@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="377.0" prefWidth="599.0" xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.example.mindharbor.controller_grafici.psicologo.ControllerGraficoVerificaDisponibilita">
+   <ImageView fitHeight="378.0" fitWidth="600.0" smooth="false">
+      <Image url="@Img/Sfondo.png"/>
+   </ImageView>
+   <Label alignment="CENTER" layoutX="186.0" layoutY="65.0" prefHeight="30.0" prefWidth="241.0"
+          text="RICHIESTA PRENOTAZIONE" textAlignment="CENTER" textFill="WHITE">
+      <font>
+         <Font size="18.0"/>
+      </font>
+      <padding>
+         <Insets top="2.0"/>
+      </padding>
+   </Label>
+   <HBox layoutX="68.0" layoutY="96.0" prefHeight="194.0" prefWidth="442.0" spacing="24.0">
+      <padding>
+         <Insets left="3.0" right="-7.0" top="22.0"/>
+      </padding>
+      <VBox prefHeight="184.0" prefWidth="172.0" spacing="4.0">
+         <HBox.margin>
+            <Insets left="4.0" top="-12.0"/>
+         </HBox.margin>
+         <Label fx:id="labelData" alignment="CENTER_RIGHT" prefHeight="82.0" prefWidth="172.0" text="DATA"
+                textFill="WHITE">
+            <padding>
+               <Insets left="71.0" top="63.0"/>
+            </padding>
+         </Label>
+         <Label fx:id="labelOra" alignment="CENTER_RIGHT" prefHeight="18.0" prefWidth="170.0" text="ORA"
+                textFill="WHITE">
+            <padding>
+               <Insets left="76.0"/>
+            </padding>
+         </Label>
+      </VBox>
+      <ImageView fx:id="immaginePaziente" fitHeight="69.0" fitWidth="87.0" pickOnBounds="true" preserveRatio="true">
+         <HBox.margin>
+            <Insets top="30.0"/>
+         </HBox.margin>
+         <Image url="@Img/IconaFemmina.png"/>
+      </ImageView>
+      <VBox prefHeight="172.0" prefWidth="158.0" spacing="4.0">
+         <HBox.margin>
+            <Insets top="-17.0"/>
+         </HBox.margin>
+         <Label fx:id="labelNome" prefHeight="81.0" prefWidth="152.0" text="NOME" textFill="WHITE">
+            <padding>
+               <Insets left="4.0" right="-6.0" top="63.0"/>
+            </padding>
+         </Label>
+         <Label fx:id="labelCognome" prefHeight="18.0" prefWidth="152.0" text="COGNOME" textFill="WHITE">
+            <padding>
+               <Insets left="4.0"/>
+            </padding>
+         </Label>
+      </VBox>
+   </HBox>
+   <HBox layoutX="288.0" layoutY="6.0" prefHeight="42.0" prefWidth="317.0" spacing="33.0">
+      <padding>
+         <Insets bottom="10.0" left="4.0" right="10.0" top="10.0"/>
+      </padding>
+      <Label fx:id="labelNomePsicologo" alignment="CENTER_RIGHT" prefHeight="18.0" prefWidth="302.0"
+             textFill="WHITE">
+         <font>
+            <Font name="Hiragino Sans W1" size="12.0"/>
+         </font>
+         <padding>
+            <Insets left="15.0"/>
+         </padding>
+      </Label>
+      <ImageView fitHeight="24.0" fitWidth="24.0">
+         <HBox.margin>
+            <Insets left="-26.0" top="-3.0"/>
+         </HBox.margin>
+         <Image url="@Img/IconaProfilo.png"/>
+      </ImageView>
+   </HBox>
+   <Label fx:id="home" layoutX="48.0" layoutY="19.0" onMouseClicked="#clickLabelHome" text="HOME" textFill="WHITE"/>
+   <ImageView fx:id="tornaIndietro" fitHeight="19.0" fitWidth="20.0" layoutX="19.0" layoutY="18.0"
+              onMouseClicked="#clickLabelTornaIndietro">
+      <Image url="@Img/TornaIndietro.png"/>
+   </ImageView>
+   <Label layoutX="86.0" layoutY="19.0" prefHeight="18.0" prefWidth="178.0" text="/ PRENOTA APPUNTAMENTO"
+          textFill="WHITE"/>
+   <Label fx:id="verificaDisp" alignment="CENTER" layoutX="205.0" layoutY="256.0"
+          onMouseClicked="#verificaDisp" prefHeight="18.0" prefWidth="216.0" text="VERIFICA DISPONIBILITÀ "
+          textAlignment="CENTER" textFill="WHITE">
+      <font>
+         <Font size="18.0"/>
+      </font>
+      <padding>
+         <Insets top="2.0"/>
+      </padding>
+   </Label>
+   <Label fx:id="accetta" alignment="CENTER" disable="true" layoutX="205.0" layoutY="280.0" prefHeight="18.0"
+          prefWidth="78.0" text="ACCETTA" textFill="WHITE" visible="false" onMouseClicked="#richiestaAccettata">
+      <font>
+         <Font size="15.0"/>
+      </font>
+   </Label>
+   <Label fx:id="rifiuta" alignment="CENTER" disable="true" layoutX="342.0" layoutY="280.0" prefHeight="18.0"
+          prefWidth="78.0" text="RIFIUTA" textFill="WHITE" visible="false" onMouseClicked="#richiestaRifiutata">
+      <font>
+         <Font size="15.0"/>
+      </font>
+   </Label>
+   <ImageView fx:id="immagineDisp" fitHeight="18.0" fitWidth="24.0" layoutX="272.0" layoutY="239.0"
+              pickOnBounds="true" preserveRatio="true" visible="false">
+      <Image url="@Img/casellaVerde.png"/>
+   </ImageView>
+   <Text fx:id="disp" fill="WHITE" layoutX="293.0" layoutY="253.0" strokeType="OUTSIDE" strokeWidth="0.0"
+         text="Disponibilità" visible="false" wrappingWidth="78.39999999999998"/>
+</AnchorPane>

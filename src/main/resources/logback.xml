@@ -1,0 +1,34 @@
+<!-- in questo file si gestisce la scrittura dei log su file o su altri destinatari
+ è un metodo molto flessibile per poter gestire appunto i log di errore
+ in molteplici modi. In questo caso i log verranno scritti sia su il file myapp.log
+ situata nella cartella logs. -->
+
+<!-- Definisce un appender che scrive i log su file, supportando il rolling basato sul tempo -->
+<configuration>
+
+    <!-- Appender per scrivere i log nella console -->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Appender per scrivere i log su file con rolling basato sul tempo -->
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/myapp.log</file>
+        <encoder>
+            <pattern>%date %level [%thread] %logger{10} - %msg%n</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logs/archived/myapp.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+    </appender>
+
+    <!-- Configurazione del logger radice che utilizza gli appender definiti -->
+    <root level="info">
+        <appender-ref ref="STDOUT" />
+        <appender-ref ref="FILE" />
+    </root>
+
+</configuration>
