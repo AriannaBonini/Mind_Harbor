@@ -4,6 +4,7 @@ public class CodiciAnsi {
 
     private CodiciAnsi() {/*costruttore privato*/}
     public static final String ANSI_ROSSO = "\u001B[31m";
+    public static final String ANSI_RIPRISTINA_ROSSO="\u001B[0m";
     public static final String ANSI_VERDE = "\u001B[32m";
     public static final String ANSI_VERDE_CHIARO = "\u001B[92m";
     public static final String ANSI_RIPRISTINA_VERDE_CHIARO = "\u001B[0m";
@@ -12,4 +13,8 @@ public class CodiciAnsi {
 
     public static final String ANSI_RIPRISTINA_GRASSETTO = "\033[0m";
     public static final String ANSI_SOTTOLINEATO = "\u001B[4m";
+    public static final String TICCHETTA = "\u2714";
+
+    public static final String ANSI_GRIGIO = "\u001B[37m";
+    public static final String ANSI_RIPRISTINA_GRIGIO = "\u001B[0m";
 }

@@ -34,7 +34,7 @@ public class ControllerGraficoHomePsicologoCLI extends AbsGestoreInput {
                 switch(opzione) {
                     case 1 -> visualizzaAppuntamenti();
                     case 2 -> richiestaAppuntamenti();
-                    case 3 -> System.out.println("Prescrivi Terapia");
+                    case 3 -> prescriviTerapia();
                     case 4 -> esci = true;
                     default -> throw new EccezioneFormatoNonValido("Scelta non valida");
                 }
@@ -51,8 +51,8 @@ public class ControllerGraficoHomePsicologoCLI extends AbsGestoreInput {
     public int mostraMenu() {
         GestoreOutput.stampaMessaggio(CodiciAnsi.ANSI_GRASSETTO + "HOME PAGE\n" + CodiciAnsi.ANSI_RIPRISTINA_GRASSETTO);
         GestoreOutput.stampaMessaggio("1) Visualizza Appuntamenti");
-        GestoreOutput.stampaMessaggio("2) " + GestoreOutput.stampaMessaggioConNotifica("Richiesta Prenotazione",notificaRichiestaPrenotazione));
-        GestoreOutput.stampaMessaggio("3) " + GestoreOutput.stampaMessaggioConNotifica("Prescrivi Terapia",notificaPrescriviTerapia));
+        GestoreOutput.stampaMessaggio("2) " + GestoreOutput.messaggioConNotifica("Richiesta Prenotazione",notificaRichiestaPrenotazione));
+        GestoreOutput.stampaMessaggio("3) " + GestoreOutput.messaggioConNotifica("Prescrivi Terapia",notificaPrescriviTerapia));
         GestoreOutput.stampaMessaggio("4) Logout");
 
         return opzioneScelta(1,4);
@@ -81,5 +81,7 @@ public class ControllerGraficoHomePsicologoCLI extends AbsGestoreInput {
     private void visualizzaAppuntamenti() {new ControllerGraficoAppuntamentiPsicologoCLI().start();}
 
     private void richiestaAppuntamenti() {new ControllerGraficoListaRichiesteAppuntamentiCLI().start();}
+
+    private void prescriviTerapia() {new ControllerGraficoListaPazientiCLI().start();}
 
 }

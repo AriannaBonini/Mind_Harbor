@@ -85,9 +85,9 @@ public class ControllerGraficoHomePazienteCLI extends AbsGestoreInput {
     public int mostraMenu() {
         GestoreOutput.stampaMessaggio(CodiciAnsi.ANSI_GRASSETTO + "HOME PAGE\n" + CodiciAnsi.ANSI_RIPRISTINA_GRASSETTO);
         GestoreOutput.stampaMessaggio("1) Prenota Appuntamento");
-        GestoreOutput.stampaMessaggio("2) " + GestoreOutput.stampaMessaggioConNotifica("Lista Appuntamenti",notificaAppuntamenti));
-        GestoreOutput.stampaMessaggio("3) " + GestoreOutput.stampaMessaggioConNotifica("Terapia",notificaTerapie));
-        GestoreOutput.stampaMessaggio("4) " + GestoreOutput.stampaMessaggioConNotifica("Test",notificaTest));
+        GestoreOutput.stampaMessaggio("2) " + GestoreOutput.messaggioConNotifica("Lista Appuntamenti",notificaAppuntamenti));
+        GestoreOutput.stampaMessaggio("3) " + GestoreOutput.messaggioConNotifica("Terapia",notificaTerapie));
+        GestoreOutput.stampaMessaggio("4) " + GestoreOutput.messaggioConNotifica("Test",notificaTest));
         GestoreOutput.stampaMessaggio("5) Logout");
 
         return opzioneScelta(1,5);

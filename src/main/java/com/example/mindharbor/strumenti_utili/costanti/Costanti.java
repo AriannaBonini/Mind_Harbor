@@ -6,5 +6,6 @@ public class Costanti {
 
     public static final String IMPOSSIBILE_CARICARE_INTERFACCIA = "Impossibile caricare l'interfaccia";
     public static final String ELIMINA_RICHIESTA = "Errore nell'eliminazione della richiesta di appuntamento";
+    public static final String SCELTA_NON_VALIDA= "Scelta non valida ";
 
 }

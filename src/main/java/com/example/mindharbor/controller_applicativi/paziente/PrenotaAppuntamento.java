@@ -124,6 +124,7 @@ public class PrenotaAppuntamento {
     }
 
     public List<AppuntamentiBean> getListaRichieste() throws EccezioneDAO {
+        System.out.println("Sono qui ");
         DAOFactoryFacade daoFactoryFacade=DAOFactoryFacade.getInstance();
         AppuntamentoDAO appuntamentoDAO= daoFactoryFacade.getAppuntamentoDAO();
         List<AppuntamentiBean> listaRichiesteBean=new ArrayList<>();
@@ -194,7 +195,10 @@ public class PrenotaAppuntamento {
         try {
             appuntamentoDAO.updateRichiesta(appuntamentoAccettato);
 
-            //eliminiamo tutte le altre richieste di appuntamento del paziente ad altri psicologi.
+            /**
+             * Eliminiamo tutte le altre richieste di appuntamento del paziente ad altri psicologi
+             */
+
             appuntamentoDAO.eliminaRichiesteDiAppuntamentoPerAltriPsicologi(appuntamentoAccettato);
 
         }catch (EccezioneDAO e) {

@@ -44,11 +44,20 @@ public class GestoreOutput {
         stampaMessaggio("");
     }
 
-    public static String stampaMessaggioConNotifica(String messaggio, boolean notifica) {
+    public static String messaggioConNotifica(String messaggio, boolean notifica) {
         if(notifica) {
-            messaggio=CodiciAnsi.ANSI_VERDE_CHIARO + messaggio + CodiciAnsi.ANSI_RIPRISTINA_VERDE_CHIARO;
+            return CodiciAnsi.ANSI_VERDE_CHIARO + messaggio + CodiciAnsi.ANSI_RIPRISTINA_VERDE_CHIARO;
+        }else {
+            return messaggio;
         }
-        return messaggio;
+    }
+
+    public static void disponibile() {
+        GestoreOutput.stampaMessaggio(GestoreOutput.messaggioConNotifica("DISPONIBILE |" + CodiciAnsi.TICCHETTA + "|",true ));
+    }
+
+    public static void nonDisponibile() {
+        GestoreOutput.stampaMessaggio(CodiciAnsi.ANSI_ROSSO + "NON DISPONIBILE |X|" + CodiciAnsi.ANSI_RIPRISTINA_ROSSO);
     }
 }
 

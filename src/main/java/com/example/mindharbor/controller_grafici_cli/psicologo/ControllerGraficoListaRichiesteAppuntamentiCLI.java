@@ -17,6 +17,7 @@ public class ControllerGraficoListaRichiesteAppuntamentiCLI extends AbsGestoreIn
     private static final Logger logger = LoggerFactory.getLogger(ControllerGraficoListaRichiesteAppuntamentiCLI.class);
     private final PrenotaAppuntamento prenotaAppuntamentoController = PrenotaAppuntamentoSingleton.getInstance();
     private final InfoUtenteBean infoUtenteBean = prenotaAppuntamentoController.getInfoUtente();
+    private List<AppuntamentiBean> listaRichieste;
 
 
     @Override
@@ -54,7 +55,9 @@ public class ControllerGraficoListaRichiesteAppuntamentiCLI extends AbsGestoreIn
 
     private void richiestaPrenotazioni() {
         try {
-            List<AppuntamentiBean> listaRichieste = prenotaAppuntamentoController.getListaRichieste();
+            if(listaRichieste==null) {
+                listaRichieste = prenotaAppuntamentoController.getListaRichieste();
+            }
             if(listaRichieste.isEmpty()) {
                 GestoreOutput.stampaMessaggio("Non ci sono richieste di appuntamento");
             }else {
@@ -69,9 +72,9 @@ public class ControllerGraficoListaRichiesteAppuntamentiCLI extends AbsGestoreIn
         int indice=0;
         for (AppuntamentiBean appuntamentiBean : listaRichieste) {
             if (appuntamentiBean.getNotificaRichiesta() == 1) {
-                GestoreOutput.stampaMessaggio(GestoreOutput.stampaMessaggioConNotifica( "NUMERO RICHIESTA DI APPUNTAMENTO : " + indice, true));
-                GestoreOutput.stampaMessaggio(GestoreOutput.stampaMessaggioConNotifica(" NOME : " + appuntamentiBean.getPaziente().getNome(), true));
-                GestoreOutput.stampaMessaggio(GestoreOutput.stampaMessaggioConNotifica(" COGNOME : " + appuntamentiBean.getPaziente().getCognome(), true));
+                GestoreOutput.stampaMessaggio(GestoreOutput.messaggioConNotifica( "NUMERO RICHIESTA DI APPUNTAMENTO : " + indice, true));
+                GestoreOutput.stampaMessaggio(GestoreOutput.messaggioConNotifica("NOME : " + appuntamentiBean.getPaziente().getNome(), true));
+                GestoreOutput.stampaMessaggio(GestoreOutput.messaggioConNotifica("COGNOME : " + appuntamentiBean.getPaziente().getCognome(), true));
             } else {
                 GestoreOutput.stampaMessaggio("NUMERO RICHIESTA DI APPUNTAMENTO : " +indice);
                 GestoreOutput.stampaMessaggio("NOME : " + appuntamentiBean.getPaziente().getNome());
