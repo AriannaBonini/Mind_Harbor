@@ -18,7 +18,6 @@ public class ControllerGraficoListaPazientiCLI extends AbsGestoreInput {
 
     private final PrescriviTerapia prescriviTerapiaController = PrescriviTerapiaSingleton.getInstance();
     private static final Logger logger = LoggerFactory.getLogger(ControllerGraficoListaPazientiCLI.class);
-    private final InfoUtenteBean infoUtenteBean = prescriviTerapiaController.getInfoUtente();
     private List<PazienteBean> listaPazienti=null;
 
 
@@ -44,6 +43,7 @@ public class ControllerGraficoListaPazientiCLI extends AbsGestoreInput {
     }
     @Override
     public int mostraMenu() {
+        InfoUtenteBean infoUtenteBean = prescriviTerapiaController.getInfoUtente();
         GestoreOutput.stampaMessaggio(CodiciAnsi.ANSI_GRASSETTO + "LISTA PAZIENTI\n" + CodiciAnsi.ANSI_RIPRISTINA_GRASSETTO);
         GestoreOutput.stampaMessaggio("NOME : " + infoUtenteBean.getNome() + "\n" + "COGNOME : " + infoUtenteBean.getCognome() + "\n");
         GestoreOutput.stampaMessaggio("1) Lista pazienti");

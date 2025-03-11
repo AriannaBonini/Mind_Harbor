@@ -11,11 +11,18 @@ public abstract class AbsGestoreInput implements InterfacciaControllerGraficiCLI
         int choice;
         while (true) {
             GestoreOutput.stampaMessaggio("\nInserisci la tua scelta: ");
-            choice = input.nextInt();
-            if (choice >= min && choice <= max) {
-                break;
+
+            if (input.hasNextInt()) {
+                choice = input.nextInt();
+                if (choice >= min && choice <= max) {
+                    break;
+                } else {
+                    GestoreOutput.stampaMessaggio("Scelta non valida. Devi inserire un numero tra " + min + " e " + max + ".\n");
+                }
+            } else {
+                GestoreOutput.stampaMessaggio("Errore: devi inserire un numero intero.\n");
+                input.next();
             }
-            GestoreOutput.stampaMessaggio("Scelta non valida\n");
         }
         return choice;
     }

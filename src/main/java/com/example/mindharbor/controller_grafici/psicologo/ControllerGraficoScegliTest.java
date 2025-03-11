@@ -62,7 +62,7 @@ public class ControllerGraficoScegliTest {
         pazienteSelezionato= prescriviTerapiaController.getPazienteSelezionato();
 
         aggiungiInformazioni();
-        getTest();
+        ottieniListaTest();
 
 
     }
@@ -106,7 +106,7 @@ public class ControllerGraficoScegliTest {
     }
 
     @FXML
-    public void getTest() {
+    public void ottieniListaTest() {
          listaTestPsicologiciBean = prescriviTerapiaController.getListaTest();
 
         if (listaTestPsicologiciBean != null) {

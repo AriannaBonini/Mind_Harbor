@@ -125,7 +125,7 @@ public class PrescriviTerapia {
         }
     }
 
-    private void notificaTest(String nomeTest) throws EccezioneDAO {
+    public void notificaTest(String nomeTest) throws EccezioneDAO {
         DAOFactoryFacade daoFactoryFacade=DAOFactoryFacade.getInstance();
         TestPsicologicoDAO testPsicologicoDAO= daoFactoryFacade.getTestPsicologicoDAO();
         try {

@@ -58,7 +58,7 @@ public class ControllerGraficoSchedaPersonalePazienteCLI extends AbsGestoreInput
 
         schedaPersonale();
 
-        if(abilitaAssegnaTest()) {
+        if(!abilitaAssegnaTest()) {
             assegnaTestAbilitato=true;
             GestoreOutput.stampaMessaggio("1) Assegna Test");
         } else {
@@ -110,14 +110,14 @@ public class ControllerGraficoSchedaPersonalePazienteCLI extends AbsGestoreInput
 
     private void creaSchedaPersonale() {
         GestoreOutput.stampaMessaggio("\n\n");
-        GestoreOutput.stampaMessaggio("NOME : " + pazienteSelezionato.getNome());
-        GestoreOutput.stampaMessaggio("COGNOME : " + pazienteSelezionato.getCognome());
-        GestoreOutput.stampaMessaggio("ANNI : " + pazienteSelezionato.getAnni());
+        GestoreOutput.stampaMessaggio("NOME PAZIENTE : " + pazienteSelezionato.getNome());
+        GestoreOutput.stampaMessaggio("COGNOME PAZIENTE : " + pazienteSelezionato.getCognome());
+        GestoreOutput.stampaMessaggio("ANNI PAZIENTE : " + pazienteSelezionato.getAnni());
 
         if(pazienteSelezionato.getDiagnosi()==null || pazienteSelezionato.getDiagnosi().isEmpty()) {
             GestoreOutput.stampaMessaggio("Diagnosi Sconosciuta");
         } else {
-            GestoreOutput.stampaMessaggio("DIAGNOSI : " + pazienteSelezionato.getDiagnosi());
+            GestoreOutput.stampaMessaggio("DIAGNOSI PAZIENTE : " + pazienteSelezionato.getDiagnosi());
         }
 
         GestoreOutput.stampaMessaggio("\n\n\n");
@@ -126,15 +126,12 @@ public class ControllerGraficoSchedaPersonalePazienteCLI extends AbsGestoreInput
 
     public void scegliTest() {
         prescriviTerapiaController.setPazienteSelezionato(pazienteSelezionato);
-        /**
-         * Carichiamo il controller grafico per scegliere il test
-         */
+        new ControllerGraficoScegliTestCLI().start();
     }
+
     public void prescriviTerapia() {
         prescriviTerapiaController.setPazienteSelezionato(pazienteSelezionato);
-        /**
-         * Carichiamo il controller grafico per prescrivere la terapia
-         */
+        new ControllerGraficoPrescriviTerapiaCLI().start();
     }
 
     private boolean abilitaPrescriviTerapia() {

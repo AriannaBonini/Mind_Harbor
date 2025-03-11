@@ -164,8 +164,6 @@ public class ControllerGraficoPrescriviTerapia {
             try {
             Date currentDate= new Date();
             prescriviTerapiaController.aggiungiTerapia(new TerapiaBean(SessionManager.getInstance().getCurrentUser().getUsername(), pazienteSelezionato.getUsername(), testoInserito,currentDate,testbean.getData()));
-            modificaStatoNotifica();
-            popolaListaTestSvoltiSenzaPrescrizione();
             Alert alert= new AlertMessage().informazione("ESITO POSITIVO", "Operazione completata", "Terapia assegnata con successo");
             new Timeline(new KeyFrame(Duration.seconds(3), event -> alert.close()));
             alert.showAndWait();
@@ -173,7 +171,7 @@ public class ControllerGraficoPrescriviTerapia {
             clickLabelTornaIndietro();
 
             } catch (EccezioneDAO e) {
-            logger.info("Errore durante il salvataggio della terapia ", e );
+                logger.info("Errore durante il salvataggio della terapia ", e );
                 Alert alert= new AlertMessage().errore("Una sola prescrizione per test");
                 alert.show();
 

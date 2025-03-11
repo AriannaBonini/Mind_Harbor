@@ -40,7 +40,7 @@ public class ControllerGraficoHomePazienteCLI extends AbsGestoreInput {
                     case 1 -> prenotaAppuntamento();
                     case 2 -> listaAppuntamenti();
                     case 3 -> terapia();
-                    case 4 -> System.out.println("Test");
+                    case 4 -> test();
                     case 5 -> esci = true;
                     default -> throw new EccezioneFormatoNonValido("Scelta non valida");
                 }
@@ -95,5 +95,6 @@ public class ControllerGraficoHomePazienteCLI extends AbsGestoreInput {
 
     private void listaAppuntamenti() {new ControllerGraficoAppuntamentiPazienteCLI().start();}
     private void terapia() {new ControllerGraficoTerapiaPazienteCLI().start();}
-   private void prenotaAppuntamento(){new ControllerGraficoSelezionaDataEOraCLI().start();}
+    private void prenotaAppuntamento(){new ControllerGraficoSelezionaDataEOraCLI().start();}
+    private void test() {new ControllerGraficoListaTestCLI().start();}
 }

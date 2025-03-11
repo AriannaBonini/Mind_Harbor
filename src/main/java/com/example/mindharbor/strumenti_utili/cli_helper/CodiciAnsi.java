@@ -17,4 +17,12 @@ public class CodiciAnsi {
 
     public static final String ANSI_GRIGIO = "\u001B[37m";
     public static final String ANSI_RIPRISTINA_GRIGIO = "\u001B[0m";
+    public static final String ANSI_QUADRATO_VERDE = ANSI_VERDE_CHIARO + "\u25A1" + ANSI_RIPRISTINA_VERDE_CHIARO;
+    public static final String ANSI_QUADRATO_VERDE_CON_TICCHETTA = ANSI_VERDE_CHIARO + "\u2611" + ANSI_RIPRISTINA_VERDE_CHIARO;
+    public static final String EMOJI_FELICE = "\uD83D\uDE00";
+    public static final String EMOJI_TRISTE = "\uD83D\uDE22";
+    public static final String EMOJI_ARRABBIATA = "\uD83D\uDE20";
+
+
+
 }
