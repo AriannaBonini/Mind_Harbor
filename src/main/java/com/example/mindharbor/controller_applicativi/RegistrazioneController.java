@@ -29,7 +29,7 @@ public class RegistrazioneController {
         );
 
         try {
-            if (utenteDAO.controllaUsernameERegistraNuovoUtente(paziente)) {
+            if (Boolean.TRUE.equals(utenteDAO.controllaUsernameERegistraNuovoUtente(paziente))) {
                 pazienteDAO.inserisciDatiPaziente(paziente);
             } else {
                 throw new EccezioneDAO("Username già in uso");
@@ -54,13 +54,13 @@ public class RegistrazioneController {
                 psicologoBean.getCognome(),
                 UserType.PSICOLOGO,
                 psicologoBean.getGenere(),
-                psicologoBean.getPassword(),
-                psicologoBean.getNomeStudio(),
-                psicologoBean.getCostoOrario()
-        );
+                psicologoBean.getPassword());
+
+                psicologo.setNomeStudio(psicologoBean.getNomeStudio());
+                psicologo.setCostoOrario(psicologoBean.getCostoOrario());
 
         try {
-            if (utenteDAO.controllaUsernameERegistraNuovoUtente(psicologo)) {
+            if (Boolean.TRUE.equals(utenteDAO.controllaUsernameERegistraNuovoUtente(psicologo))) {
                 psicologoDAO.inserisciDatiPsicologo(psicologo);
             } else {
                 throw new EccezioneDAO("Username già in uso");

@@ -103,10 +103,9 @@ public class PazienteBean {
     public void setDiagnosi(String diagnosi){this.diagnosi=diagnosi;}
     public String getUsername() {return username;}
     public void setUsername(String username) {
-        if (username.matches("[0-9]+")) {
+        if (username.chars().allMatch(Character::isDigit)) {
             throw new IllegalArgumentException("Lo username non può essere composto solo da numeri.");
         }
-
         this.username = username;
     }
     public Integer getNumTestSvolti() {
@@ -120,13 +119,15 @@ public class PazienteBean {
             throw new IllegalArgumentException("La password deve contenere almeno 8 caratteri.");
         }
 
-        if (!password.matches(".*[A-Z].*")) {
+        if (password.chars().noneMatch(Character::isUpperCase)) {
             throw new IllegalArgumentException("La password deve contenere almeno una lettera maiuscola.");
         }
 
-        if (!password.matches(".*[0-9].*") && !password.matches(".*[!@#$%^&*(),.?\":{}|<>].*")) {
+        if (password.chars().noneMatch(Character::isDigit) &&
+                password.chars().noneMatch(c -> "!@#$%^&*(),.?\":{}|<>".indexOf(c) >= 0)) {
             throw new IllegalArgumentException("La password deve contenere almeno un numero o un carattere speciale.");
         }
+
         this.password = password;
     }
 

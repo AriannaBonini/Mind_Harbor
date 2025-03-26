@@ -33,7 +33,8 @@ public class ControllerGraficoLoginCLI extends AbsGestoreInput {
                 opzione = mostraMenu();
                 switch(opzione) {
                     case 1 -> login();
-                    case 2 -> esci=true;
+                    case 2 -> registrazione();
+                    case 3 -> esci=true;
                     default -> throw new EccezioneFormatoNonValido("Scelta non valida");
                 }
             } catch (EccezioneFormatoNonValido e) {
@@ -48,9 +49,10 @@ public class ControllerGraficoLoginCLI extends AbsGestoreInput {
     public int mostraMenu() {
         GestoreOutput.stampaMessaggio(CodiciAnsi.ANSI_GRASSETTO + "*** BENVENUTO! ***\n" + CodiciAnsi.ANSI_RIPRISTINA_GRASSETTO);
         GestoreOutput.stampaMessaggio("1) Login");
-        GestoreOutput.stampaMessaggio("2) Esci");
+        GestoreOutput.stampaMessaggio("2) Registrati");
+        GestoreOutput.stampaMessaggio("3) Esci");
 
-        return opzioneScelta(1,2);
+        return opzioneScelta(1,3);
     }
 
     public void login() {
@@ -79,6 +81,8 @@ public class ControllerGraficoLoginCLI extends AbsGestoreInput {
             logger.info(e.getMessage());
         }
     }
+
+    private void registrazione() {new ControllerGraficoRegistrazioneCLI().start();}
 
 }
 

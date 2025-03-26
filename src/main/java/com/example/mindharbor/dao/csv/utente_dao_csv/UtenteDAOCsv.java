@@ -5,6 +5,7 @@ import com.example.mindharbor.eccezioni.EccezioneDAO;
 import com.example.mindharbor.model.Appuntamento;
 import com.example.mindharbor.model.Psicologo;
 import com.example.mindharbor.model.Utente;
+import com.example.mindharbor.strumenti_utili.costanti.Costanti;
 import com.example.mindharbor.tipo_utente.UserType;
 import com.example.mindharbor.strumenti_utili.costanti.CostantiLetturaScrittura;
 import com.example.mindharbor.strumenti_utili.UtilitiesCSV;
@@ -193,7 +194,7 @@ public class UtenteDAOCsv implements UtenteDAO {
                 }
             }
         } catch (EccezioneDAO e) {
-            throw new EccezioneDAO("Errore nella lettura del file CSV: " + e.getMessage(), e);
+            throw new EccezioneDAO(Costanti.ERRORE_NELLA_LETTURA_DEI_FILE_CSV + e.getMessage(), e);
         }
         return richiesteAppuntamenti;
     }
@@ -249,7 +250,7 @@ public class UtenteDAOCsv implements UtenteDAO {
                 }
             }
         } catch (EccezioneDAO e) {
-            throw new EccezioneDAO("Errore nella lettura del file CSV: " + e.getMessage(), e);
+            throw new EccezioneDAO(Costanti.ERRORE_NELLA_LETTURA_DEI_FILE_CSV + e.getMessage(), e);
         }
 
         registraNuovoUtente(utente,righe);

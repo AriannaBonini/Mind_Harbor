@@ -39,7 +39,7 @@ public class PsicologoBean {
 
     public String getUsername() {return username;}
     public void setUsername(String username) {
-        if (username.matches("[0-9]+")) {
+        if (username.chars().allMatch(Character::isDigit)) {
             throw new IllegalArgumentException("Lo username non può essere composto solo da numeri.");
         }
 
@@ -75,10 +75,10 @@ public class PsicologoBean {
         return nomeStudio;
     }
     public void setNomeStudio(String nomeStudio) {
-        if (nomeStudio.matches("^[0-9]+$")) {
-            throw new IllegalArgumentException("Il nome dello studio non può essere composto solo da numeri. ");
+        if (nomeStudio.chars().allMatch(Character::isDigit)) {
+            throw new IllegalArgumentException("Il nome dello studio non può essere composto solo da numeri.");
         }
-        this.nomeStudio=nomeStudio;
+        this.nomeStudio = nomeStudio;
     }
     public String getGenere() {
         return genere;
@@ -90,13 +90,15 @@ public class PsicologoBean {
             throw new IllegalArgumentException("La password deve contenere almeno 8 caratteri.");
         }
 
-        if (!password.matches(".*[A-Z].*")) {
+        if (password.chars().noneMatch(Character::isUpperCase)) {
             throw new IllegalArgumentException("La password deve contenere almeno una lettera maiuscola.");
         }
 
-        if (!password.matches(".*[0-9].*") && !password.matches(".*[!@#$%^&*(),.?\":{}|<>].*")) {
+        if (password.chars().noneMatch(Character::isDigit) &&
+                password.chars().noneMatch(c -> "!@#$%^&*(),.?\":{}|<>".indexOf(c) >= 0)) {
             throw new IllegalArgumentException("La password deve contenere almeno un numero o un carattere speciale.");
         }
+
         this.password = password;
     }
 

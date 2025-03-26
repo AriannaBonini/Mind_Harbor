@@ -45,7 +45,7 @@ public class ControllerGraficoListaRichiesteAppuntamentiCLI extends AbsGestoreIn
     @Override
     public int mostraMenu() {
         GestoreOutput.stampaMessaggio(CodiciAnsi.ANSI_GRASSETTO + "RICHIESTE PRENOTAZIONE\n" + CodiciAnsi.ANSI_RIPRISTINA_GRASSETTO);
-        GestoreOutput.stampaMessaggio("NOME : " + infoUtenteBean.getNome() + "\n" + "COGNOME : " + infoUtenteBean.getCognome() + "\n");
+        GestoreOutput.stampaMessaggio(GestoreOutput.NOME + infoUtenteBean.getNome() + "\n" + "COGNOME : " + infoUtenteBean.getCognome() + "\n");
         GestoreOutput.stampaMessaggio("1) Lista richieste prenotazioni");
         GestoreOutput.stampaMessaggio("2) Torna alla Home");
 

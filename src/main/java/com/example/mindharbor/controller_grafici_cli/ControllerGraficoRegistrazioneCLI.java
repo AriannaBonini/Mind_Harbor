@@ -29,8 +29,8 @@ public class ControllerGraficoRegistrazioneCLI extends AbsGestoreInput{
             try {
                 opzione = mostraMenu();
                 switch (opzione) {
-                    case 1 -> datiGenericiUtente(UserType.PAZIENTE);
-                    case 2 -> datiGenericiUtente(UserType.PSICOLOGO);
+                    case 1 -> datiGenericiUtente(UserType.PAZIENTE.getId());
+                    case 2 -> datiGenericiUtente(UserType.PSICOLOGO.getId());
                     case 3 -> esci = true;
                     default -> throw new EccezioneFormatoNonValido("Scelta non valida");
                 }
@@ -54,7 +54,7 @@ public class ControllerGraficoRegistrazioneCLI extends AbsGestoreInput{
 
 
 
-    private void datiGenericiUtente(UserType TipoUtente) {
+    private void datiGenericiUtente(String TipoUtente) {
         String nome;
         String cognome;
         String username;

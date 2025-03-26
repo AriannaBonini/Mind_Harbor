@@ -8,4 +8,6 @@ public class Costanti {
     public static final String ELIMINA_RICHIESTA = "Errore nell'eliminazione della richiesta di appuntamento";
     public static final String SCELTA_NON_VALIDA= "Scelta non valida ";
 
+    public static final String ERRORE_NELLA_LETTURA_DEI_FILE_CSV= "Errore nella lettura del file CSV: ";
+
 }

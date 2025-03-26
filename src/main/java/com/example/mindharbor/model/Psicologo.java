@@ -7,11 +7,6 @@ public class Psicologo extends Utente {
     private String nomeStudio;
     private Integer costoOrario;
 
-    public Psicologo(String username, String nome, String cognome, UserType userType, String genere, String password, String nomeStudio, Integer costoOrario) {
-        super(username, nome, cognome, userType, genere, password);
-        setNomeStudio(nomeStudio);
-        setCostoOrario(costoOrario);
-    }
 
     public Psicologo(String username, String nome, String cognome, UserType userType, String genere, String password) {
         super(username, nome, cognome, userType, genere, password);
