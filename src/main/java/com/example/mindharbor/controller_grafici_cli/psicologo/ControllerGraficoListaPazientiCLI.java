@@ -45,7 +45,7 @@ public class ControllerGraficoListaPazientiCLI extends AbsGestoreInput {
     public int mostraMenu() {
         InfoUtenteBean infoUtenteBean = prescriviTerapiaController.getInfoUtente();
         GestoreOutput.stampaMessaggio(CodiciAnsi.ANSI_GRASSETTO + "LISTA PAZIENTI\n" + CodiciAnsi.ANSI_RIPRISTINA_GRASSETTO);
-        GestoreOutput.stampaMessaggio("NOME : " + infoUtenteBean.getNome() + "\n" + "COGNOME : " + infoUtenteBean.getCognome() + "\n");
+        GestoreOutput.stampaMessaggio(GestoreOutput.NOME + infoUtenteBean.getNome() + "\n" + "COGNOME : " + infoUtenteBean.getCognome() + "\n");
         GestoreOutput.stampaMessaggio("1) Lista pazienti");
         GestoreOutput.stampaMessaggio("2) Torna alla Home");
 
@@ -68,11 +68,11 @@ public class ControllerGraficoListaPazientiCLI extends AbsGestoreInput {
         for (PazienteBean pazienteBean : listaPazienti) {
             if (pazienteBean.getNumTestSvolti()>0) {
                 GestoreOutput.stampaMessaggio(GestoreOutput.messaggioConNotifica( "NUMERO PAZIENTE : " + indice, true));
-                GestoreOutput.stampaMessaggio(GestoreOutput.messaggioConNotifica("NOME : " + pazienteBean.getNome(), true));
+                GestoreOutput.stampaMessaggio(GestoreOutput.messaggioConNotifica(GestoreOutput.NOME + pazienteBean.getNome(), true));
                 GestoreOutput.stampaMessaggio(GestoreOutput.messaggioConNotifica("COGNOME : " + pazienteBean.getCognome(), true));
             } else {
                 GestoreOutput.stampaMessaggio("NUMERO PAZIENTE : " +indice);
-                GestoreOutput.stampaMessaggio("NOME : " + pazienteBean.getNome());
+                GestoreOutput.stampaMessaggio(GestoreOutput.NOME + pazienteBean.getNome());
                 GestoreOutput.stampaMessaggio("COGNOME : " + pazienteBean.getCognome());
             }
 

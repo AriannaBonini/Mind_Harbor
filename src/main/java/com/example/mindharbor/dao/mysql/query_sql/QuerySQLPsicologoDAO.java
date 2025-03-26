@@ -12,5 +12,11 @@ public abstract class QuerySQLPsicologoDAO {
             "FROM " + TABELLA_PSICOLOGO + " " +
             "WHERE " + USERNAME + " = ? ";
 
+    protected static final String INSERISCI_DATI_PSICOLOGO =
+            "INSERT INTO " + TABELLA_PSICOLOGO + " (" +
+                     USERNAME + ", " +
+                    COSTO_ORARIO + ", " +
+                    NOME_STUDIO + ") " +
+                    "VALUES (?, ?, ?)";
 
 }

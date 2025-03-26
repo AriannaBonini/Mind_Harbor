@@ -167,6 +167,30 @@ public class PazienteDAOCsv implements PazienteDAO {
         paziente.setDiagnosi(rigaPaziente[CostantiPazienteCsv.INDICE_DIAGNOSI]);
         return paziente;
     }
+
+
+    @Override
+    public void inserisciDatiPaziente(Paziente paziente) throws EccezioneDAO {
+        List<String[]> righeCSV;
+        try {
+            righeCSV = UtilitiesCSV.leggiRigheDaCsv(CostantiPazienteCsv.FILE_PATH, CostantiLetturaScrittura.LETTURA_SCRITTURA);
+        } catch (EccezioneDAO e) {
+            throw new EccezioneDAO(CostantiPazienteCsv.ERRORE_LETTURA + " " + e.getMessage(), e);
+        }
+
+        String[] nuovaRiga = new String[CostantiPazienteCsv.NUMERO_COLONNE];
+        nuovaRiga[CostantiPazienteCsv.INDICE_PAZIENTE_USERNAME] = paziente.getUsername();
+        nuovaRiga[CostantiPazienteCsv.INDICE_ANNI] = String.valueOf(paziente.getAnni());
+
+        righeCSV.add(nuovaRiga);
+
+        try {
+            UtilitiesCSV.scriviRigheAggiornate(CostantiPazienteCsv.FILE_PATH, righeCSV);
+
+        } catch (EccezioneDAO e) {
+            throw new EccezioneDAO(CostantiPazienteCsv.ERRORE_SCRITTURA + " " + e.getMessage(), e);
+        }
+    }
 }
 
 

@@ -136,5 +136,27 @@ public class PazienteDAOMySql extends QuerySQLPazienteDAO implements PazienteDAO
             throw new EccezioneDAO(e.getMessage());
         }
     }
+
+    @Override
+    public void inserisciDatiPaziente(Paziente paziente) throws EccezioneDAO{
+        /**
+         * Questo metodo inserisce i dati relativi al paziente nel database.
+         * I dati inseriti includono gli anni e il paziente_username.
+         */
+        Connection conn = ConnectionFactory.getConnection();
+
+        try (PreparedStatement stmt = conn.prepareStatement(QuerySQLPazienteDAO.INSERISCI_DATI_PAZIENTE)) {
+
+            stmt.setString(1, paziente.getUsername());
+            stmt.setInt(2, paziente.getAnni());
+
+            stmt.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new EccezioneDAO("Errore durante l'inserimento dei dati del paziente: " + e.getMessage(), e);
+        }
+
+    }
+
  }
 

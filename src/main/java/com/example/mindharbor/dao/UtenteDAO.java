@@ -12,4 +12,5 @@ public interface UtenteDAO {
     List<Psicologo> listaUtentiDiTipoPsicologo(String usernamePsicologo) throws EccezioneDAO;
     List<Appuntamento> richiestaAppuntamentiInfoPaziente(List<Appuntamento> richiesteAppuntamenti) throws EccezioneDAO;
     Utente trovaInfoUtente(Utente paziente) throws EccezioneDAO;
+    Boolean controllaUsernameERegistraNuovoUtente(Utente nuovoUtente) throws EccezioneDAO;
 }

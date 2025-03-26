@@ -6,6 +6,7 @@ public abstract class QuerySQLUtenteDAO {
     protected static final String NOME = "Nome";
     protected static final String COGNOME = "Cognome";
     protected static final String GENERE = "Genere";
+    protected static final String PASSWORD = "Password";
     protected static final String PSW = "Password";
     protected static final String RUOLO = "Categoria";
     protected static final String TABELLA_UTENTE = "Utente";
@@ -25,4 +26,16 @@ public abstract class QuerySQLUtenteDAO {
             "WHERE " + USERNAME + " = ?";
 
 
+    protected static final String CONTROLLA_USERNAME_FASE_REGISTRAZIONE= " SELECT " + USERNAME + " " +
+            "FROM " + TABELLA_UTENTE + " " +
+            "WHERE " + USERNAME + " = ?";
+
+    protected static final String INSERISCI_NUOVO_UTENTE = " INSERT INTO " + TABELLA_UTENTE + " (" +
+            USERNAME + ", " +
+            PASSWORD + ", " +
+            NOME + ", " +
+            COGNOME + ", " +
+            RUOLO + ", " +
+            GENERE + ") " +
+            "VALUES (?, ?, ?, ?, ?, ?)";
 }

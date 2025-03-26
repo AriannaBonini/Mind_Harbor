@@ -11,4 +11,5 @@ public class CostantiPazienteCsv {
     protected static final Integer INDICE_DIAGNOSI=1;
     protected static final Integer INDICE_PAZIENTE_USERNAME=2;
     protected static final Integer INDICE_PSICOLOGO_USERNAME=3;
+    protected static final Integer NUMERO_COLONNE=4;
 }

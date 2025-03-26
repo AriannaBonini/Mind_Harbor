@@ -9,6 +9,12 @@ public class Paziente extends Utente{
     private Integer anni;
     private Integer numeroTest;
 
+    public Paziente(String username, String nome, String cognome, UserType userType, String genere, String password, Integer anni) {
+        super(username, nome, cognome, userType, genere,password);
+        setAnni(anni);
+
+    }
+
     public Paziente(String username, String nome, String cognome, String genere, Integer numTest) {
         super(username, nome, cognome, genere);
         this.numeroTest=numTest;
@@ -49,5 +55,10 @@ public class Paziente extends Utente{
     public String getUsernamePsicologo() {return usernamePsicologo;}
     public void setUsernamePsicologo(String usernamePsicologo) {this.usernamePsicologo = usernamePsicologo;}
     public Integer getAnni() {return anni;}
-    public void setAnni(Integer anni) {this.anni = anni;}
+    public void setAnni(Integer anni) {
+        if (anni <= 18 || anni > 90 ) {
+            throw new IllegalArgumentException("Età non valida: deve essere tra 18 e 90");
+        }
+        this.anni = anni;
+    }
 }

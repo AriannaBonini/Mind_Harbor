@@ -7,6 +7,12 @@ public class Psicologo extends Utente {
     private String nomeStudio;
     private Integer costoOrario;
 
+    public Psicologo(String username, String nome, String cognome, UserType userType, String genere, String password, String nomeStudio, Integer costoOrario) {
+        super(username, nome, cognome, userType, genere, password);
+        setNomeStudio(nomeStudio);
+        setCostoOrario(costoOrario);
+    }
+
     public Psicologo(String username, String nome, String cognome, UserType userType, String genere, String password) {
         super(username, nome, cognome, userType, genere, password);
     }
@@ -21,7 +27,13 @@ public class Psicologo extends Utente {
     public Psicologo(String username) { super(username);}
 
     public String getNomeStudio() {return nomeStudio;}
-    public void setNomeStudio(String nomeStudio) {this.nomeStudio = nomeStudio;}
+    public void setNomeStudio(String nomeStudio) {
+        if (nomeStudio.length() > 45) {
+            throw new IllegalArgumentException("Username non può superare i 45 caratteri.");
+        }
+        this.nomeStudio=nomeStudio;
+    }
+
     public Integer getCostoOrario() {return costoOrario;}
     public void setCostoOrario(Integer costoOrario) {this.costoOrario = costoOrario;}
 }

@@ -32,4 +32,25 @@ public class PsicologoDAOMySql extends QuerySQLPsicologoDAO implements Psicologo
 
         return psicologo;
     }
+
+    @Override
+    public void inserisciDatiPsicologo(Psicologo psicologo) throws EccezioneDAO {
+        Connection conn = ConnectionFactory.getConnection();
+
+        try (PreparedStatement stmt = conn.prepareStatement(QuerySQLPsicologoDAO.INSERISCI_DATI_PSICOLOGO)) {
+
+            stmt.setString(1, psicologo.getUsername());
+            stmt.setInt(2, psicologo.getCostoOrario());
+            stmt.setString(3, psicologo.getNomeStudio());
+
+            int rowsAffected = stmt.executeUpdate();
+
+            if (rowsAffected == 0) {
+                throw new EccezioneDAO("Errore durante l'inserimento del nuovo psicologo");
+            }
+        } catch (SQLException e) {
+            throw new EccezioneDAO("Errore nell'inserimento dei dati dello psicologo: " + e.getMessage(), e);
+        }
+    }
+
 }

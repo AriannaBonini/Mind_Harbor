@@ -13,4 +13,5 @@ public interface PazienteDAO {
     boolean checkAnniPaziente(Paziente paziente) throws EccezioneDAO;
     String getUsernamePsicologo(Utente paziente) throws EccezioneDAO;
     void aggiungiPsicologoAlPaziente(Appuntamento appuntamento) throws EccezioneDAO;
+    void inserisciDatiPaziente(Paziente paziente) throws EccezioneDAO;
 }

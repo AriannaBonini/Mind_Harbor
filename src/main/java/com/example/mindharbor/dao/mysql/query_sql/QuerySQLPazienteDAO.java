@@ -30,4 +30,10 @@ public abstract class QuerySQLPazienteDAO {
             "SET " + PSICOLOGO_USERNAME +  " = ? " + " " +
             "WHERE " + PAZIENTE_USERNAME + " = ? ";
 
+    protected static final String INSERISCI_DATI_PAZIENTE =
+            "INSERT INTO " + TABELLA_PAZIENTE + " (" +
+                    PAZIENTE_USERNAME + ", " +
+                    ETA + ") " +
+                    "VALUES (?, ?)";
+
 }

@@ -232,4 +232,49 @@ public class UtenteDAOCsv implements UtenteDAO {
 
         return infoUtente;
     }
+
+
+    @Override
+    public Boolean controllaUsernameERegistraNuovoUtente(Utente utente) throws EccezioneDAO {
+        /**
+         * Questo metodo viene utilizzato in fase di registrazione per verificare se lo username è già in uso.
+         */
+        List<String[]> righe;
+        try {
+            righe = UtilitiesCSV.leggiRigheDaCsv(CostantiUtenteCvs.FILE_PATH, CostantiLetturaScrittura.LETTURA_SCRITTURA);
+
+            for (String[] colonne : righe) {
+                if (colonne[CostantiUtenteCvs.INDICE_UTENTE_USERNAME].equals(utente.getUsername())) {
+                    return false;
+                }
+            }
+        } catch (EccezioneDAO e) {
+            throw new EccezioneDAO("Errore nella lettura del file CSV: " + e.getMessage(), e);
+        }
+
+        registraNuovoUtente(utente,righe);
+        return true;
+    }
+
+    private void registraNuovoUtente(Utente utente, List<String[]> righe) throws EccezioneDAO {
+        /**
+         * Questo metodo viene utilizzato per registrare un nuovo utente nel file CSV.
+         */
+        try {
+            String[] nuovaRiga = new String[] {
+                    utente.getUsername(),
+                    utente.getPassword(),
+                    utente.getNome(),
+                    utente.getCognome(),
+                    utente.getUserType().toString(),
+                    utente.getGenere()
+            };
+
+            righe.add(nuovaRiga);
+            UtilitiesCSV.scriviRigheAggiornate(CostantiUtenteCvs.FILE_PATH, righe);
+
+        } catch (EccezioneDAO e) {
+            throw new EccezioneDAO("Errore durante la scrittura nel file CSV: " + e.getMessage(), e);
+        }
+    }
 }

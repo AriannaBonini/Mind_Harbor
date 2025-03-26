@@ -2,9 +2,12 @@ package com.example.mindharbor.strumenti_utili.cli_helper;
 
 public class GestoreOutput {
 
+    public static final String NOME="NOME : ";
+
     private GestoreOutput(){/*costruttore privato per evitare istanze*/}
 
     public static void stampaMessaggio(String messaggio){System.out.println(messaggio);}
+
 
     public static void stampaLogoLogin(){
         String asciiartMind = """

@@ -153,5 +153,54 @@ public class UtenteDAOMySql extends QuerySQLUtenteDAO implements UtenteDAO {
         return infoUtente;
     }
 
+    @Override
+    public Boolean controllaUsernameERegistraNuovoUtente(Utente utente) throws EccezioneDAO{
+        /**
+         * Questo metodo viene utilizzato in fase di registrazione per verificare se lo username è già in uso.
+         */
+        Connection conn = ConnectionFactory.getConnection();
+        try (PreparedStatement stmt = conn.prepareStatement(QuerySQLUtenteDAO.CONTROLLA_USERNAME_FASE_REGISTRAZIONE, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)) {
+
+            stmt.setString(1, utente.getUsername());
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return false;
+                }
+            }
+            registraNuovoUtente(utente);
+        } catch (SQLException e) {
+            throw new EccezioneDAO(e.getMessage());
+        }
+
+        return true;
+
+    }
+
+    private void registraNuovoUtente(Utente utente) throws EccezioneDAO {
+        /**
+         * Questo metodo viene utilizzato per inserire un nuovo utente nella tabella "Utente" nel database.
+         */
+        Connection conn = ConnectionFactory.getConnection();
+        try (PreparedStatement stmt = conn.prepareStatement(QuerySQLUtenteDAO.INSERISCI_NUOVO_UTENTE)) {
+
+            stmt.setString(1, utente.getUsername());
+            stmt.setString(2, utente.getPassword());
+            stmt.setString(3, utente.getNome());
+            stmt.setString(4, utente.getCognome());
+            stmt.setString(5, utente.getUserType().toString());
+            stmt.setString(6, utente.getGenere());
+
+            int rowsAffected = stmt.executeUpdate();
+
+            if (rowsAffected == 0) {
+                throw new EccezioneDAO("Errore durante l'inserimento del nuovo utente");
+            }
+
+        } catch (SQLException e) {
+            throw new EccezioneDAO(e.getMessage());
+        }
+    }
+
 
 }

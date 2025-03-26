@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="377.0" prefWidth="599.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.mindharbor.controller_grafici.ControllerGraficoRegistrazione">
+   <children>
+      <ImageView fitHeight="378.0" fitWidth="600.0" smooth="false">
+         <image>
+            <Image url="@Img/Sfondo.png" />
+         </image>
+      </ImageView>
+      <Label fx:id="home" layoutX="48.0" layoutY="19.0" text="FASE DI REGISTRAZIONE" textFill="WHITE" />
+      <TextField fx:id="campoNome" disable="true" layoutX="25.0" layoutY="110.0" prefHeight="26.0" prefWidth="170.0" promptText="nome" />
+      <ImageView fitHeight="27.0" fitWidth="240.0" layoutX="180.0" layoutY="312.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@Img/LOGOconNOME.png" />
+         </image>
+      </ImageView>
+      <TextField fx:id="campoCognome" disable="true" layoutX="25.0" layoutY="159.0" prefHeight="26.0" prefWidth="170.0" promptText="cognome" />
+      <Label fx:id="datiAnagrafici" disable="true" layoutX="9.0" layoutY="85.0" prefHeight="18.0" prefWidth="107.0" text="Dati anagrafici :" textAlignment="CENTER" textFill="WHITE">
+         <font>
+            <Font name="Hiragino Sans W1" size="12.0" />
+         </font>
+         <padding>
+            <Insets left="15.0" />
+         </padding>
+      </Label>
+      <TextField fx:id="campoUsername" disable="true" layoutX="223.0" layoutY="110.0" prefHeight="26.0" prefWidth="170.0" promptText="username" />
+      <TextField fx:id="campoPassword" disable="true" layoutX="223.0" layoutY="159.0" prefHeight="26.0" prefWidth="170.0" promptText="password" />
+      <Label layoutX="209.0" layoutY="85.0" prefHeight="18.0" prefWidth="107.0" text="Account :" textAlignment="CENTER" textFill="WHITE">
+         <font>
+            <Font name="Hiragino Sans W1" size="12.0" />
+         </font>
+         <padding>
+            <Insets left="15.0" />
+         </padding>
+      </Label>
+      <ComboBox fx:id="campoSesso" disable="true" layoutX="118.0" layoutY="209.0" prefHeight="26.0" prefWidth="78.0" promptText="sesso" style="-fx-background-color: #FFFFFF;" />
+      <ComboBox fx:id="campoTipoUtente" layoutX="223.0" layoutY="209.0" onAction="#selezionatoTipoUtente" prefHeight="26.0" prefWidth="170.0" promptText="tipo utente" style="-fx-background-color: #FFFFFF;" />
+      <ImageView fx:id="tornaIndietro" fitHeight="24.0" fitWidth="26.0" layoutX="14.0" layoutY="16.0" onMouseClicked="#tornaIndietro">
+         <image>
+            <Image url="@Img/TornaIndietro.png" />
+         </image>
+      </ImageView>
+      <Label fx:id="registrati" alignment="CENTER" layoutX="245.0" layoutY="262.0" onMouseClicked="#registrati" prefHeight="30.0" prefWidth="131.0" text="REGISTRATI" textAlignment="CENTER" textFill="WHITE">
+         <font>
+            <Font size="18.0" />
+         </font>
+         <padding>
+            <Insets top="2.0" />
+         </padding>
+      </Label>
+      <TextField fx:id="campoNomeStudio" disable="true" layoutX="416.0" layoutY="109.0" prefHeight="26.0" prefWidth="170.0" promptText="nome studio" />
+      <Label fx:id="datiStudio" disable="true" layoutX="399.0" layoutY="85.0" prefHeight="18.0" prefWidth="107.0" text="Dati studio : " textAlignment="CENTER" textFill="WHITE">
+         <font>
+            <Font name="Hiragino Sans W1" size="12.0" />
+         </font>
+         <padding>
+            <Insets left="15.0" />
+         </padding>
+      </Label>
+      <TextField fx:id="campoCostoOrario" disable="true" layoutX="416.0" layoutY="159.0" prefHeight="26.0" prefWidth="170.0" promptText="costo orario" />
+      <TextField fx:id="campoAnni" disable="true" layoutX="25.0" layoutY="209.0" prefHeight="26.0" prefWidth="70.0" promptText="anni" />
+      <Label fx:id="info" alignment="CENTER" layoutX="101.0" layoutY="57.0" prefHeight="18.0" prefWidth="414.0" textAlignment="CENTER" textFill="WHITE">
+         <font>
+            <Font name="Hiragino Sans W1" size="12.0" />
+         </font>
+         <padding>
+            <Insets left="15.0" />
+         </padding>
+      </Label>
+   </children>
+</AnchorPane>

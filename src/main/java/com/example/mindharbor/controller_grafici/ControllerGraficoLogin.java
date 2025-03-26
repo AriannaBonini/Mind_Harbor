@@ -20,13 +20,15 @@ import java.io.IOException;
 
 public class ControllerGraficoLogin {
     @FXML
-    private Label msgLbl;
+    private Label registrati;
     @FXML
-    private TextField usernameTextField;
+    private Label info;
     @FXML
-    private TextField enterPasswordField;
+    private TextField campoUsername;
     @FXML
-    private Button accediButton;
+    private TextField campoPassword;
+    @FXML
+    private Button accedi;
 
     private final LoginController loginController = new LoginController();
     private static final Logger logger = LoggerFactory.getLogger(ControllerGraficoLogin.class);
@@ -34,25 +36,35 @@ public class ControllerGraficoLogin {
 
 
     public void initialize() {
-        //possiamo aggiungere la registrazione
-        msgLbl.setText("Benvenuto");
+        info.setText("Benvenuto");
+    }
+
+    @FXML
+    public void clickLabelRegistrati() {
+        try {
+            Stage login = (Stage) registrati.getScene().getWindow();
+            login.close();
+            navigator.gotoPage("/com/example/mindharbor/Registrazione.fxml");
+        } catch (IOException e) {
+            logger.error("Impossibile caricare l'interfaccia per la registrazione", e);
+        }
     }
 
 
     @FXML
-    public void onLoginClick() {
-        String username = usernameTextField.getText();
-        String password = enterPasswordField.getText();
+    public void clickBottoneAccedi() {
+        String username = campoUsername.getText();
+        String password = campoPassword.getText();
 
         if (username.isEmpty() || password.isEmpty()) {
-            msgLbl.setText("Inserisci username e/o password");
+            info.setText("Inserisci username e/o password");
             return;
         }
         try {
             CredenzialiLoginBean credenziali = new CredenzialiLoginBean(username, password);
             InfoUtenteBean infoUtenteLoggato = loginController.login(credenziali);
             if (infoUtenteLoggato == null) {
-                new LabelDuration().duration(msgLbl, "Credenziali errate");
+                new LabelDuration().duration(info, "Credenziali errate");
             } else {
                 if (infoUtenteLoggato.getUserType().equals(UserType.PAZIENTE)) {
                     homePaziente();
@@ -62,18 +74,18 @@ public class ControllerGraficoLogin {
             }
         } catch (EccezioneDAO e) {
             logger.error("Errore durante la ricerca dell'utente {}", username, e);
-            new LabelDuration().duration(msgLbl, "Credenziali errate");
+            new LabelDuration().duration(info, "Credenziali errate");
         } catch (EccezioneSessioneUtente e) {
             logger.info("{} già loggato", username, e);
-            new LabelDuration().duration(msgLbl, "Utente già loggato");
+            new LabelDuration().duration(info, "Utente già loggato");
         }
 
     }
 
-    public void homePaziente() {
+    private void homePaziente() {
         try {
-            Stage loginstage = (Stage) accediButton.getScene().getWindow();
-            loginstage.close();
+            Stage login = (Stage) accedi.getScene().getWindow();
+            login.close();
             navigator.gotoPage("/com/example/mindharbor/HomePaziente.fxml");
         } catch (IOException e) {
             logger.error("Impossibile caricare la Home del paziente", e);
@@ -81,10 +93,10 @@ public class ControllerGraficoLogin {
 
     }
 
-    public void homePsicologo() {
+    private void homePsicologo() {
         try {
-            Stage loginstage = (Stage) accediButton.getScene().getWindow();
-            loginstage.close();
+            Stage login = (Stage) accedi.getScene().getWindow();
+            login.close();
             navigator.gotoPage("/com/example/mindharbor/HomePsicologo.fxml");
         } catch (IOException e) {
             logger.error("Impossibile caricare la Home dello psicologo", e);

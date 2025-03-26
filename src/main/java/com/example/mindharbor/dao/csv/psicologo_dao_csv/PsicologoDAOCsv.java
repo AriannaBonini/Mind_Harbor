@@ -30,4 +30,25 @@ public class PsicologoDAOCsv implements PsicologoDAO {
 
         return psicologo; // Restituisce l'oggetto psicologo aggiornato
     }
+
+
+    @Override
+    public void inserisciDatiPsicologo(Psicologo psicologo) throws EccezioneDAO {
+        try {
+            List<String[]> righeCSV = UtilitiesCSV.leggiRigheDaCsv(CostantiPsicologoCsv.FILE_PATH, CostantiLetturaScrittura.LETTURA_SCRITTURA);
+
+            String[] nuovaRiga = new String[3];
+            nuovaRiga[CostantiPsicologoCsv.INDICE_PSICOLOGO_USERNAME] = psicologo.getUsername();
+            nuovaRiga[CostantiPsicologoCsv.INDICE_COSTO_ORARIO] = String.valueOf(psicologo.getCostoOrario());
+            nuovaRiga[CostantiPsicologoCsv.INDICE_NOME_STUDIO] = psicologo.getNomeStudio();
+
+            righeCSV.add(nuovaRiga);
+
+            UtilitiesCSV.scriviRigheAggiornate(CostantiPsicologoCsv.FILE_PATH, righeCSV);
+
+        } catch (EccezioneDAO e) {
+            throw new EccezioneDAO("Errore nell'inserimento dei dati dello psicologo nel file CSV: " + e.getMessage(), e);
+        }
+    }
+
 }
