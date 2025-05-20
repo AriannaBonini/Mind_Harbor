@@ -23,13 +23,7 @@ public class TestBean {
         this.svolto=svolto;
 
     }
-
-    public TestBean(String nomeTest, Integer risultato, Date data, Integer svolto) {
-        this.nomeTest=nomeTest;
-        this.risultato=risultato;
-        this.data=data;
-        this.svolto=svolto;
-    }
+    public TestBean(String nomeTest, Integer risultato, Date data, Integer svolto) {this(nomeTest,null,null,risultato,data,svolto);}
 
     public String getNomeTest() {
         return nomeTest;

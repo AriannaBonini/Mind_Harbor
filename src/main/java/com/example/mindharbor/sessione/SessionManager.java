@@ -3,7 +3,7 @@ package com.example.mindharbor.sessione;
 
 import com.example.mindharbor.eccezioni.EccezioneSessioneUtente;
 import com.example.mindharbor.model.Utente;
-import com.example.mindharbor.strumenti_utili.UtenteWrapper;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,13 +13,7 @@ public class SessionManager {
         protected List<UtenteWrapper> utenteLoggato;
         protected Utente utenteCorrente;
         protected String usernamePsicologo; //questo attributo viene utilizzato soltanto quando utenteCorrente.UserType=Paziente.
-
-        public Utente getCurrentUser(){
-            return utenteCorrente;
-        }
-        public List<UtenteWrapper> getLoggedUsers(){
-            return utenteLoggato;
-        }
+        public Utente getCurrentUser(){return utenteCorrente;}
         public String getUsernamePsicologo() {return usernamePsicologo;}
 
     protected SessionManager() {
@@ -52,19 +46,9 @@ public class SessionManager {
         public synchronized void logout(){
             utenteLoggato.removeIf(wrapper -> wrapper.utente().equals(utenteCorrente));
             utenteCorrente = null;
-            usernamePsicologo = null;// Reset dell'usernamePsicologo quando viene effettuato il logout
+            usernamePsicologo = null;
         }
 
-        public synchronized Utente changeCurrentUser(String username){
-            for (UtenteWrapper wrapper : utenteLoggato) {
-                if (wrapper.utente().getUsername().equals(username)) {
-                    utenteCorrente = wrapper.utente();
-                    usernamePsicologo = wrapper.usernamePsicologo();
-                    return utenteCorrente;
-                }
-            }
-            return null;
-        }
 }
 
 

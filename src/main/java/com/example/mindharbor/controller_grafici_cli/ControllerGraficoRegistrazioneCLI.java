@@ -54,7 +54,7 @@ public class ControllerGraficoRegistrazioneCLI extends AbsGestoreInput{
 
 
 
-    private void datiGenericiUtente(String TipoUtente) {
+    private void datiGenericiUtente(String tipoUtente) {
         String nome;
         String cognome;
         String username;
@@ -87,16 +87,16 @@ public class ControllerGraficoRegistrazioneCLI extends AbsGestoreInput{
         controlloInserimento(sesso);
 
         try {
-            if (TipoUtente.equals("Paziente")) {
+            if (tipoUtente.equals("Paziente")) {
                 String anni;
                 GestoreOutput.stampaMessaggio("Inserisci la tua età o scrivi LOGIN per tornare alla schermata del Login: ");
                 anni = scanner.nextLine();
                 controlloInserimento(anni);
 
-                PazienteBean pazienteBean = new PazienteBean(nome, cognome, sesso, username, Integer.valueOf(anni), password);
+                PazienteBean pazienteBean = new PazienteBean(nome, cognome, sesso, username, anni, password);
                 registrazioneController.registrazionePaziente(pazienteBean);
 
-            } else if (TipoUtente.equals("Psicologo")) {
+            } else if (tipoUtente.equals("Psicologo")) {
                 String nomeStudio;
                 String costoOrario;
 
@@ -108,7 +108,7 @@ public class ControllerGraficoRegistrazioneCLI extends AbsGestoreInput{
                 costoOrario = scanner.nextLine();
                 controlloInserimento(costoOrario);
 
-                PsicologoBean psicologoBean = new PsicologoBean(username, nome, cognome, Integer.valueOf(costoOrario), nomeStudio, sesso, password);
+                PsicologoBean psicologoBean = new PsicologoBean(username, nome, cognome, costoOrario, nomeStudio, sesso, password);
                 registrazioneController.registrazionePsicologo(psicologoBean);
             }
             new ControllerGraficoLoginCLI().start();

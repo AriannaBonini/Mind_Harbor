@@ -1,4 +1,4 @@
-package com.example.mindharbor.strumenti_utili;
+package com.example.mindharbor.sessione;
 
 import com.example.mindharbor.model.Utente;
 

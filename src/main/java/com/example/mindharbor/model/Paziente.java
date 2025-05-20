@@ -11,7 +11,7 @@ public class Paziente extends Utente{
 
     public Paziente(String username, String nome, String cognome, UserType userType, String genere, String password, Integer anni) {
         super(username, nome, cognome, userType, genere,password);
-        setAnni(anni);
+        this.anni=anni;
 
     }
 
@@ -55,10 +55,5 @@ public class Paziente extends Utente{
     public String getUsernamePsicologo() {return usernamePsicologo;}
     public void setUsernamePsicologo(String usernamePsicologo) {this.usernamePsicologo = usernamePsicologo;}
     public Integer getAnni() {return anni;}
-    public void setAnni(Integer anni) {
-        if (anni <= 18 || anni > 90 ) {
-            throw new IllegalArgumentException("Età non valida: deve essere tra 18 e 90");
-        }
-        this.anni = anni;
-    }
+    public void setAnni(Integer anni) {this.anni=anni;}
 }

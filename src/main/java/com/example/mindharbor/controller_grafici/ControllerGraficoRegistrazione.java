@@ -113,12 +113,12 @@ public class ControllerGraficoRegistrazione {
         } else {
             try {
                 if (tipoUtenteScelto.equals("Paziente") && !campoAnni.getText().isEmpty()) {
-                    PazienteBean pazienteBean = new PazienteBean(campoNome.getText(), campoCognome.getText(), campoSesso.getValue(), campoUsername.getText(), Integer.valueOf(campoAnni.getText()), campoPassword.getText());
+                    PazienteBean pazienteBean = new PazienteBean(campoNome.getText(), campoCognome.getText(), campoSesso.getValue(), campoUsername.getText(), campoAnni.getText(), campoPassword.getText());
                     registrazioneController.registrazionePaziente(pazienteBean);
 
 
                 } else if (tipoUtenteScelto.equals("Psicologo") && !campoNomeStudio.getText().isEmpty() && campoCostoOrario.getText().isEmpty()) {
-                    PsicologoBean psicologoBean = new PsicologoBean(campoUsername.getText(), campoNome.getText(), campoCognome.getText(), Integer.valueOf(campoCostoOrario.getText()), campoNomeStudio.getText(), campoSesso.getValue(), campoPassword.getText());
+                    PsicologoBean psicologoBean = new PsicologoBean(campoUsername.getText(), campoNome.getText(), campoCognome.getText(), campoCostoOrario.getText(), campoNomeStudio.getText(), campoSesso.getValue(), campoPassword.getText());
                     registrazioneController.registrazionePsicologo(psicologoBean);
                 }
 

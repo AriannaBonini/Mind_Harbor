@@ -20,28 +20,12 @@ public class TestPsicologico {
         this.test=test;
         this.svolto=svolto;
     }
-
-    public TestPsicologico(Psicologo psicologo, Paziente paziente, String test) {
-        this.psicologo= psicologo;
-        this.paziente=paziente;
-        this.test=test;
-    }
-
+    public TestPsicologico(Psicologo psicologo, Paziente paziente, String test) {this(null,null,psicologo,paziente,test,null);}
     public TestPsicologico(Psicologo psicologo) {
         this.psicologo= psicologo;
     }
-    public TestPsicologico(Date data, Integer risultato, String test, Integer svolto) {
-        this.data = data;
-        this.risultato = risultato;
-        this.test=test;
-        this.svolto=svolto;
-    }
-
-    public TestPsicologico(Date data, Integer risultato, String test) {
-        this.data = data;
-        this.risultato = risultato;
-        this.test=test;
-    }
+    public TestPsicologico(Date data, Integer risultato, String test, Integer svolto) {this(data,risultato,null,null,test,svolto);}
+    public TestPsicologico(Date data, Integer risultato, String test) {this(data,risultato,null,null,test,null);}
 
     public LocalDate convertiInLocalDate(Date date) {
         // Converti java.util.Date a LocalDate

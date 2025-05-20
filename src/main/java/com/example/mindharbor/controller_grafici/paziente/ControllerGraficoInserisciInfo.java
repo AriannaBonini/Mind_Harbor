@@ -57,26 +57,22 @@ public class ControllerGraficoInserisciInfo {
     }
 
     @FXML
-    public void clickConferma() {
-        if(campoNome.getText().isEmpty() || campoCognome.getText().isEmpty() || campoAnni.getText().isEmpty()) {
-            new LabelDuration().duration(info,"Compila tutti i campi");
-        } else {
-            if(!prenotaAppuntamentoController.controlloFormatoAnni(campoAnni.getText())) {
-                new LabelDuration().duration(info,"Formato anni errato");
-                return;
+    public void clickConferma(){
+        try {
+            pazienteBean = new PazienteBean(campoNome.getText(), campoCognome.getText(), campoAnni.getText());
+            if(prenotaAppuntamentoController.controlloInformazioniPaziente(pazienteBean)) {
+                caricaListaPsicologi();
+            }else {
+                new LabelDuration().duration(info, "dati errati");
             }
-            try {
-                pazienteBean=new PazienteBean(campoNome.getText(), campoCognome.getText(), Integer.valueOf(campoAnni.getText()));
-                if (prenotaAppuntamentoController.controlloInformazioniPaziente(pazienteBean)) {
-                    caricaListaPsicologi();
-                }else {
-                    new LabelDuration().duration(info,"Dati errati");
-                }
-            }catch (EccezioneDAO e) {
-                logger.info("Errore nel controllo dei dati del paziente");
-            }
+        }catch (IllegalArgumentException e) {
+            new LabelDuration().duration(info,"Dati inseriti errati o mancanti");
+        }catch (EccezioneDAO e) {
+            logger.info("Errore nel controllo dei dati del paziente");
         }
+
     }
+
     private void caricaListaPsicologi() {
         try {
             appuntamentoBean.setPaziente(pazienteBean);
@@ -96,7 +92,6 @@ public class ControllerGraficoInserisciInfo {
         try {
             Integer risposta= new AlertMessage().avvertenza("Sei sicuro di voler tornare indietro?");
             if(risposta!=0) {
-
 
                 prenotaAppuntamentoController.eliminaRichiestaAppuntamento();
 

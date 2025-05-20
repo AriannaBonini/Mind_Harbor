@@ -52,14 +52,13 @@ public class ControllerGraficoSelezionaDataEOra {
 
         if((appuntamentoBean = prenotaAppuntamentoController.getRichiestaAppuntamento())!=null) {
             orario.setText(appuntamentoBean.getOra());
-            LocalDate dataLocale = LocalDate.parse(appuntamentoBean.getData());
-            this.data.setValue(dataLocale);
+            this.data.setValue(LocalDate.parse(appuntamentoBean.getData()));
         }else {
             appuntamentoBean =new AppuntamentiBean();}
     }
 
     private void inserisciInfo(){
-        Tooltip tooltipOra=new Tooltip(prenotaAppuntamentoController.tooltipOra());
+        Tooltip tooltipOra=new Tooltip("Le fasce orarie valide sono: " + prenotaAppuntamentoController.tooltipOra());
         tooltipOra.setStyle("-fx-background-color: white; -fx-text-fill: #22433a; -fx-font-size: 14px;");
         infoOra.setTooltip(tooltipOra);
 
@@ -83,24 +82,28 @@ public class ControllerGraficoSelezionaDataEOra {
 
             @Override
             public LocalDate fromString(String string) {
+                if (string == null || string.isEmpty()) {
+                    return null;
+                }
+                return data.getValue();
                 /**
                  * Togliamo il parsing automatico.
                  * Il parsing verrà fatto SOLO dopo che l'utente avrà selezionato la Label "Avanti".
                  */
-                return null;
             }
         });
 
 
-        data.getEditor().textProperty().addListener((observable, dataPrimaDellaModifica, nuovaData) -> {
-                if (nuovaData != null && !nuovaData.isEmpty()) {
-                    data.getEditor().setText(nuovaData);
-                    /**
-                     * Queste listener si attiva ogni volta che viene modificato il campo data, sia manualmente che tramite il calendario.
-                     * Mi prende il nuovo valore inserito facendo si che la modifica sia visibile subito; sia se quest'ultima avviene manualmente, sia tramite il calendario.
-                     */
+        data.valueProperty().addListener((observable, dataPrimaDellaModifica, nuovaData) -> {
+            if (nuovaData != null) {
+                data.getEditor().setText(nuovaData.toString());
 
-                }
+                /**
+                 * Queste listener si attiva ogni volta che viene modificato il campo data, sia manualmente che tramite il calendario.
+                 * Mi prende il nuovo valore inserito facendo si che la modifica sia visibile subito; sia se quest'ultima avviene manualmente, sia tramite il calendario.
+                 */
+
+            }
         });
 
         data.setDayCellFactory(picker -> new DateCell() {
@@ -140,21 +143,17 @@ public class ControllerGraficoSelezionaDataEOra {
 
     @FXML
     public void clickAvanti() {
-        if (data.getEditor().getText().isEmpty() || orario.getText().isEmpty()) {
-            new LabelDuration().duration(errore, "Compilare tutti i campi");
-        } else {
-            try {
-                appuntamentoBean.setData(data.getEditor().getText().trim());
-                appuntamentoBean.setOra(orario.getText());
+        try {
+            appuntamentoBean.setData(data.getEditor().getText().trim());
+            appuntamentoBean.setOra(orario.getText());
 
-                if(Boolean.FALSE.equals(prenotaAppuntamentoController.controlloDataEOra(appuntamentoBean))) {
-                    new LabelDuration().duration(errore,"Dati non validi");
-                } else {
-                    prossimaInterfaccia(appuntamentoBean);
-                }
-            }catch (IllegalArgumentException e) {
-                new LabelDuration().duration(errore, "Il formato deve essere: AAAA-MM-GG, HH:mm");
+            if(Boolean.FALSE.equals(prenotaAppuntamentoController.controlloDataEOra(appuntamentoBean))) {
+                new LabelDuration().duration(errore,"Dati non validi");
+            } else {
+                prossimaInterfaccia(appuntamentoBean);
             }
+        }catch (IllegalArgumentException e) {
+            new LabelDuration().duration(errore, "Il formato deve essere: AAAA-MM-GG, HH:mm");
         }
     }
 

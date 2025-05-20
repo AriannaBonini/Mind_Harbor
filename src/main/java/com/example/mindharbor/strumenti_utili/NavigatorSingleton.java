@@ -44,13 +44,6 @@ public class NavigatorSingleton {
         return instance;
     }
 
-    /*public static synchronized NavigatorSingleton getInstanceForCLI() {
-        if (NavigatorSingleton.instance == null) {
-            NavigatorSingleton.instance = new NavigatorSingleton();
-        }
-        return instance;
-    }*/
-
     public void gotoPage(String fxml) throws IOException{
         FXMLLoader loader = new FXMLLoader(getClass().getResource(fxml));
         Parent root = loader.load();
@@ -61,6 +54,11 @@ public class NavigatorSingleton {
         stage.setTitle("Mind Harbor");
         stage.setResizable(false);
         stage.show();
+    }
+
+    public void closeStage(javafx.scene.Node node) {
+        Stage stage = (Stage) node.getScene().getWindow();
+        stage.close();
     }
 
     public void setAppuntamentoBean(AppuntamentiBean app) {this.appBean =app;}

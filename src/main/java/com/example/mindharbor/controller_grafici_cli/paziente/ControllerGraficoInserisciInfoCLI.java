@@ -73,22 +73,10 @@ public class ControllerGraficoInserisciInfoCLI extends AbsGestoreInput {
 
         controlloInserimento(cognome);
 
-        boolean anniValidi=false;
+        GestoreOutput.stampaMessaggio("Inserisci i tuoi anni o scrivi HOME per tornare alla Home o scrivi INDIETRO per tornarre indietro:");
+        anni=scanner.nextLine();
 
-        do {
-            GestoreOutput.stampaMessaggio("Inserisci i tuoi anni o scrivi HOME per tornare alla Home o scrivi INDIETRO per tornarre indietro:");
-            anni=scanner.nextLine();
-
-            controlloInserimento(anni);
-
-            if(!prenotaAppuntamentoController.controlloFormatoAnni(anni)) {
-                GestoreOutput.stampaMessaggio("Formato anni errato");
-            }else {
-                anniValidi = true;
-
-            }
-
-        }while (!anniValidi);
+        controlloInserimento(anni);
 
         validaDati(anni,nome,cognome);
     }
@@ -134,7 +122,7 @@ public class ControllerGraficoInserisciInfoCLI extends AbsGestoreInput {
     private void validaDati(String anni, String nome, String cognome ) {
         PazienteBean pazienteBean;
         try {
-            pazienteBean=new PazienteBean(nome, cognome, Integer.valueOf(anni));
+            pazienteBean=new PazienteBean(nome, cognome, anni);
             if (prenotaAppuntamentoController.controlloInformazioniPaziente(pazienteBean)) {
                 appuntamentoBean.setPaziente(pazienteBean);
                 prenotaAppuntamentoController.setRichiestaAppuntamento(appuntamentoBean);
@@ -145,6 +133,8 @@ public class ControllerGraficoInserisciInfoCLI extends AbsGestoreInput {
             }
         }catch (EccezioneDAO e) {
             logger.info("Errore nel controllo dei dati del paziente");
+        }catch (IllegalArgumentException e) {
+            GestoreOutput.stampaMessaggio("Dati non validi");
         }
     }
 

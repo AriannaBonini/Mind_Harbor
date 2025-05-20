@@ -21,8 +21,16 @@ import com.example.mindharbor.tipo_utente.UserType;
 import com.example.mindharbor.strumenti_utili.NavigatorSingleton;
 import com.example.mindharbor.strumenti_utili.SetInfoUtente;
 
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.example.mindharbor.strumenti_utili.costanti.OrariEDataValidiRichiestaAppuntamento.*;
+import static com.example.mindharbor.strumenti_utili.costanti.OrariEDataValidiRichiestaAppuntamento.FINE_PAUSA;
 
 public class PrenotaAppuntamento {
 
@@ -30,19 +38,49 @@ public class PrenotaAppuntamento {
 
     public InfoUtenteBean getInfoUtente() {return new SetInfoUtente().getInfo();}
 
-    public String tooltipOra() {return "Le fasce orarie valide sono: " + OrariEDataValidiRichiestaAppuntamento.stampaFasceOrarie();}
+    public String tooltipOra() {return OrariEDataValidiRichiestaAppuntamento.stampaFasceOrarie();}
     public String tooltipData() {return OrariEDataValidiRichiestaAppuntamento.INFO_DATA;}
 
-    public boolean controlloFormatoAnni(String anni) {
-        //controlla se la stringa anni è formata solo da cifre numeriche.
-        return anni.matches("\\d+");
-    }
 
     public Boolean controlloDataEOra(AppuntamentiBean richiestaAppuntamentoBean) {
         try {
-            return new Appuntamento().controllaOrario(richiestaAppuntamentoBean.getOra()) && new Appuntamento().controllaData(richiestaAppuntamentoBean.getData());
+            return controllaOrario(richiestaAppuntamentoBean.getOra()) && controllaData(richiestaAppuntamentoBean.getData());
         }catch (IllegalArgumentException e) {
             return false;
+        }
+    }
+
+    private boolean controllaOrario(String ora) {
+        /**
+         * Questo metodo mi controlla che se l'orario è semanticamente corretto
+         */
+        try {
+            LocalTime time = LocalTime.parse(ora);
+
+            boolean inFasciaMattutina = !time.isAfter(INIZIO_PAUSA) && !time.isBefore(ORARIO_APERTURA);
+            boolean inFasciaPomeridiana = !time.isAfter(ORARIO_CHIUSURA) &&  !time.isBefore(FINE_PAUSA);
+
+            return inFasciaMattutina || inFasciaPomeridiana;
+        } catch (DateTimeParseException e) {
+            throw new IllegalArgumentException(e);
+        }
+    }
+
+
+    private boolean controllaData(String data) {
+        /**
+         * Questo metodo mi controlla se la data è semanticamente corretta
+         */
+        try {
+            LocalDate localDate = LocalDate.parse(data, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+
+            if (localDate.isBefore(LocalDate.now())) {
+                return false;
+            }
+            DayOfWeek dayOfWeek = localDate.getDayOfWeek();
+            return !(dayOfWeek == DayOfWeek.SATURDAY || dayOfWeek == DayOfWeek.SUNDAY);
+        }catch(DateTimeParseException e) {
+            throw new IllegalArgumentException();
         }
     }
 
@@ -51,7 +89,7 @@ public class PrenotaAppuntamento {
         DAOFactoryFacade daoFactoryFacade=DAOFactoryFacade.getInstance();
         PazienteDAO pazienteDAO= daoFactoryFacade.getPazienteDAO();
         try {
-            if(!pazienteBean.getNome().equals(SessionManager.getInstance().getCurrentUser().getNome()) || !pazienteBean.getCognome().equals(SessionManager.getInstance().getCurrentUser().getCognome()))  {
+            if(!pazienteBean.getNome().equals(SessionManager.getInstance().getCurrentUser().getNome()) || !pazienteBean.getCognome().equals(SessionManager.getInstance().getCurrentUser().getCognome()) || !controllaAnniPaziente(pazienteBean.getAnni()))  {
                 return false;
             }
             return pazienteDAO.checkAnniPaziente(new Paziente(SessionManager.getInstance().getCurrentUser().getUsername(),"","", UserType.PAZIENTE, pazienteBean.getAnni()));
@@ -60,6 +98,8 @@ public class PrenotaAppuntamento {
             throw new EccezioneDAO(e.getMessage());
         }
     }
+
+    private boolean controllaAnniPaziente(Integer anni) {return anni >= 18 && anni <= 100;}
 
 
     public List<PsicologoBean> getListaPsicologi() throws EccezioneDAO {
@@ -70,7 +110,7 @@ public class PrenotaAppuntamento {
             List<PsicologoBean> listaPsicologiBean = new ArrayList<>();
             List<Psicologo> listaPsicologi = utenteDAO.listaUtentiDiTipoPsicologo(SessionManager.getInstance().getUsernamePsicologo());
             for(Psicologo psi : listaPsicologi) {
-                PsicologoBean psicologoBean=new PsicologoBean(psi.getUsername(),psi.getNome(),psi.getCognome(),0,"",psi.getGenere());
+                PsicologoBean psicologoBean=new PsicologoBean(psi.getUsername(),psi.getNome(),psi.getCognome(),psi.getGenere());
 
                 listaPsicologiBean.add(psicologoBean);
             }
@@ -94,7 +134,6 @@ public class PrenotaAppuntamento {
         appuntamentiBean.getPaziente().setUsername(SessionManager.getInstance().getCurrentUser().getUsername());
         Appuntamento appuntamento= new Appuntamento(appuntamentiBean.getData(),
                 appuntamentiBean.getOra(),
-                null,
                 new Paziente(appuntamentiBean.getPaziente().getUsername()),
                 new Psicologo(appuntamentiBean.getPsicologo().getUsername()));
 
@@ -124,7 +163,6 @@ public class PrenotaAppuntamento {
     }
 
     public List<AppuntamentiBean> getListaRichieste() throws EccezioneDAO {
-        System.out.println("Sono qui ");
         DAOFactoryFacade daoFactoryFacade=DAOFactoryFacade.getInstance();
         AppuntamentoDAO appuntamentoDAO= daoFactoryFacade.getAppuntamentoDAO();
         List<AppuntamentiBean> listaRichiesteBean=new ArrayList<>();
