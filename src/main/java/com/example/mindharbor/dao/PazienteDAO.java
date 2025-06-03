@@ -10,7 +10,7 @@ import java.util.List;
 public interface PazienteDAO {
     List<Paziente> trovaPazienti(Utente psicologo) throws EccezioneDAO;
     Paziente getInfoSchedaPersonale(Paziente pazienteSelezionato) throws EccezioneDAO;
-    boolean checkAnniPaziente(Paziente paziente) throws EccezioneDAO;
+    Paziente checkAnniPaziente(Paziente paziente) throws EccezioneDAO;
     String getUsernamePsicologo(Utente paziente) throws EccezioneDAO;
     void aggiungiPsicologoAlPaziente(Appuntamento appuntamento) throws EccezioneDAO;
     void inserisciDatiPaziente(Paziente paziente) throws EccezioneDAO;

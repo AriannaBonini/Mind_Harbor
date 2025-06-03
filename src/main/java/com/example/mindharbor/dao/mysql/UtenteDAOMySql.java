@@ -77,28 +77,30 @@ public class UtenteDAOMySql extends QuerySQLUtenteDAO implements UtenteDAO {
     }
 
     @Override
-    public List<Psicologo> listaUtentiDiTipoPsicologo(String usernamePsicologo) throws EccezioneDAO {
-        //Questo metodo viene utilizzato nella prenotazione dell'appuntamento, quando il paziente deve visualizzare la lista degli psicologi, oppure, nel caso in cui
-        //lui abbia già uno psicologo, solo quest'ultimo.
-        //Il metodo ci ritorna il nome, il cognome, lo username e il genere dello psicologo o degli psicologi.
+    public List<Psicologo> listaUtentiDiTipoPsicologo(Utente psicologo) throws EccezioneDAO {
+        /*
+         * Questo metodo viene utilizzato nella prenotazione dell'appuntamento, quando il paziente deve visualizzare la lista degli psicologi, oppure, nel caso in cui
+         *lui abbia già uno psicologo, solo quest'ultimo.
+         *Il metodo ci ritorna il nome, il cognome, lo username e il genere dello psicologo o degli psicologi.
+         */
 
         List<Psicologo> listaPsicologi = new ArrayList<>();
         String sql = QuerySQLUtenteDAO.LISTA_PSICOLOGI;
 
         Connection conn = ConnectionFactory.getConnection();
 
-        try (PreparedStatement stmt = (usernamePsicologo != null)
+        try (PreparedStatement stmt = (psicologo!=null && psicologo.getUsername() != null)
                 ? conn.prepareStatement(sql + " AND " + USERNAME + " = ?", ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)
                 : conn.prepareStatement(sql, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)) {
 
-            if (usernamePsicologo != null) {
-                stmt.setString(1, usernamePsicologo);
+            if (psicologo!=null && psicologo.getUsername() != null) {
+                stmt.setString(1, psicologo.getUsername());
             }
 
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
-                    Psicologo psicologo = new Psicologo(rs.getString(3), rs.getString(1), rs.getString(2), rs.getString(4));
-                    listaPsicologi.add(psicologo);
+                    Psicologo psicologi = new Psicologo(rs.getString(3), rs.getString(1), rs.getString(2), rs.getString(4));
+                    listaPsicologi.add(psicologi);
                 }
             }
         } catch (SQLException e) {
@@ -155,7 +157,7 @@ public class UtenteDAOMySql extends QuerySQLUtenteDAO implements UtenteDAO {
 
     @Override
     public Boolean controllaUsernameERegistraNuovoUtente(Utente utente) throws EccezioneDAO{
-        /**
+        /*
          * Questo metodo viene utilizzato in fase di registrazione per verificare se lo username è già in uso.
          */
         Connection conn = ConnectionFactory.getConnection();
@@ -178,7 +180,7 @@ public class UtenteDAOMySql extends QuerySQLUtenteDAO implements UtenteDAO {
     }
 
     private void registraNuovoUtente(Utente utente) throws EccezioneDAO {
-        /**
+        /*
          * Questo metodo viene utilizzato per inserire un nuovo utente nella tabella "Utente" nel database.
          */
         Connection conn = ConnectionFactory.getConnection();

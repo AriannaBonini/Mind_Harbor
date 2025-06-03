@@ -3,29 +3,48 @@ package com.example.mindharbor.model;
 import java.util.Date;
 
 public class Terapia {
-    private final TestPsicologico testPsicologico;
-    private String terapiaStr;
-    private final Date dataTerapia;
+    private TestPsicologico testPsicologico;
+    private String prescrizione;
+    private Date dataTerapia;
+    private Integer notificaPaziente;
 
-    public Terapia(TestPsicologico testPsicologico, String terapiaStr, Date dataTerapia ) {
+    public Terapia(TestPsicologico testPsicologico, String prescrizione, Date dataTerapia ) {
         this.testPsicologico=testPsicologico;
-        this.terapiaStr=terapiaStr;
+        this.prescrizione = prescrizione;
         this.dataTerapia=dataTerapia;
     }
+
+    public Terapia(){}
 
     public TestPsicologico getTestPsicologico() {
         return testPsicologico;
     }
 
+    public void setTestPsicologico(TestPsicologico testPsicologico) {
+        this.testPsicologico = testPsicologico;
+    }
+
     public String getTerapia() {
-        return terapiaStr;
+        return prescrizione;
     }
 
     public void setTerapia(String terapiaStr) {
-        this.terapiaStr = terapiaStr;
+        this.prescrizione = terapiaStr;
     }
 
     public Date getDataTerapia() {
         return dataTerapia;
+    }
+
+    public void setDataTerapia(Date dataTerapia) {
+        this.dataTerapia = dataTerapia;
+    }
+
+    public Integer getNotificaPaziente() {
+        return notificaPaziente;
+    }
+
+    public void setNotificaPaziente(Integer notificaPaziente) {
+        this.notificaPaziente = notificaPaziente;
     }
 }

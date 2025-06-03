@@ -17,7 +17,7 @@ public class TerapiaDAOCsv implements TerapiaDAO {
     private static final Logger logger = LoggerFactory.getLogger(TerapiaDAOCsv.class);
 
     @Override
-    public void insertTerapia(Terapia terapia) throws EccezioneDAO {
+    public void aggiungiTerapia(Terapia terapia) throws EccezioneDAO {
         // Creazione della nuova riga da aggiungere al CSV
         String[] nuovaRiga = {
                 terapia.getTestPsicologico().getPsicologo().getUsername(),
@@ -117,14 +117,15 @@ public class TerapiaDAOCsv implements TerapiaDAO {
         return UtilitiesCSV.contaNotifichePaziente(CostantiTerapiaCsv.FILE_PATH, paziente.getUsername(), CostantiTerapiaCsv.INDICE_PAZIENTE, CostantiTerapiaCsv.INDICE_NOTIFICA_PAZIENTE);
     }
 
-    public boolean controlloEsistenzaTerapiaPerUnTest(String usernamePsicologo, String usernamePaziente, String dataTestPsicologico) throws EccezioneDAO {
+
+    @Override
+    public boolean controlloEsistenzaTerapiaPerUnTest(TestPsicologico testPsicologico) throws EccezioneDAO {
         List<String[]> righeCSV = leggiRigheDaCsv(CostantiTerapiaCsv.FILE_PATH, CostantiLetturaScrittura.SOLO_LETTURA);
-        for (String[] colonna : righeCSV) { // Ogni riga è già un array di stringhe
-            if (colonna[CostantiTerapiaCsv.INDICE_PSICOLOGO].equals(usernamePsicologo) && colonna[CostantiTerapiaCsv.INDICE_PAZIENTE].equals(usernamePaziente) && colonna[CostantiTerapiaCsv.INDICE_DATA_TEST].equals(dataTestPsicologico)) {
-                //è stata trovata una prescrizione per il test
-                return false;
+        for (String[] colonna : righeCSV) {
+            if (colonna[CostantiTerapiaCsv.INDICE_PSICOLOGO].equals(testPsicologico.getPsicologo().getUsername()) && colonna[CostantiTerapiaCsv.INDICE_PAZIENTE].equals(testPsicologico.getPaziente().getUsername()) && java.sql.Date.valueOf(colonna[CostantiTerapiaCsv.INDICE_DATA_TEST]).equals(testPsicologico.getData())) {
+                return true;
             }
         }
-        return true;
+        return false;
     }
 }

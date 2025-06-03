@@ -4,6 +4,8 @@ import com.example.mindharbor.beans.AppuntamentiBean;
 import com.example.mindharbor.beans.PazienteBean;
 import com.example.mindharbor.beans.PsicologoBean;
 import com.example.mindharbor.beans.TestBean;
+import com.example.mindharbor.controller_grafici.interfacce.RicevitoreControllerApplicativo;
+import com.example.mindharbor.controller_grafici.interfacce.RicevitoreParametri;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -14,18 +16,14 @@ import java.io.IOException;
 public class NavigatorSingleton {
     private static NavigatorSingleton instance = null;
     protected Stage stg;
-    private AppuntamentiBean appBean;
-    private PazienteBean pazienteBean;
-    private TestBean testBean;
-    private PsicologoBean psicologoBean;
 
     protected NavigatorSingleton(Stage stg) {
         this.stg = stg;
     }
 
     protected NavigatorSingleton() {
-        /**
-         * Costruttore per la CLI
+        /*
+          Costruttore per la CLI
          */
     }
 
@@ -44,16 +42,35 @@ public class NavigatorSingleton {
         return instance;
     }
 
-    public void gotoPage(String fxml) throws IOException{
+    public Object gotoPage(String fxml) throws IOException {
+        return gotoPage(fxml, null, null);
+    }
+
+    public Object gotoPage(String fxml, Object controllerApplicativo) throws IOException {
+        return gotoPage(fxml, controllerApplicativo, null);
+    }
+
+    public Object gotoPage(String fxml, Object controllerApplicativo, Object parametri) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource(fxml));
         Parent root = loader.load();
 
+        Object controllerGrafico = loader.getController();
+
+        if (controllerGrafico instanceof RicevitoreControllerApplicativo && controllerApplicativo != null) {
+            ((RicevitoreControllerApplicativo) controllerGrafico).setControllerApplicativo(controllerApplicativo);
+        }
+
+        if (controllerGrafico instanceof RicevitoreParametri && parametri != null) {
+            ((RicevitoreParametri) controllerGrafico).setParametri(parametri);
+        }
 
         Stage stage = new Stage();
         stage.setScene(new Scene(root));
         stage.setTitle("Mind Harbor");
         stage.setResizable(false);
         stage.show();
+
+        return controllerGrafico;
     }
 
     public void closeStage(javafx.scene.Node node) {
@@ -61,22 +78,4 @@ public class NavigatorSingleton {
         stage.close();
     }
 
-    public void setAppuntamentoBean(AppuntamentiBean app) {this.appBean =app;}
-    public AppuntamentiBean getAppuntamentoBean() {return appBean;}
-    public void eliminaAppuntamentoBean() {this.appBean =null;}
-
-
-    public PazienteBean getPazienteBean() {return pazienteBean;}
-    public void setPazienteBean(PazienteBean pazienteBean) {this.pazienteBean = pazienteBean;}
-    //questo metodo viene utilizzato per caricare l'istanza di PazientiBean contenente il paziente selezionato dallo psicologo nella Lista dei suoi pazienti.
-    public void eliminaPazienteBean() {this.pazienteBean=null;}
-
-
-    public TestBean getTestBean() {return testBean;}
-    public void setTestBean(TestBean testBean) {this.testBean=testBean;}
-    public void eliminaTestBean(){this.testBean=null;}
-
-    public PsicologoBean getPsicologoBean() {return psicologoBean;}
-    public void setPsicologoBean(PsicologoBean psicologoBean) {this.psicologoBean=psicologoBean;}
-    public void eliminaPsicologoBean(){this.psicologoBean=null;}
 }

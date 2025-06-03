@@ -26,13 +26,14 @@ public class BoundaryMockAPICalendario {
 
         try {
             JSONObject jsonObject = (JSONObject) JSONValue.parse(jsonResponse);
-            String valore = jsonObject.getAsString("disponibile"); // Otteniamo il valore direttamente
+            String valore = jsonObject.getAsString("disponibile");
             return valore.equalsIgnoreCase("si");
 
         } catch (Exception e) {
             logger.error(e.getMessage());
+        }finally {
+            MockCalendarioPsicologiAPI.stopWireMockServer();
         }
-        MockCalendarioPsicologiAPI.stopWireMockServer();
 
         return disponibile;
     }

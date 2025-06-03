@@ -13,7 +13,6 @@ public abstract class QuerySQLTestPsicologicoDAO {
     protected static final String TABELLA_TESTPSICOLOGICO= "testpsicologico";
     protected static final String TERAPIA= "terapia";
     protected static final String STATO= "statoNotificaPaziente";
-    protected static final String DATA_TEST="DataTest";
     protected static final String TOTAL="Total";
     protected static final String SELECT="SELECT";
     protected static final String FROM="FROM";
@@ -62,27 +61,14 @@ public abstract class QuerySQLTestPsicologicoDAO {
             FROM + " " + TABELLA_TESTPSICOLOGICO + " " +
             "WHERE " + STATO_PSICOLOGO + " = 1 " + " AND " + PSICOLOGO + " " + CONFRONTO;
 
-    protected static final String NUMERO_TEST_SVOLTI_SENZA_PRESCRIZIONE="SELECT COUNT(*) AS Total " +
+    protected static final String NUMERO_TEST_SVOLTI_SENZA_PRESCRIZIONE="SELECT " + DATA + " , " + PSICOLOGO + " , " + PAZIENTE + " " +
             "FROM " + TABELLA_TESTPSICOLOGICO + " " +
-            "WHERE " + SVOLTO + " = 1 AND " + PSICOLOGO + " = ? AND " + PAZIENTE + " = ? AND " +
-            " NOT EXISTS ( " +
-            "   SELECT 1 " +
-            "   FROM " + TERAPIA + " " +
-            "   WHERE " + TERAPIA + "." + PAZIENTE + " = " + TABELLA_TESTPSICOLOGICO + "." + PAZIENTE + " " +
-            "     AND " + TERAPIA + "." + PSICOLOGO + " = " + TABELLA_TESTPSICOLOGICO + "." + PSICOLOGO + " " +
-            "     AND " + TERAPIA + "." + DATA_TEST + " = " + TABELLA_TESTPSICOLOGICO + "." + DATA +
-            ")";
+            "WHERE " + SVOLTO + " = 1 AND " + PSICOLOGO + " = ? AND " + PAZIENTE + CONFRONTO;
 
-    protected static final String LISTA_TEST_SVOLTI_SENZA_PRESCRIZIONE="SELECT " + DATA + ", " + RISULTATO + ", " + TEST + " " +
+
+    protected static final String LISTA_TEST_SVOLTI_SENZA_PRESCRIZIONE="SELECT " + DATA + ", " + RISULTATO + ", " + TEST + " , " + PSICOLOGO + " , " + PAZIENTE + " " +
             "FROM " + TABELLA_TESTPSICOLOGICO + " " +
-            "WHERE " + SVOLTO + " = 1 AND " + PSICOLOGO + " = ? AND " + PAZIENTE + " = ? " +
-            "AND NOT EXISTS ( " +
-            "SELECT 1 " +
-            "FROM " + TERAPIA + " " +
-            "WHERE " + TABELLA_TESTPSICOLOGICO + "." + PSICOLOGO + " = " + TERAPIA + "." + PSICOLOGO + " " +
-            "AND " + TABELLA_TESTPSICOLOGICO + "." + PAZIENTE + " = " + TERAPIA + "." + PAZIENTE + " " +
-            "AND " + TABELLA_TESTPSICOLOGICO + "." + DATA + " = " + TERAPIA + "." +  DATA_TEST +  " )";
-
+            "WHERE " + SVOLTO + " = 1 AND " + PSICOLOGO + " = ? AND " + PAZIENTE + CONFRONTO;
     protected static final String NUMERO_TEST_SVOLTI_PAZIENTE="SELECT SUM(statoNotificaPsicologo) " + " " +
             "FROM " + TABELLA_TESTPSICOLOGICO + " " +
             "WHERE " + PAZIENTE + " " + CONFRONTO;

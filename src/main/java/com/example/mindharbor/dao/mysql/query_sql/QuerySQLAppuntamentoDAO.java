@@ -14,7 +14,6 @@ public abstract class QuerySQLAppuntamentoDAO {
     protected static final String CONFRONTO="= ?";
     protected static final String UGUALE_A ="= a.";
     protected static final String UGUALE_1 ="= 1";
-    protected static final String AND_A ="AND a.";
     protected static final String UPDATE="UPDATE";
     protected static final String SELECT="SELECT";
 
@@ -41,16 +40,14 @@ public abstract class QuerySQLAppuntamentoDAO {
             STATO_NOTIFICA_PAZIENTE + " ) " +
             "VALUES (DEFAULT, ? , ? , ? , ? , DEFAULT, DEFAULT, DEFAULT ) ";
 
-    protected static final String NUMERO_RICHIESTE_APPUNTAMENTI_DA_NOTIFICARE_PSICOLOGO="SELECT COUNT(*) AS Total " +
+    protected static final String NUMERO_RICHIESTE_APPUNTAMENTI_DA_NOTIFICARE_PSICOLOGO="SELECT COUNT(*) AS Totale " +
             "FROM " + TABELLA_APPUNTAMENTO + " " +
             "WHERE " + USERNAME_PSICOLOGO + " = ?  AND " + STATO_NOTIFICA_PSICOLOGO + " " + UGUALE_1;
 
-    protected static final String NUMERO_NUOVI_APPUNTAMENTI_DA_NOTIFICARE_PAZIENTE="SELECT COUNT(*) AS Total " +
+    protected static final String NUMERO_NUOVI_APPUNTAMENTI_DA_NOTIFICARE_PAZIENTE="SELECT COUNT(*) AS Totale " +
             "FROM " + TABELLA_APPUNTAMENTO + " " +
             "WHERE " + USERNAME_PAZIENTE + " = ?  AND " + STATO_NOTIFICA_PAZIENTE + " = 1 ";
 
-    protected static final String CONFRONTO_USERNAME_PSICOLOGO=" " +AND_A + " " + USERNAME_PSICOLOGO + " " + CONFRONTO;
-    protected static final String CONFRONTO_USERNAME_PAZIENTE=" " +AND_A + " " + USERNAME_PAZIENTE +" " + CONFRONTO;
     protected static final String TROVA_RICHIESTE_APPUNTAMENTI_PSICOLOGO="SELECT " + " " +
             STATO_NOTIFICA_PSICOLOGO + " , " +
             ID_APPUNTAMENTO + " , " +

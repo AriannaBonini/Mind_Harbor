@@ -1,8 +1,6 @@
 package com.example.mindharbor.dao.csv.paziente_dao_csv;
 
 import com.example.mindharbor.dao.PazienteDAO;
-import com.example.mindharbor.dao.csv.test_psicologico_dao_csv.TestPsicologicoDAOCsv;
-import com.example.mindharbor.dao.csv.utente_dao_csv.UtenteDAOCsv;
 import com.example.mindharbor.eccezioni.EccezioneDAO;
 import com.example.mindharbor.model.Appuntamento;
 import com.example.mindharbor.model.Paziente;
@@ -15,47 +13,27 @@ import java.util.List;
 public class PazienteDAOCsv implements PazienteDAO {
 
     public List<Paziente> trovaPazienti(Utente psicologo) throws EccezioneDAO {
-        List<Paziente> pazienteList = new ArrayList<>();
-        UtenteDAOCsv utenteDAOCsv = new UtenteDAOCsv();
-        Utente utente;
-        TestPsicologicoDAOCsv testPsicologicoDAOCsv = new TestPsicologicoDAOCsv();
-        Paziente numeroTestPaziente;
+        List<Paziente> listaPazienti = new ArrayList<>();
 
         try {
-            // Usa il CSVReader per leggere le righe del CSV
             List<String[]> righeCSV = UtilitiesCSV.leggiRigheDaCsv(CostantiPazienteCsv.FILE_PATH, CostantiLetturaScrittura.SOLO_LETTURA);
 
             for (String[] colonne : righeCSV) {
-                String pazienteUsername = colonne[CostantiPazienteCsv.INDICE_PAZIENTE_USERNAME];
-                String usernamePsicologo = colonne[CostantiPazienteCsv.INDICE_PSICOLOGO_USERNAME];
-                if (!pazienteUsername.isBlank() && !usernamePsicologo.isEmpty()) {
-                    Paziente paziente = new Paziente(pazienteUsername);
-                    utente = utenteDAOCsv.trovaInfoUtente(paziente);
+                if (colonne[CostantiPazienteCsv.INDICE_PSICOLOGO_USERNAME].equals(psicologo.getUsername())) {
+                    Paziente paziente= new Paziente(colonne[CostantiPazienteCsv.INDICE_PAZIENTE_USERNAME]);
 
-                    if (usernamePsicologo.equals(psicologo.getUsername()) && utente != null) {
-                        paziente = creaIstanzaPaziente(utente, colonne);
-
-                        numeroTestPaziente = testPsicologicoDAOCsv.numTestSvoltiPerPaziente(paziente);
-
-                        if (numeroTestPaziente != null) {
-                            paziente.setNumeroTest(numeroTestPaziente.getNumeroTest());
-                        }
-                        pazienteList.add(paziente);
-                    }
+                    listaPazienti.add(paziente);
                 }
             }
+            return listaPazienti;
         } catch (EccezioneDAO e) {
             throw new EccezioneDAO("Errore nella lettura del file CSV: " + e.getMessage(), e);
         }
-
-        return pazienteList;
     }
 
     @Override
     public Paziente getInfoSchedaPersonale(Paziente pazienteSelezionato) throws EccezioneDAO {
-        // Questo metodo viene utilizzato per prendere dalla persistenza la diagnosi e l'età del paziente.
 
-        // Leggi tutte le righe del file CSV
         List<String[]> righeCSV;
         try {
             righeCSV = UtilitiesCSV.leggiRigheDaCsv(CostantiPazienteCsv.FILE_PATH, CostantiLetturaScrittura.SOLO_LETTURA); // Usa il metodo leggiRigheDaCsv per leggere con CSVReader
@@ -63,13 +41,9 @@ public class PazienteDAOCsv implements PazienteDAO {
             throw new EccezioneDAO(CostantiPazienteCsv.ERRORE_LETTURA + " " + e.getMessage(), e);
         }
 
-        // Cerca il paziente selezionato
         for (String[] colonne : righeCSV) {
             if (colonne[CostantiPazienteCsv.INDICE_PAZIENTE_USERNAME].equals(pazienteSelezionato.getUsername())) {
-                // Imposta l'età e la diagnosi
-                pazienteSelezionato.setAnni(Integer.parseInt(colonne[CostantiPazienteCsv.INDICE_ANNI]));
-                pazienteSelezionato.setDiagnosi(colonne[CostantiPazienteCsv.INDICE_DIAGNOSI]);
-                break; // Esci dal ciclo una volta trovato il paziente
+                return new Paziente(Integer.parseInt(colonne[CostantiPazienteCsv.INDICE_ANNI]),colonne[CostantiPazienteCsv.INDICE_DIAGNOSI]);
             }
         }
 
@@ -77,8 +51,8 @@ public class PazienteDAOCsv implements PazienteDAO {
     }
 
     @Override
-    public boolean checkAnniPaziente(Paziente paziente) throws EccezioneDAO {
-        // Leggi tutte le righe del file CSV
+    public Paziente checkAnniPaziente(Paziente pazienteCorrente) throws EccezioneDAO {
+        Paziente paziente= new Paziente();
         List<String[]> righeCSV;
         try {
             righeCSV = UtilitiesCSV.leggiRigheDaCsv(CostantiPazienteCsv.FILE_PATH, CostantiLetturaScrittura.SOLO_LETTURA); // Usa CSVReader tramite leggiRigheDaCsv
@@ -86,23 +60,18 @@ public class PazienteDAOCsv implements PazienteDAO {
             throw new EccezioneDAO(CostantiPazienteCsv.ERRORE_LETTURA + " " + e.getMessage(), e);
         }
 
-        // Controlla se l'età del paziente corrisponde a quella fornita
         for (String[] colonne : righeCSV) {
-            // Verifica che lo username e l'età siano corretti
-            if (colonne[CostantiPazienteCsv.INDICE_PAZIENTE_USERNAME].equals(paziente.getUsername())
-                    && Integer.parseInt(colonne[CostantiPazienteCsv.INDICE_ANNI]) == paziente.getAnni()) {
-                return true; // Trovato il paziente con l'età corretta
+            if (colonne[CostantiPazienteCsv.INDICE_PAZIENTE_USERNAME].equals(pazienteCorrente.getUsername())) {
+                paziente.setAnni(Integer.parseInt(colonne[CostantiPazienteCsv.INDICE_ANNI]));
             }
         }
-
-        return false; // Paziente non trovato o età non corrispondente
+        return paziente;
     }
 
     @Override
     public String getUsernamePsicologo(Utente paziente) throws EccezioneDAO {
         String usernamePsicologo = null;
 
-        // Leggi tutte le righe del file CSV utilizzando CSVReader
         List<String[]> righeCSV;
         try {
             righeCSV = UtilitiesCSV.leggiRigheDaCsv(CostantiPazienteCsv.FILE_PATH, CostantiLetturaScrittura.SOLO_LETTURA);
@@ -110,17 +79,15 @@ public class PazienteDAOCsv implements PazienteDAO {
             throw new EccezioneDAO(CostantiPazienteCsv.ERRORE_LETTURA + " " + e.getMessage(), e);
         }
 
-        // Cerca l'username dello psicologo associato al paziente
         for (String[] colonne : righeCSV) {
-            // Verifica che lo username del paziente corrisponda a quello cercato
             if (colonne[CostantiPazienteCsv.INDICE_PAZIENTE_USERNAME].equals(paziente.getUsername())) {
                 if (!colonne[CostantiPazienteCsv.INDICE_PSICOLOGO_USERNAME].isEmpty()) {
-                    usernamePsicologo = colonne[CostantiPazienteCsv.INDICE_PSICOLOGO_USERNAME]; // Ottieni l'username dello psicologo
+                    usernamePsicologo = colonne[CostantiPazienteCsv.INDICE_PSICOLOGO_USERNAME];
                 }
-                break; // Esci dal ciclo una volta trovato
+                break;
             }
         }
-        return usernamePsicologo; // Restituisce l'username dello psicologo o null se non trovato
+        return usernamePsicologo;
     }
 
 
@@ -159,15 +126,6 @@ public class PazienteDAOCsv implements PazienteDAO {
             throw new EccezioneDAO(CostantiPazienteCsv.ERRORE_SCRITTURA + " " + e.getMessage(), e);
         }
     }
-
-    private Paziente creaIstanzaPaziente(Utente utente, String[] rigaPaziente) {
-        Paziente paziente = new Paziente(utente.getUsername(), utente.getNome(), utente.getCognome());
-        paziente.setGenere(utente.getGenere());
-        paziente.setAnni(Integer.parseInt(rigaPaziente[CostantiPazienteCsv.INDICE_ANNI]));
-        paziente.setDiagnosi(rigaPaziente[CostantiPazienteCsv.INDICE_DIAGNOSI]);
-        return paziente;
-    }
-
 
     @Override
     public void inserisciDatiPaziente(Paziente paziente) throws EccezioneDAO {

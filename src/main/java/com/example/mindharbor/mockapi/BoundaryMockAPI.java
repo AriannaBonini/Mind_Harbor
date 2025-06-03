@@ -38,9 +38,9 @@ public class BoundaryMockAPI {
             }
         } catch (Exception e) {
             logger.error(e.getMessage());
+        }finally {
+            MockBancaTestPsicologiciAPI.stopWireMockServer();
         }
-
-        MockBancaTestPsicologiciAPI.stopWireMockServer();
 
         return nomiTest;
     }
@@ -57,12 +57,12 @@ public class BoundaryMockAPI {
 
             JSONObject jsonObject = (JSONObject) JSONValue.parse(jsonResponse);
             for (Map.Entry<String, Object> entry : jsonObject.entrySet()) {
-                String key = entry.getKey(); // Ottieni la chiave
-                String value = (String) entry.getValue(); // Ottieni il valore
+                String key = entry.getKey();
+                String value = (String) entry.getValue();
 
                 if (key.equalsIgnoreCase(nomeTest)) {
                     urlTest = value;
-                    break; // Esci dal ciclo se trovato
+                    break;
                 }
             }
             domande.setDomande(trovaDomande(urlTest));
@@ -70,9 +70,9 @@ public class BoundaryMockAPI {
 
         } catch (Exception e) {
             logger.error(e.getMessage());
+        }finally {
+            MockBancaTestPsicologiciAPI.stopWireMockServer();
         }
-
-        MockBancaTestPsicologiciAPI.stopWireMockServer();
 
         return domande;
     }

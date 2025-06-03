@@ -5,6 +5,7 @@ import com.example.mindharbor.beans.PsicologoBean;
 import com.example.mindharbor.dao.AppuntamentoDAO;
 import com.example.mindharbor.dao.TestPsicologicoDAO;
 import com.example.mindharbor.eccezioni.EccezioneDAO;
+import com.example.mindharbor.model.Appuntamento;
 import com.example.mindharbor.patterns.facade.DAOFactoryFacade;
 import com.example.mindharbor.sessione.SessionManager;
 import com.example.mindharbor.strumenti_utili.SetInfoUtente;
@@ -20,7 +21,7 @@ public class HomePsicologoController extends SetInfoUtente {
         DAOFactoryFacade daoFactoryFacade=DAOFactoryFacade.getInstance();
         TestPsicologicoDAO testPsicologicoDAO= daoFactoryFacade.getTestPsicologicoDAO();
         try {
-             psicologoBean=new PsicologoBean(testPsicologicoDAO.getNumTestSvoltiDaNotificare(SessionManager.getInstance().getCurrentUser()));
+             psicologoBean=new PsicologoBean(testPsicologicoDAO.getNumTestSvoltiDaNotificare(SessionManager.getInstance().getPsicologoCorrente()));
         } catch (EccezioneDAO e ) {
             throw new EccezioneDAO(e.getMessage());
         }
@@ -31,11 +32,11 @@ public class HomePsicologoController extends SetInfoUtente {
         DAOFactoryFacade daoFactoryFacade=DAOFactoryFacade.getInstance();
         AppuntamentoDAO appuntamentoDAO= daoFactoryFacade.getAppuntamentoDAO();
         try {
-            psicologoBean= new PsicologoBean(appuntamentoDAO.getNumRicAppDaNotificare(SessionManager.getInstance().getCurrentUser()));
+            Appuntamento appuntamento= appuntamentoDAO.notificheNuoviAppuntamentiPsicologo(SessionManager.getInstance().getPsicologoCorrente());
+            return new PsicologoBean(appuntamento.getStatoNotificaPsicologo());
         } catch (EccezioneDAO e ) {
             throw new EccezioneDAO(e.getMessage());
         }
-        return psicologoBean;
     }
 
     public void logout() {

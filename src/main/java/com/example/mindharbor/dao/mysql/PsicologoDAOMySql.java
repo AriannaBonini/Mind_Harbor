@@ -22,8 +22,7 @@ public class PsicologoDAOMySql extends QuerySQLPsicologoDAO implements Psicologo
 
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    psicologo.setCostoOrario(rs.getInt(1));
-                    psicologo.setNomeStudio(rs.getString(2));
+                    return new Psicologo(rs.getInt(1),rs.getString(2));
                 }
             }
         } catch (SQLException e) {

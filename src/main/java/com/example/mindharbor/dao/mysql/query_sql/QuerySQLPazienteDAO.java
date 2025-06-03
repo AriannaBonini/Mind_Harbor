@@ -9,6 +9,7 @@ public abstract class QuerySQLPazienteDAO {
     protected static final String TABELLA_PAZIENTE= "paziente";
     protected static final String PAZIENTE_USERNAME= "Paziente_Username";
     protected static final String PSICOLOGO_USERNAME= "Username_Psicologo";
+    protected static final String CONFRONTO= " = ?";
     protected static final String SELECT="SELECT ";
     protected static final String TROVA_PAZIENTE= SELECT + PAZIENTE_USERNAME + " " +
             "FROM " + TABELLA_PAZIENTE + " " +
@@ -20,7 +21,7 @@ public abstract class QuerySQLPazienteDAO {
 
     protected static final String CHECK_ANNI_PAZIENTE = SELECT + " " + ETA + " " +
             "FROM " + TABELLA_PAZIENTE + " " +
-            "WHERE " + PAZIENTE_USERNAME + " = ? AND " + ETA + " = ?";
+            "WHERE " + PAZIENTE_USERNAME + CONFRONTO;
 
     protected static final String USERNAME_PSICOLOGO=" SELECT " + PSICOLOGO_USERNAME + " " +
             "FROM " + TABELLA_PAZIENTE + " " +

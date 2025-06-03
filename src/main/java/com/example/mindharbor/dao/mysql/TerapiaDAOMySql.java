@@ -15,7 +15,7 @@ import java.util.List;
 public class TerapiaDAOMySql extends QuerySQLTerapiaDAO implements TerapiaDAO {
 
     @Override
-    public void insertTerapia(Terapia terapia) throws EccezioneDAO {
+    public void aggiungiTerapia(Terapia terapia) throws EccezioneDAO {
         Connection conn = ConnectionFactory.getConnection();
 
         try (PreparedStatement stmt = conn.prepareStatement(QuerySQLTerapiaDAO.INSERISCI_TERAPIA)) {
@@ -94,4 +94,26 @@ public class TerapiaDAOMySql extends QuerySQLTerapiaDAO implements TerapiaDAO {
         }
         return count;
     }
+    @Override
+    public boolean controlloEsistenzaTerapiaPerUnTest(TestPsicologico testPsicologico) throws EccezioneDAO {
+
+        Connection conn = ConnectionFactory.getConnection();
+        try (PreparedStatement stmt = conn.prepareStatement(QuerySQLTerapiaDAO.ESISTE_TERAPIA, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)) {
+
+            stmt.setString(1, testPsicologico.getPaziente().getUsername());
+            stmt.setString(2, testPsicologico.getPsicologo().getUsername());
+            stmt.setDate(3, new java.sql.Date(testPsicologico.getData().getTime()));
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                return rs.next();
+            }
+        } catch (SQLException e) {
+            throw new EccezioneDAO(e.getMessage());
+        }
+    }
+
+
+
+
+
 }

@@ -3,17 +3,16 @@ package com.example.mindharbor.dao.mysql;
 import com.example.mindharbor.dao.AppuntamentoDAO;
 import com.example.mindharbor.dao.mysql.query_sql.QuerySQLAppuntamentoDAO;
 import com.example.mindharbor.eccezioni.EccezioneDAO;
+import com.example.mindharbor.model.Psicologo;
 import com.example.mindharbor.model.Utente;
-import com.example.mindharbor.tipo_utente.UserType;
 import com.example.mindharbor.model.Appuntamento;
 import com.example.mindharbor.model.Paziente;
 import com.example.mindharbor.sessione.ConnectionFactory;
-import com.example.mindharbor.strumenti_utili.HelperDAO;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AppuntamentoDAOMySql extends QuerySQLAppuntamentoDAO implements HelperDAO, AppuntamentoDAO {
+public class AppuntamentoDAOMySql extends QuerySQLAppuntamentoDAO implements AppuntamentoDAO {
 
     @Override
     public List<Appuntamento>  trovaAppuntamentiPaziente(Utente paziente, String selectedTabName) throws EccezioneDAO {
@@ -68,14 +67,11 @@ public class AppuntamentoDAOMySql extends QuerySQLAppuntamentoDAO implements Hel
             stmt.setString(1, psicologo.getUsername());
 
             try (ResultSet rs = stmt.executeQuery()) {
-                UtenteDAOMySql utenteDAOMySql = new UtenteDAOMySql();
                 while (rs.next()) {
-                    Utente paziente = utenteDAOMySql.trovaNomeCognome(new Utente(rs.getString(3)));
-
                     Appuntamento appuntamento = new Appuntamento(
                             rs.getString(1),
                             rs.getString(2),
-                            new Paziente(paziente.getUsername(), paziente.getNome(), paziente.getCognome())
+                            new Paziente(rs.getString(3))
                     );
 
                     appuntamentoPsicologoList.add(appuntamento);
@@ -107,31 +103,63 @@ public class AppuntamentoDAOMySql extends QuerySQLAppuntamentoDAO implements Hel
     }
 
     @Override
-    public Integer getNumRicAppDaNotificare(Utente utente) throws EccezioneDAO {
-        int count = 0;
+    public Appuntamento notificheNuoviAppuntamentiPaziente(Paziente paziente) throws EccezioneDAO {
+        Appuntamento appuntamento = new Appuntamento();
+
         Connection conn = ConnectionFactory.getConnection();
 
-        try (PreparedStatement stmt = createPreparedStatement(conn,utente);
-             ResultSet rs = stmt.executeQuery()) {
+        try (PreparedStatement stmt = conn.prepareStatement(QuerySQLAppuntamentoDAO.NUMERO_NUOVI_APPUNTAMENTI_DA_NOTIFICARE_PAZIENTE, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)) {
 
-            if (rs.next()) {
-                count = rs.getInt("Total");
+            stmt.setString(1, paziente.getUsername());
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    appuntamento.setStatoNotificaPaziente(rs.getInt("Totale"));
+                }
             }
+
         } catch (SQLException e) {
             throw new EccezioneDAO(e.getMessage());
         }
 
-        return count;
+        return appuntamento;
     }
 
     @Override
-    public List<Appuntamento> trovaRichiesteAppuntamento(Utente utente) throws EccezioneDAO {
+    public Appuntamento notificheNuoviAppuntamentiPsicologo(Psicologo psicologo) throws EccezioneDAO {
+        Appuntamento appuntamento = null;
+
+        Connection conn = ConnectionFactory.getConnection();
+
+        try (PreparedStatement stmt = conn.prepareStatement(QuerySQLAppuntamentoDAO.NUMERO_RICHIESTE_APPUNTAMENTI_DA_NOTIFICARE_PSICOLOGO, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)) {
+
+            stmt.setString(1, psicologo.getUsername());
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    appuntamento = new Appuntamento();
+                    appuntamento.setStatoNotificaPaziente(rs.getInt("Totale"));
+                }
+            }
+
+        } catch (SQLException e) {
+            throw new EccezioneDAO(e.getMessage());
+        }
+
+        return appuntamento;
+    }
+
+
+
+
+    @Override
+    public List<Appuntamento> trovaRichiesteAppuntamento(Psicologo psicologo) throws EccezioneDAO {
         List<Appuntamento> richiesteAppuntamento = new ArrayList<>();
 
         Connection conn = ConnectionFactory.getConnection();
 
         try (PreparedStatement stmt = conn.prepareStatement(QuerySQLAppuntamentoDAO.TROVA_RICHIESTE_APPUNTAMENTI_PSICOLOGO, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)) {
-            stmt.setString(1, utente.getUsername());
+            stmt.setString(1, psicologo.getUsername());
 
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
@@ -144,8 +172,6 @@ public class AppuntamentoDAOMySql extends QuerySQLAppuntamentoDAO implements Hel
                     richiesteAppuntamento.add(richiesta);
                 }
             }
-            richiesteAppuntamento=new UtenteDAOMySql().richiestaAppuntamentiInfoPaziente(richiesteAppuntamento);
-
         } catch (SQLException e) {
             throw new EccezioneDAO(e.getMessage());
         }
@@ -153,7 +179,7 @@ public class AppuntamentoDAOMySql extends QuerySQLAppuntamentoDAO implements Hel
     }
 
     @Override
-    public void updateStatoNotifica(Appuntamento richiestaAppuntamento) throws EccezioneDAO {
+    public void aggiornaStatoNotifica(Appuntamento richiestaAppuntamento) throws EccezioneDAO {
 
         Connection conn = ConnectionFactory.getConnection();
         try (PreparedStatement stmt = conn.prepareStatement(QuerySQLAppuntamentoDAO.UPDATE_STATO_NOTIFICA_PSICOLOGO)) {
@@ -193,7 +219,7 @@ public class AppuntamentoDAOMySql extends QuerySQLAppuntamentoDAO implements Hel
     }
 
     @Override
-    public void updateRichiesta(Appuntamento appuntamento) throws EccezioneDAO {
+    public void accettaRichiesta(Appuntamento appuntamento) throws EccezioneDAO {
 
         Connection conn = ConnectionFactory.getConnection();
         try (PreparedStatement stmt = conn.prepareStatement(QuerySQLAppuntamentoDAO.RICHIESTA_DI_APPUNTAMENTO_ACCETTATA)) {
@@ -205,8 +231,6 @@ public class AppuntamentoDAOMySql extends QuerySQLAppuntamentoDAO implements Hel
             throw new EccezioneDAO(e.getMessage());
         }
 
-        // Chiamata al metodo per aggiungere lo psicologo al paziente fuori dal blocco try-with-resources
-        new PazienteDAOMySql().aggiungiPsicologoAlPaziente(appuntamento);
     }
 
     @Override
@@ -239,14 +263,14 @@ public class AppuntamentoDAOMySql extends QuerySQLAppuntamentoDAO implements Hel
     }
 
     @Override
-    public boolean getDisp(Integer idAppuntamento, Utente utente) throws EccezioneDAO {
+    public boolean getDisp(Integer idAppuntamento, Psicologo psicologo) throws EccezioneDAO {
         boolean disponibile = false;
 
         Connection conn = ConnectionFactory.getConnection();
         try (PreparedStatement stmt = conn.prepareStatement(QuerySQLAppuntamentoDAO.CONTROLLA_DISPONIBILITA, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)) {
 
             stmt.setInt(1, idAppuntamento);
-            stmt.setString(2, utente.getUsername());
+            stmt.setString(2, psicologo.getUsername());
 
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
@@ -274,20 +298,4 @@ public class AppuntamentoDAOMySql extends QuerySQLAppuntamentoDAO implements Hel
     }
 
 
-    public PreparedStatement createPreparedStatement(Connection conn, Utente utente) throws EccezioneDAO {
-        String sql;
-        if (utente.getUserType().equals(UserType.PSICOLOGO)) {
-            sql = QuerySQLAppuntamentoDAO.NUMERO_RICHIESTE_APPUNTAMENTI_DA_NOTIFICARE_PSICOLOGO;
-        } else {
-            sql = QuerySQLAppuntamentoDAO.NUMERO_NUOVI_APPUNTAMENTI_DA_NOTIFICARE_PAZIENTE;
-        }
-
-        try {
-            PreparedStatement stmt = conn.prepareStatement(sql, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-            stmt.setString(1, utente.getUsername());
-            return stmt;
-        } catch (SQLException e) {
-            throw new EccezioneDAO(e.getMessage());
-        }
-    }
 }

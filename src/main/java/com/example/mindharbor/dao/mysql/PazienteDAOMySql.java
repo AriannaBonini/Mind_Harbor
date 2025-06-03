@@ -18,51 +18,41 @@ public class PazienteDAOMySql extends QuerySQLPazienteDAO implements PazienteDAO
 
     @Override
     public List<Paziente> trovaPazienti(Utente psicologo) throws EccezioneDAO {
-        //Questo metodo viene utilizzato per prendere dalla persistenza lo username, il nome, il cognome e il genere del Paziente.
-        //Viene utilizzato dallo psicologo per ottenere la lista dei suoi pazienti.
+        /*
+         * Recupera dalla persistenza i dati anagrafici del paziente associato allo psicologo:
+         * username, nome, cognome e genere.
+         * <p>
+         * Questo metodo viene utilizzato dallo psicologo per ottenere la lista completa dei suoi pazienti.
+         *
+         * @return una lista di pazienti con informazioni anagrafiche essenziali
+         * @throws EccezioneDAO se si verifica un errore durante l'accesso ai dati
+         */
         List<Paziente> pazienteList = new ArrayList<>();
 
         Connection conn = ConnectionFactory.getConnection();
 
         try (PreparedStatement stmt = conn.prepareStatement(QuerySQLPazienteDAO.TROVA_PAZIENTE, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)) {
             stmt.setString(1, psicologo.getUsername());
-            //Con questa query sql ottengo lo username di tutti i pazienti di un determinato psicologo.
-
-            UtenteDAOMySql utenteDaoMySql =new UtenteDAOMySql();
-            Utente utente;
-
-            TestPsicologicoDAOMySql testPsicologicoDAOMySql =new TestPsicologicoDAOMySql();
-            Paziente numeroTestPaziente;
-
 
 
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
                     Paziente paziente = new Paziente(rs.getString(1));
-                    utente= utenteDaoMySql.trovaInfoUtente(paziente);
-
-                    paziente.setNome(utente.getNome());
-                    paziente.setCognome(utente.getCognome());
-                    paziente.setGenere(utente.getGenere());
-
-
-                    numeroTestPaziente= testPsicologicoDAOMySql.numTestSvoltiPerPaziente(paziente);
-                    //con questa chiamata otteniamo il numero dei test svolti dal paziente da notificare allo psicologo
-                    paziente.setNumeroTest(numeroTestPaziente.getNumeroTest());
 
                     pazienteList.add(paziente);
                 }
             }
-
         } catch (SQLException e) {
             throw new EccezioneDAO(e.getMessage());
         }
         return pazienteList;
     }
 
+
+
+
     @Override
     public Paziente getInfoSchedaPersonale(Paziente pazienteSelezionato) throws EccezioneDAO {
-        //questo metodo viene utilizzato per prendere dalla persistenza la diagnosi e l'età del paziente.
 
         Connection conn = ConnectionFactory.getConnection();
         try (PreparedStatement stmt = conn.prepareStatement(QuerySQLPazienteDAO.INFO_SCHEDA_PERSONALE, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)) {
@@ -70,9 +60,8 @@ public class PazienteDAOMySql extends QuerySQLPazienteDAO implements PazienteDAO
             stmt.setString(1, pazienteSelezionato.getUsername());
 
             try (ResultSet rs = stmt.executeQuery()) {
-                while (rs.next()) {
-                    pazienteSelezionato.setAnni(rs.getInt(1));
-                    pazienteSelezionato.setDiagnosi(rs.getString(2));
+                if (rs.next()) {
+                    return new Paziente(rs.getInt(1),rs.getString(2));
                 }
             }
 
@@ -84,16 +73,18 @@ public class PazienteDAOMySql extends QuerySQLPazienteDAO implements PazienteDAO
     }
 
     @Override
-    public boolean checkAnniPaziente(Paziente paziente) throws EccezioneDAO {
+    public Paziente checkAnniPaziente(Paziente pazienteCorrente) throws EccezioneDAO {
         Connection conn = ConnectionFactory.getConnection();
+        Paziente paziente=new Paziente();
 
         try (PreparedStatement stmt = conn.prepareStatement(QuerySQLPazienteDAO.CHECK_ANNI_PAZIENTE, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)) {
 
-            stmt.setString(1, paziente.getUsername());
-            stmt.setInt(2, paziente.getAnni());
-
+            stmt.setString(1, pazienteCorrente.getUsername());
             try (ResultSet rs = stmt.executeQuery()) {
-                return rs.next();
+                if (rs.next()) {
+                    paziente.setAnni(rs.getInt(1));
+                }
+                return paziente;
             }
         } catch (SQLException e) {
             throw new EccezioneDAO(e.getMessage());
@@ -139,7 +130,7 @@ public class PazienteDAOMySql extends QuerySQLPazienteDAO implements PazienteDAO
 
     @Override
     public void inserisciDatiPaziente(Paziente paziente) throws EccezioneDAO{
-        /**
+        /*
          * Questo metodo inserisce i dati relativi al paziente nel database.
          * I dati inseriti includono gli anni e il paziente_username.
          */

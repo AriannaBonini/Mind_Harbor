@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="377.0" prefWidth="599.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.mindharbor.controller_grafici.ControllerGraficoRegistrazione">
+<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="377.0" prefWidth="599.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.mindharbor.controller_grafici.gui.ControllerGraficoRegistrazione">
    <children>
       <ImageView fitHeight="378.0" fitWidth="600.0" smooth="false">
          <image>

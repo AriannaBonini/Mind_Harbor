@@ -98,9 +98,9 @@ public class RegistrazioneController {
 
 
     private void controllaPassword(String password) {
-        if (password.length() < 8 || password.length()>45 ||  password.chars().noneMatch(Character::isUpperCase) || password.chars().noneMatch(Character::isDigit) &&
+        if (password.length() < 4 || password.length()>45 ||  password.chars().noneMatch(Character::isUpperCase) || password.chars().noneMatch(Character::isDigit) &&
                 password.chars().noneMatch(c -> "!@#$%^&*(),.?\":{}|<>".indexOf(c) >= 0)) {
-            throw new IllegalArgumentException("La password deve contenere da 8 a 45 caratteri, di cui almeno una lettere maiuscola e almeno un numero e/o un carattere speciale.");
+            throw new IllegalArgumentException("Password da 4 a 45 caratteri, con almeno una lettere maiuscola,un numero e/o un carattere speciale.");
         }
     }
 

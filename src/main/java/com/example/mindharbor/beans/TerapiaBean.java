@@ -17,6 +17,10 @@ public class TerapiaBean {
         this.dataTest=dataTest;
     }
 
+    public TerapiaBean(String paziente, String terapia, Date dataTerapia, Date dataTest) {
+        this(null,paziente,terapia,dataTerapia,dataTest);
+    }
+
 
     public String getPsicologo() {
         return psicologo;

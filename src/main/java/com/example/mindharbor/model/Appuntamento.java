@@ -8,45 +8,117 @@ public class Appuntamento {
     private Paziente paziente;
     private Psicologo psicologo;
     private Integer notificaRichiesta;
+    private Integer statoAppuntamento;
+    private Integer statoNotificaPsicologo;
+    private Integer statoNotificaPaziente;
 
-    public Appuntamento(){}
+    public Appuntamento() {
+    }
 
     public Appuntamento(String data, String ora, Integer idAppuntamento, Paziente paziente, Psicologo psicologo, Integer notificaRichiesta) {
         this.idAppuntamento = idAppuntamento;
         this.data = data;
-        this.ora=ora;
+        this.ora = ora;
         this.paziente = paziente;
         this.psicologo = psicologo;
-        this.notificaRichiesta=notificaRichiesta;
+        this.notificaRichiesta = notificaRichiesta;
     }
-    public Appuntamento(String data, String ora, Paziente paziente) {this(data,ora,null,paziente,null,null);}
-    public Appuntamento(String data, String ora) {this(data,ora,null,null,null,null);}
-    public Appuntamento(Integer idAppuntamento, Paziente paziente, Integer notificaRichiesta) {this(null,null,idAppuntamento,paziente,null,notificaRichiesta);}
-    public Appuntamento(String data, String ora, Paziente paziente, Psicologo psicologo) {this(data, ora,null, paziente, psicologo, null);}
-    public Appuntamento(Paziente paziente, Psicologo psicologo) {this(null,null,null,paziente,psicologo,null);}
+
+    public Appuntamento(String data, String ora, Paziente paziente) {
+        this(data, ora, null, paziente, null, null);
+    }
+
+    public Appuntamento(String data, String ora) {
+        this(data, ora, null, null, null, null);
+    }
+
+    public Appuntamento(Integer idAppuntamento, Paziente paziente, Integer statoNotificaPsicologo) {
+        this(null, null, idAppuntamento, paziente, null, statoNotificaPsicologo);
+    }
+
+    public Appuntamento(String data, String ora, Paziente paziente, Psicologo psicologo) {
+        this(data, ora, null, paziente, psicologo, null);
+    }
+
+    public Appuntamento(Paziente paziente, Psicologo psicologo) {
+        this(null, null, null, paziente, psicologo, null);
+    }
+
     public Appuntamento(Integer idAppuntamento) {
-        this.idAppuntamento=idAppuntamento;
+        this.idAppuntamento = idAppuntamento;
     }
-    public Appuntamento(Integer idAppuntamento, Psicologo psicologo, Paziente paziente) {this(null,null,idAppuntamento,paziente,psicologo,null);}
-    public void setData(String data) {this.data=data;}
-    public void setOra(String ora) {this.ora = ora;}
+
+    public Appuntamento(Integer idAppuntamento, Psicologo psicologo, Paziente paziente) {
+        this(null, null, idAppuntamento, paziente, psicologo, null);
+    }
+
+    public void setData(String data) {
+        this.data = data;
+    }
+
+    public void setOra(String ora) {
+        this.ora = ora;
+    }
+
     public Integer getIdAppuntamento() {
         return idAppuntamento;
     }
-    public String getData() {return data;}
-    public String getOra() {return ora;}
+
+    public String getData() {
+        return data;
+    }
+
+    public String getOra() {
+        return ora;
+    }
+
     public Paziente getPaziente() {
         return paziente;
     }
+
     public void setPaziente(Paziente paziente) {
         this.paziente = paziente;
     }
+
     public Psicologo getPsicologo() {
         return psicologo;
     }
+
     public void setPsicologo(Psicologo psicologo) {
         this.psicologo = psicologo;
     }
-    public Integer getNotificaRichiesta() {return notificaRichiesta;}
+
+    public Integer getNotificaRichiesta() {
+        return notificaRichiesta;
+    }
+
+    public Integer getStatoAppuntamento() {
+        return statoAppuntamento;
+    }
+
+    public void setStatoAppuntamento(Integer statoAppuntamento) {
+        this.statoAppuntamento = statoAppuntamento;
+    }
+
+    public Integer getStatoNotificaPsicologo() {
+        return statoNotificaPsicologo;
+    }
+
+    public void setStatoNotificaPsicologo(Integer statoNotificaPsicologo) {
+        this.statoNotificaPsicologo = statoNotificaPsicologo;
+    }
+
+    public Integer getStatoNotificaPaziente() {
+        return statoNotificaPaziente;
+    }
+
+    public void setStatoNotificaPaziente(Integer statoNotificaPaziente) {
+        this.statoNotificaPaziente = statoNotificaPaziente;
+    }
+
+    public void setIdAppuntamento(Integer idAppuntamento) {
+        this.idAppuntamento = idAppuntamento;
+    }
 }
+
 

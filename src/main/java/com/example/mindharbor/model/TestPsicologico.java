@@ -11,6 +11,10 @@ public class TestPsicologico {
     private Paziente paziente;
     private String test;
     private Integer svolto;
+    private Integer statoNotificaPaziente;
+    private Integer statoNotificaPsicologo;
+
+    public TestPsicologico() {/*Costruttore vuoto*/}
 
     public TestPsicologico(Date data, Integer risultato, Psicologo psicologo, Paziente paziente, String test, Integer svolto) {
         this.data = data;
@@ -20,6 +24,18 @@ public class TestPsicologico {
         this.test=test;
         this.svolto=svolto;
     }
+
+    public TestPsicologico(Date data, Integer risultato, Psicologo psicologo, Paziente paziente, String test, Integer svolto,Integer statoNotificaPaziente, Integer statoNotificaPsicologo) {
+        this.data = data;
+        this.risultato = risultato;
+        this.psicologo= psicologo;
+        this.paziente=paziente;
+        this.test=test;
+        this.svolto=svolto;
+        this.statoNotificaPaziente=statoNotificaPaziente;
+        this.statoNotificaPsicologo=statoNotificaPsicologo;
+    }
+    public TestPsicologico(Date data, Psicologo psicologo, Paziente paziente) {this(data,0,psicologo,paziente,null,null);}
     public TestPsicologico(Psicologo psicologo, Paziente paziente, String test) {this(null,null,psicologo,paziente,test,null);}
     public TestPsicologico(Psicologo psicologo) {
         this.psicologo= psicologo;
@@ -78,4 +94,29 @@ public class TestPsicologico {
     public Integer getSvolto() {
         return svolto;
     }
+
+    public void setSvolto(Integer svolto) {
+        this.svolto = svolto;
+    }
+    public Integer getStatoNotificaPsicologo() {
+        return statoNotificaPsicologo;
+    }
+
+    public void setStatoNotificaPsicologo(Integer statoNotificaPsicologo) {
+        this.statoNotificaPsicologo = statoNotificaPsicologo;
+    }
+
+    public Integer getStatoNotificaPaziente() {
+        return statoNotificaPaziente;
+    }
+
+    public void setStatoNotificaPaziente(Integer statoNotificaPaziente) {
+        this.statoNotificaPaziente = statoNotificaPaziente;
+
+    }
+    public void setRisultato(Integer risultato) {
+        this.risultato = risultato;
+    }
+
+
 }

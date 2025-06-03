@@ -10,6 +10,9 @@ public class PazienteBean {
     private String password;
     private Integer numTestSvolti;
     private Integer numNotifiche;
+    /*
+    Questo attributo viene utilizzato per le notifiche dei nuovi appuntamenti, delle nuove terapie e dei nuovi test
+     */
 
     public PazienteBean(String nome, String cognome, String genere, Integer anni, String diagnosi, String username,Integer numTestSvolti) {
         this.nome = nome;

@@ -7,14 +7,12 @@ module com.example.mindharbor {
     requires com.opencsv;
 
     opens com.example.mindharbor to javafx.fxml;
-    opens com.example.mindharbor.controller_grafici to javafx.fxml;
-    opens com.example.mindharbor.controller_grafici.psicologo to javafx.fxml;
-    opens com.example.mindharbor.controller_grafici.paziente to javafx.fxml;
+    opens com.example.mindharbor.controller_grafici.gui.psicologo to javafx.fxml;
+    opens com.example.mindharbor.controller_grafici.gui.paziente to javafx.fxml;
 
     exports com.example.mindharbor;
     exports com.example.mindharbor.controller_applicativi;
     opens com.example.mindharbor.controller_applicativi to javafx.fxml;
-    exports com.example.mindharbor.controller_grafici to javafx.fxml;
     exports com.example.mindharbor.beans;
     exports com.example.mindharbor.dao;
     exports com.example.mindharbor.eccezioni;
@@ -25,4 +23,13 @@ module com.example.mindharbor {
     exports com.example.mindharbor.controller_applicativi.psicologo;
     opens com.example.mindharbor.controller_applicativi.psicologo to javafx.fxml;
     exports com.example.mindharbor.dao.mysql;
+
+    exports com.example.mindharbor.controller_grafici.gui;
+    opens com.example.mindharbor.controller_grafici.gui to javafx.fxml;
+
+    exports com.example.mindharbor.controller_grafici.gui.psicologo;
+    exports com.example.mindharbor.controller_grafici.gui.paziente;
+
+    exports com.example.mindharbor.controller_grafici.cli.paziente;
+    exports com.example.mindharbor.controller_grafici.cli.psicologo;
 }

@@ -83,8 +83,8 @@ public class PsicologoBean {
     }
 
     private void controlloCostoOrario(String costoOrario) {
-        if (costoOrario == null || costoOrario.matches("\\d+")) {
-            throw new IllegalArgumentException("Il costo orario deve essere maggiore di zero e non nullo");
+        if (costoOrario == null || !costoOrario.matches("\\d+")) {
+            throw new IllegalArgumentException("Il costo orario deve essere un numero intero positivo e non nullo");
         }
     }
     private void controlloNome(String nome) {

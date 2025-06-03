@@ -8,8 +8,8 @@ public class SetInfoUtente {
         SessionManager sessionManager = SessionManager.getInstance();
 
         return new InfoUtenteBean(
-                sessionManager.getCurrentUser().getNome(),
-                sessionManager.getCurrentUser().getCognome()
+                sessionManager.getUtenteCorrente().getNome(),
+                sessionManager.getUtenteCorrente().getCognome()
         );
     }
 

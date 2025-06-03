@@ -16,11 +16,9 @@ import com.example.mindharbor.model.Paziente;
 import com.example.mindharbor.model.Psicologo;
 import com.example.mindharbor.patterns.facade.DAOFactoryFacade;
 import com.example.mindharbor.sessione.SessionManager;
+import com.example.mindharbor.strumenti_utili.ValidatoreSessione;
 import com.example.mindharbor.strumenti_utili.costanti.OrariEDataValidiRichiestaAppuntamento;
-import com.example.mindharbor.tipo_utente.UserType;
-import com.example.mindharbor.strumenti_utili.NavigatorSingleton;
 import com.example.mindharbor.strumenti_utili.SetInfoUtente;
-
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -28,13 +26,12 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static com.example.mindharbor.strumenti_utili.costanti.OrariEDataValidiRichiestaAppuntamento.*;
 import static com.example.mindharbor.strumenti_utili.costanti.OrariEDataValidiRichiestaAppuntamento.FINE_PAUSA;
 
 public class PrenotaAppuntamento {
-
-    private final NavigatorSingleton navigator=NavigatorSingleton.getInstance();
 
     public InfoUtenteBean getInfoUtente() {return new SetInfoUtente().getInfo();}
 
@@ -51,9 +48,6 @@ public class PrenotaAppuntamento {
     }
 
     private boolean controllaOrario(String ora) {
-        /**
-         * Questo metodo mi controlla che se l'orario è semanticamente corretto
-         */
         try {
             LocalTime time = LocalTime.parse(ora);
 
@@ -68,9 +62,6 @@ public class PrenotaAppuntamento {
 
 
     private boolean controllaData(String data) {
-        /**
-         * Questo metodo mi controlla se la data è semanticamente corretta
-         */
         try {
             LocalDate localDate = LocalDate.parse(data, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 
@@ -86,13 +77,19 @@ public class PrenotaAppuntamento {
 
 
     public boolean controlloInformazioniPaziente(PazienteBean pazienteBean) throws EccezioneDAO {
+        Paziente pazienteCorrente=SessionManager.getInstance().getPazienteCorrente();
+
         DAOFactoryFacade daoFactoryFacade=DAOFactoryFacade.getInstance();
         PazienteDAO pazienteDAO= daoFactoryFacade.getPazienteDAO();
         try {
-            if(!pazienteBean.getNome().equals(SessionManager.getInstance().getCurrentUser().getNome()) || !pazienteBean.getCognome().equals(SessionManager.getInstance().getCurrentUser().getCognome()) || !controllaAnniPaziente(pazienteBean.getAnni()))  {
+            if(!pazienteBean.getNome().equals(pazienteCorrente.getNome()) || !pazienteBean.getCognome().equals(pazienteCorrente.getCognome()) || !controllaAnniPaziente(pazienteBean.getAnni()))  {
                 return false;
             }
-            return pazienteDAO.checkAnniPaziente(new Paziente(SessionManager.getInstance().getCurrentUser().getUsername(),"","", UserType.PAZIENTE, pazienteBean.getAnni()));
+            if(pazienteCorrente.getAnni()!=null) {
+                return Objects.equals(pazienteCorrente.getAnni(), pazienteBean.getAnni());
+            }
+            pazienteCorrente.setAnni((pazienteDAO.checkAnniPaziente(pazienteCorrente)).getAnni());
+            return Objects.equals(pazienteCorrente.getAnni(), pazienteBean.getAnni());
 
         }catch (EccezioneDAO e) {
             throw new EccezioneDAO(e.getMessage());
@@ -103,35 +100,66 @@ public class PrenotaAppuntamento {
 
 
     public List<PsicologoBean> getListaPsicologi() throws EccezioneDAO {
-        DAOFactoryFacade daoFactoryFacade=DAOFactoryFacade.getInstance();
-        UtenteDAO utenteDAO= daoFactoryFacade.getUtenteDAO();
+        Paziente pazienteCorrente = SessionManager.getInstance().getPazienteCorrente();
+        Psicologo psicologoPazienteCorrente = pazienteCorrente.getPsicologo();
+
+        DAOFactoryFacade daoFactoryFacade = DAOFactoryFacade.getInstance();
+        UtenteDAO utenteDAO = daoFactoryFacade.getUtenteDAO();
 
         try {
-            List<PsicologoBean> listaPsicologiBean = new ArrayList<>();
-            List<Psicologo> listaPsicologi = utenteDAO.listaUtentiDiTipoPsicologo(SessionManager.getInstance().getUsernamePsicologo());
-            for(Psicologo psi : listaPsicologi) {
-                PsicologoBean psicologoBean=new PsicologoBean(psi.getUsername(),psi.getNome(),psi.getCognome(),psi.getGenere());
-
-                listaPsicologiBean.add(psicologoBean);
+            if (ValidatoreSessione.psicologoDelPazienteCorrente(psicologoPazienteCorrente)) {
+                if (ValidatoreSessione.controllaPresenzaDatiAnagraficiPsicologo(psicologoPazienteCorrente)) {
+                    return popolaListaPsicologiBean(List.of(psicologoPazienteCorrente));
+                } else {
+                    List<Psicologo> psicologo = utenteDAO.listaUtentiDiTipoPsicologo(psicologoPazienteCorrente);
+                    aggiornaSessioneConDatiAnagraficiPsicologo(psicologo.getFirst());
+                    return popolaListaPsicologiBean(psicologo);
+                }
+            } else {
+                List<Psicologo> listaPsicologi = utenteDAO.listaUtentiDiTipoPsicologo(null);
+                return popolaListaPsicologiBean(listaPsicologi);
             }
-
-            return listaPsicologiBean;
-
         }catch (EccezioneDAO e) {
             throw new EccezioneDAO(e.getMessage());
         }
     }
 
-    public void eliminaAppuntamentoSelezionato(){
-        eliminaRichiestaAppuntamento();
-        eliminaPsicologoSelezionato();
+
+
+    private void aggiornaSessioneConDatiAnagraficiPsicologo(Psicologo psicologo) {
+        Paziente pazienteCorrente=SessionManager.getInstance().getPazienteCorrente();
+
+        pazienteCorrente.getPsicologo().setNome(psicologo.getNome());
+        pazienteCorrente.getPsicologo().setCognome(psicologo.getCognome());
+        pazienteCorrente.getPsicologo().setGenere(psicologo.getGenere());
     }
+
+    private void aggiornaSessioneConDatiPsicologo(Psicologo psicologo) {
+        Paziente pazienteCorrente=SessionManager.getInstance().getPazienteCorrente();
+
+        pazienteCorrente.getPsicologo().setNomeStudio(psicologo.getNomeStudio());
+        pazienteCorrente.getPsicologo().setCostoOrario(psicologo.getCostoOrario());
+    }
+
+    private List<PsicologoBean> popolaListaPsicologiBean(List<Psicologo> listaPsicologi) {
+        List<PsicologoBean> listaBeans = new ArrayList<>();
+        for (Psicologo psi : listaPsicologi) {
+            listaBeans.add(new PsicologoBean(
+                    psi.getUsername(),
+                    psi.getNome(),
+                    psi.getCognome(),
+                    psi.getGenere()
+            ));
+        }
+        return listaBeans;
+    }
+
 
     public void salvaRichiestaAppuntamento(AppuntamentiBean appuntamentiBean) throws EccezioneDAO {
         DAOFactoryFacade daoFactoryFacade=DAOFactoryFacade.getInstance();
         AppuntamentoDAO appuntamentoDAO= daoFactoryFacade.getAppuntamentoDAO();
 
-        appuntamentiBean.getPaziente().setUsername(SessionManager.getInstance().getCurrentUser().getUsername());
+        appuntamentiBean.getPaziente().setUsername(SessionManager.getInstance().getPazienteCorrente().getUsername());
         Appuntamento appuntamento= new Appuntamento(appuntamentiBean.getData(),
                 appuntamentiBean.getOra(),
                 new Paziente(appuntamentiBean.getPaziente().getUsername()),
@@ -139,7 +167,6 @@ public class PrenotaAppuntamento {
 
         try {
             appuntamentoDAO.insertRichiestaAppuntamento(appuntamento);
-            eliminaAppuntamentoSelezionato();
 
         }catch (EccezioneDAO e) {
             throw new EccezioneDAO(e.getMessage());
@@ -148,28 +175,44 @@ public class PrenotaAppuntamento {
     }
 
     public PsicologoBean getInfoPsicologo(PsicologoBean psicologoSelezionato) throws EccezioneDAO {
+        Paziente paziente= SessionManager.getInstance().getPazienteCorrente();
+        Psicologo psicologoPazienteCorrente=paziente.getPsicologo();
+
         DAOFactoryFacade daoFactoryFacade=DAOFactoryFacade.getInstance();
         PsicologoDAO psicologoDAO= daoFactoryFacade.getPsicologoDAO();
+
         try {
-            Psicologo psicologo= psicologoDAO.getInfoPsicologo(new Psicologo(psicologoSelezionato.getUsername()));
+            Psicologo psicologoDaUsare;
 
-            psicologoSelezionato.setCostoOrario(psicologo.getCostoOrario());
-            psicologoSelezionato.setNomeStudio(psicologo.getNomeStudio());
+            if (ValidatoreSessione.psicologoDelPazienteCorrente(SessionManager.getInstance().getPazienteCorrente().getPsicologo())) {
+                if (ValidatoreSessione.controllaPresenzaDatiStudioPsicologo( SessionManager.getInstance().getPazienteCorrente().getPsicologo())) {
+                    psicologoDaUsare = psicologoPazienteCorrente;
+                } else {
+                    psicologoDaUsare = psicologoDAO.getInfoPsicologo(psicologoPazienteCorrente);
+                    aggiornaSessioneConDatiPsicologo(psicologoDaUsare);
+                }
+            } else {
+                psicologoDaUsare = psicologoDAO.getInfoPsicologo(new Psicologo(psicologoSelezionato.getUsername()));
+            }
 
+            psicologoSelezionato.setNomeStudio(psicologoDaUsare.getNomeStudio());
+            psicologoSelezionato.setCostoOrario(psicologoDaUsare.getCostoOrario());
+
+            return psicologoSelezionato;
         }catch (EccezioneDAO e){
             throw new EccezioneDAO(e.getMessage());
         }
-        return psicologoSelezionato;
     }
 
-    public List<AppuntamentiBean> getListaRichieste() throws EccezioneDAO {
+    public List<AppuntamentiBean> getListaRichieste() throws EccezioneDAO,IllegalArgumentException {
         DAOFactoryFacade daoFactoryFacade=DAOFactoryFacade.getInstance();
         AppuntamentoDAO appuntamentoDAO= daoFactoryFacade.getAppuntamentoDAO();
+        UtenteDAO utenteDAO=daoFactoryFacade.getUtenteDAO();
         List<AppuntamentiBean> listaRichiesteBean=new ArrayList<>();
 
         try {
-            List<Appuntamento> listaRichieste = appuntamentoDAO.trovaRichiesteAppuntamento(
-                    SessionManager.getInstance().getCurrentUser());
+            List<Appuntamento> listaRichieste = appuntamentoDAO.trovaRichiesteAppuntamento(SessionManager.getInstance().getPsicologoCorrente());
+            listaRichieste= utenteDAO.richiestaAppuntamentiInfoPaziente(listaRichieste);
 
             for(Appuntamento ric: listaRichieste) {
                 AppuntamentiBean ricBean= new AppuntamentiBean(
@@ -205,20 +248,20 @@ public class PrenotaAppuntamento {
         DAOFactoryFacade daoFactoryFacade=DAOFactoryFacade.getInstance();
         AppuntamentoDAO appuntamentoDAO= daoFactoryFacade.getAppuntamentoDAO();
         try {
-            appuntamentoDAO.updateStatoNotifica(new Appuntamento(richiestaAppuntamento.getIdAppuntamento()));
+            appuntamentoDAO.aggiornaStatoNotifica(new Appuntamento(richiestaAppuntamento.getIdAppuntamento()));
         }catch (EccezioneDAO e) {
             throw new EccezioneDAO(e.getMessage());
         }
     }
 
-    public boolean verificaDisponibilita(Integer idAppuntamento) throws EccezioneDAO {
+    public boolean nonDisponibile(AppuntamentiBean richiestaAppuntamentoSelezionata) throws EccezioneDAO {
         DAOFactoryFacade daoFactoryFacade=DAOFactoryFacade.getInstance();
         AppuntamentoDAO appuntamentoDAO= daoFactoryFacade.getAppuntamentoDAO();
         try {
-            if(!appuntamentoDAO.getDisp(idAppuntamento,SessionManager.getInstance().getCurrentUser())) {
-                return false;
+            if(!appuntamentoDAO.getDisp(richiestaAppuntamentoSelezionata.getIdAppuntamento(),SessionManager.getInstance().getPsicologoCorrente())) {
+                return true;
             }
-            return BoundaryMockAPICalendario.calendario();
+            return !BoundaryMockAPICalendario.calendario();
 
         }catch (EccezioneDAO e) {
             throw new EccezioneDAO(e.getMessage());
@@ -228,14 +271,12 @@ public class PrenotaAppuntamento {
     public void richiestaAccettata(AppuntamentiBean richiestaAppuntamento) throws EccezioneDAO {
         DAOFactoryFacade daoFactoryFacade=DAOFactoryFacade.getInstance();
         AppuntamentoDAO appuntamentoDAO= daoFactoryFacade.getAppuntamentoDAO();
+        PazienteDAO pazienteDAO=daoFactoryFacade.getPazienteDAO();
 
-        Appuntamento appuntamentoAccettato= new Appuntamento(richiestaAppuntamento.getIdAppuntamento(),new Psicologo(SessionManager.getInstance().getCurrentUser().getUsername()),new Paziente(richiestaAppuntamento.getPaziente().getUsername()));
+        Appuntamento appuntamentoAccettato= new Appuntamento(richiestaAppuntamento.getIdAppuntamento(),SessionManager.getInstance().getPsicologoCorrente(),new Paziente(richiestaAppuntamento.getPaziente().getUsername()));
         try {
-            appuntamentoDAO.updateRichiesta(appuntamentoAccettato);
-
-            /**
-             * Eliminiamo tutte le altre richieste di appuntamento del paziente ad altri psicologi
-             */
+            appuntamentoDAO.accettaRichiesta(appuntamentoAccettato);
+            pazienteDAO.aggiungiPsicologoAlPaziente(appuntamentoAccettato);
 
             appuntamentoDAO.eliminaRichiesteDiAppuntamentoPerAltriPsicologi(appuntamentoAccettato);
 
@@ -254,13 +295,5 @@ public class PrenotaAppuntamento {
             throw new EccezioneDAO(e.getMessage());
         }
     }
-
-    public AppuntamentiBean getRichiestaAppuntamento() {return navigator.getAppuntamentoBean();}
-    public void setRichiestaAppuntamento(AppuntamentiBean appuntamento) {navigator.setAppuntamentoBean(appuntamento);}
-    public void eliminaRichiestaAppuntamento() {navigator.eliminaAppuntamentoBean();}
-    public void setPsicologoSelezionato(PsicologoBean psicologoSelezionato) {navigator.setPsicologoBean(psicologoSelezionato);}
-    public PsicologoBean getPsicologoSelezionato(){ return navigator.getPsicologoBean();}
-    public void eliminaPsicologoSelezionato(){navigator.eliminaPsicologoBean();}
-
 
 }

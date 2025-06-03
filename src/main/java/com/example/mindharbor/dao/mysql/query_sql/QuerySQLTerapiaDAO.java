@@ -34,4 +34,8 @@ public abstract class QuerySQLTerapiaDAO {
             "FROM " + TABELLA_TERAPIA + " " +
             "WHERE " + PAZIENTE + " = ?  AND " + NOTIFICA_PAZIENTE + " = 1 ";
 
+
+    protected static final String ESISTE_TERAPIA = "SELECT 1 FROM " + TERAPIA + " " +
+            "WHERE " + PAZIENTE + " = ? AND " + PSICOLOGO + " = ? AND " + DATA_TEST + " = ? " +
+            "LIMIT 1";
 }

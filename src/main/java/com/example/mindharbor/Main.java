@@ -1,6 +1,6 @@
 package com.example.mindharbor;
 
-import com.example.mindharbor.controller_grafici_cli.ControllerGraficoLoginCLI;
+import com.example.mindharbor.controller_grafici.cli.ControllerGraficoLoginCLI;
 import com.example.mindharbor.patterns.facade.DAOFactoryFacade;
 import com.example.mindharbor.patterns.facade.TipoPersistenza;
 import com.example.mindharbor.strumenti_utili.NavigatorSingleton;
@@ -27,8 +27,10 @@ public class Main extends Application {
 
         if ("mysql".equals(tipoPersistenza)) {
             daoFactoryFacade.setTipoPersistenza(TipoPersistenza.MYSQL);
-        } else {
+        } else if ("csv".equals(tipoPersistenza)){
             daoFactoryFacade.setTipoPersistenza(TipoPersistenza.CSV);
+        }else {
+            daoFactoryFacade.setTipoPersistenza(TipoPersistenza.MEMORIA);
         }
 
         if ("gui".equals(tipoInterfaccia)) {

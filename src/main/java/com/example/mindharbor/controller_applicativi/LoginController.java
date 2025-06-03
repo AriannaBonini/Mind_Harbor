@@ -3,6 +3,8 @@ package com.example.mindharbor.controller_applicativi;
 import com.example.mindharbor.beans.InfoUtenteBean;
 import com.example.mindharbor.dao.PazienteDAO;
 import com.example.mindharbor.dao.UtenteDAO;
+import com.example.mindharbor.model.Paziente;
+import com.example.mindharbor.model.Psicologo;
 import com.example.mindharbor.patterns.facade.DAOFactoryFacade;
 import com.example.mindharbor.sessione.SessionManager;
 import com.example.mindharbor.tipo_utente.UserType;
@@ -26,9 +28,9 @@ public class LoginController extends AbstractController {
             if (utente != null) {
                 infoUtente = new InfoUtenteBean(utente.getUserType());
                 if (utente.getUserType().equals(UserType.PAZIENTE)) {
-                    storeSessionUtente(utente.getUsername(), utente.getNome(), utente.getCognome(), utente.getUserType(), pazienteDAO.getUsernamePsicologo(utente));
+                    assegnaSessione(utente.getUsername(), utente.getNome(), utente.getCognome(), utente.getUserType(), pazienteDAO.getUsernamePsicologo(utente));
                 } else {
-                    storeSessionUtente(utente.getUsername(), utente.getNome(), utente.getCognome(), utente.getUserType());
+                    assegnaSessione(utente.getUsername(), utente.getNome(), utente.getCognome(), utente.getUserType());
                 }
             }
             return infoUtente;
@@ -38,17 +40,17 @@ public class LoginController extends AbstractController {
     }
 
     @Override
-    protected void storeSessionUtente(String username, String nome, String cognome, UserType userType,String usernamePsicologo) throws EccezioneSessioneUtente {
+    protected void assegnaSessione(String username, String nome, String cognome, UserType userType,String usernamePsicologo) throws EccezioneSessioneUtente {
         SessionManager sessionManager = SessionManager.getInstance();
-        Utente currentUser = new Utente(username, nome, cognome, userType);
-        sessionManager.login(currentUser,usernamePsicologo);
+        Paziente utenteCorrente = new Paziente(username, nome, cognome, userType,new Psicologo(usernamePsicologo));
+        sessionManager.login(utenteCorrente);
     }
 
     @Override
-    protected void storeSessionUtente(String username, String nome, String cognome, UserType userType) throws EccezioneSessioneUtente {
+    protected void assegnaSessione(String username, String nome, String cognome, UserType userType) throws EccezioneSessioneUtente {
         SessionManager sessionManager = SessionManager.getInstance();
-        Utente currentUser = new Utente(username, nome, cognome, userType);
-        sessionManager.login(currentUser,null); //sarebbe meglio cambiare nome al metodo in creaSessione
+        Psicologo utenteCorrente = new Psicologo(username, nome, cognome, userType);
+        sessionManager.login(utenteCorrente);
     }
 
 }

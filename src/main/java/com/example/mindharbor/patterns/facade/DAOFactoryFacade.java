@@ -4,8 +4,8 @@ import com.example.mindharbor.dao.*;
 import com.example.mindharbor.patterns.factory.*;
 
 public class DAOFactoryFacade {
-    private static DAOFactoryFacade istanza;
-    private TipoPersistenza tipoPersistenza;
+    private static final DAOFactoryFacade istanza=new DAOFactoryFacade();
+    private volatile TipoPersistenza tipoPersistenza;
     private AppuntamentoDAO appuntamentoDAO;
     private PazienteDAO pazienteDAO;
     private PsicologoDAO psicologoDAO;
@@ -15,26 +15,23 @@ public class DAOFactoryFacade {
 
     private DAOFactoryFacade() {/*costruttore privato per evitare una new*/}
 
-    public static synchronized DAOFactoryFacade getInstance() {
-        if(istanza==null) {
-            istanza=new DAOFactoryFacade();
-        }
-        return istanza;
-    }
+    public static DAOFactoryFacade getInstance() {return istanza;}
 
-    public void setTipoPersistenza(TipoPersistenza tipoPersistenza) {
+    public synchronized void setTipoPersistenza(TipoPersistenza tipoPersistenza) {
         this.tipoPersistenza=tipoPersistenza;
     }
 
-    public AppuntamentoDAO getAppuntamentoDAO() {
+    public synchronized AppuntamentoDAO getAppuntamentoDAO() {
         if(appuntamentoDAO==null) {
+            synchronized (this)  {
             AppuntamentoDAOFactory appuntamentoDAOFactory=new AppuntamentoDAOFactory();
             appuntamentoDAO=appuntamentoDAOFactory.getAppuntamentoDAO(tipoPersistenza);
+        }
         }
         return appuntamentoDAO;
     }
 
-    public PazienteDAO getPazienteDAO(){
+    public synchronized PazienteDAO getPazienteDAO(){
         if(pazienteDAO==null) {
             PazienteDAOFactory pazienteDAOFactory=new PazienteDAOFactory();
             pazienteDAO=pazienteDAOFactory.getPazienteDAO(tipoPersistenza);
@@ -42,7 +39,7 @@ public class DAOFactoryFacade {
         return pazienteDAO;
     }
 
-    public PsicologoDAO getPsicologoDAO() {
+    public synchronized PsicologoDAO getPsicologoDAO() {
         if(psicologoDAO==null) {
             PsicologoDAOFactory psicologoDAOFactory=new PsicologoDAOFactory();
             psicologoDAO=psicologoDAOFactory.getPsicologoDAO(tipoPersistenza);
@@ -50,7 +47,7 @@ public class DAOFactoryFacade {
         return psicologoDAO;
     }
 
-    public TerapiaDAO getTerapiaDAO() {
+    public synchronized TerapiaDAO getTerapiaDAO() {
         if(terapiaDAO==null) {
             TerapiaDAOFactory terapiaDAOFactory=new TerapiaDAOFactory();
             terapiaDAO=terapiaDAOFactory.getTerapiaDAO(tipoPersistenza);
@@ -58,7 +55,7 @@ public class DAOFactoryFacade {
         return terapiaDAO;
     }
 
-    public TestPsicologicoDAO getTestPsicologicoDAO() {
+    public synchronized TestPsicologicoDAO getTestPsicologicoDAO() {
         if(testPsicologicoDAO==null) {
             TestPsicologicoDAOFactory testPsicologicoDAOFactory=new TestPsicologicoDAOFactory();
             testPsicologicoDAO=testPsicologicoDAOFactory.getTestPsicologicoDAO(tipoPersistenza);
@@ -66,7 +63,7 @@ public class DAOFactoryFacade {
         return testPsicologicoDAO;
     }
 
-    public UtenteDAO getUtenteDAO() {
+    public synchronized UtenteDAO getUtenteDAO() {
         if(utenteDAO==null) {
             UtenteDAOFactory utenteDAOFactory=new UtenteDAOFactory();
             utenteDAO=utenteDAOFactory.getUtenteDAO(tipoPersistenza);

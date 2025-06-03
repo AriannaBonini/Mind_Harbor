@@ -23,9 +23,7 @@ import com.example.mindharbor.tipo_utente.UserType;
         public Utente(String username, String nome, String cognome, UserType userType) {this(username,nome,cognome,userType,null,null);}
         public Utente(String username, String password) {this(username,null,null,null,null,password);}
         public Utente(String username, String nome, String cognome, UserType userType, String genere) {this(username,nome,cognome,userType,genere,null);}
-        public Utente(String username) {
-            this.username=username;
-        }
+        public Utente(String username) {this.username=username;}
         public Utente(String username, String nome, String cognome, String genere) {this(username,nome,cognome,null,genere,null);}
 
         public String getGenere() {return genere;}
