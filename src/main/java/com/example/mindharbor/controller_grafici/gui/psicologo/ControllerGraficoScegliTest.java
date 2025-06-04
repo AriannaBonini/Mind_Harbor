@@ -111,66 +111,103 @@ public class ControllerGraficoScegliTest implements RicevitoreControllerApplicat
 
     @FXML
     public void ottieniListaTest() {
-         listaTestPsicologiciBean = prescriviTerapiaController.getListaTest();
+        listaTestPsicologiciBean = prescriviTerapiaController.getListaTest();
 
-        if (listaTestPsicologiciBean != null) {
-            CheckBox[] checkBoxes = {test1, test2, test3, test4};
-            int numCheckBoxes = Math.min(listaTestPsicologiciBean.size(), checkBoxes.length);
-            for (int i = 0; i < numCheckBoxes; i++) {
-                checkBoxes[i].setText(String.valueOf(listaTestPsicologiciBean.get(i).getNomeTest()));
+        if (listaTestPsicologiciBean == null || listaTestPsicologiciBean.isEmpty()) {
+            nascondiTuttiICheckBox();
+            return;
+        }
+
+        aggiornaCheckBoxConTest();
+    }
+
+    private void aggiornaCheckBoxConTest() {
+        CheckBox[] checkBoxes = {test1, test2, test3, test4};
+        int limite = Math.min(listaTestPsicologiciBean.size(), checkBoxes.length);
+
+        for (int i = 0; i < checkBoxes.length; i++) {
+            if (i < limite) {
+                checkBoxes[i].setText(listaTestPsicologiciBean.get(i).getNomeTest());
                 checkBoxes[i].setVisible(true);
-            }
-            for (int i = numCheckBoxes; i < checkBoxes.length; i++) {
+            } else {
                 checkBoxes[i].setVisible(false);
             }
+        }
+    }
+
+    private void nascondiTuttiICheckBox() {
+        CheckBox[] checkBoxes = {test1, test2, test3, test4};
+        for (CheckBox cb : checkBoxes) {
+            cb.setVisible(false);
         }
     }
 
     @FXML
     public void assegnaTest() {
         CheckBox[] checkBoxes = {test1, test2, test3, test4};
-        int numCheckBoxes = Math.min(listaTestPsicologiciBean.size(), checkBoxes.length);
+
         int contatore = 0;
         String nomeTest = null;
 
-        for (int i = 0; i < numCheckBoxes; i++) {
-            if (checkBoxes[i].isSelected()) {
+        for (CheckBox cb : checkBoxes) {
+            if (cb.isSelected()) {
                 contatore++;
-                nomeTest = checkBoxes[i].getText();
+                nomeTest = cb.getText();
             }
         }
-        TestBean testBean= new TestBean(nomeTest);
+
+        if (nomeTest == null) {
+            mostraMessaggioErrore("Selezionare uno ed un solo test");
+            return;
+        }
+
+        TestBean testBean = new TestBean(nomeTest);
         testBean.setPaziente(pazienteSelezionato.getUsername());
 
         try {
-            if(!prescriviTerapiaController.controlloNumeroTestSelezionati(contatore,testBean)){
-                controlloFallito();
-            }else {
-                controlloSuperato();
+            boolean esito = prescriviTerapiaController.controlloNumeroTestSelezionati(contatore, testBean);
+
+            if (esito) {
+                mostraMessaggioSuccesso();
+            } else {
+                mostraMessaggioErrore("Selezionare uno ed un solo test");
             }
+
         } catch (EccezioneDAO e) {
             logger.error("Errore nell'assegnazione del test", e);
+            mostraMessaggioErrore("Errore interno, riprovare più tardi");
         }
-
     }
 
-    private void controlloFallito(){
-        Alert alert = MessaggioDiAlert.errore("Selezionare uno ed un solo test");
-        alert.show();
-        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(3), event -> alert.close()));
-        timeline.play();
+    private void mostraMessaggioErrore(String messaggio) {
+        Alert alert = MessaggioDiAlert.errore(messaggio);
+        mostraAlertConChiusuraAutomatica(alert);
     }
 
-    private void controlloSuperato() {
-        Alert alert = MessaggioDiAlert.informazione("Operazione Completata", "Esito Positivo", "Test assegnato con successo");
+    private void mostraMessaggioSuccesso() {
+        Alert alert = MessaggioDiAlert.informazione(
+                "Operazione Completata",
+                "Esito Positivo",
+                "Test assegnato con successo");
+        mostraAlertConChiusuraAutomatica(alert, true);
+    }
+
+    private void mostraAlertConChiusuraAutomatica(Alert alert) {
+        mostraAlertConChiusuraAutomatica(alert, false);
+    }
+
+    private void mostraAlertConChiusuraAutomatica(Alert alert, boolean chiudiEtornaIndietro) {
         alert.show();
 
-        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(3), event -> {
+        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(3), e -> {
             alert.close();
-            clickLabelTornaIndietro();
+            if (chiudiEtornaIndietro) {
+                clickLabelTornaIndietro();
+            }
         }));
         timeline.play();
     }
+
 
     @Override
     public void setControllerApplicativo(Object controllerApplicativo) {

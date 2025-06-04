@@ -44,6 +44,7 @@ public class ControllerGraficoListaPsicologi implements RicevitoreControllerAppl
     private AppuntamentiBean appuntamentoBean;
 
     public void initialize() {
+        listaVuota.setText("Caricamento Lista");
     }
 
 

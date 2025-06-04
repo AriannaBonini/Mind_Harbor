@@ -143,36 +143,45 @@ public class ControllerGraficoPrescriviTerapia implements RicevitoreControllerAp
         }
     }
 
+
     @FXML
     public void clickLabelPrescrivi() {
-        String testoInserito= campoPrescrizione.getText();
+        String testoInserito = campoPrescrizione.getText();
+
         if (testoInserito.isEmpty()) {
-            Alert alert= MessaggioDiAlert.errore("Inserisci la prescrizione");
-            alert.show();
-            new Timeline(new KeyFrame(Duration.seconds(3), event -> alert.close()));
-        } else {
-            try {
+            mostraAlertTemporaneo(MessaggioDiAlert.errore("Inserisci la prescrizione"));
+            return;
+        }
 
-                TerapiaBean terapiaBean= new TerapiaBean(testoInserito,null);
-                terapiaBean.setPaziente(pazienteSelezionato.getUsername());
-                terapiaBean.setDataTest(testbean.getData());
+        try {
+            TerapiaBean terapiaBean = creaTerapiaBean(testoInserito);
+            prescriviTerapiaController.aggiungiNuovaTerapia(terapiaBean);
 
-                prescriviTerapiaController.aggiungiNuovaTerapia(terapiaBean);
-
-            Alert alert= MessaggioDiAlert.informazione("ESITO POSITIVO", "Operazione completata", "Terapia assegnata con successo");
-            new Timeline(new KeyFrame(Duration.seconds(3), event -> alert.close()));
-            alert.showAndWait();
-
+            mostraAlertInformazioneEChiudi();
             clickLabelTornaIndietro();
 
-            } catch (EccezioneDAO e) {
-                logger.info("Errore durante il salvataggio della terapia ", e );
-                Alert alert= MessaggioDiAlert.errore("Una sola prescrizione per test");
-                alert.show();
-
-                new Timeline(new KeyFrame(Duration.seconds(3), event -> alert.close()));
-            }
+        } catch (EccezioneDAO e) {
+            logger.info("Errore durante il salvataggio della terapia", e);
+            mostraAlertTemporaneo(MessaggioDiAlert.errore("Una sola prescrizione per test"));
         }
+    }
+
+    private TerapiaBean creaTerapiaBean(String testoPrescrizione) {
+        TerapiaBean terapiaBean = new TerapiaBean(testoPrescrizione, null);
+        terapiaBean.setPaziente(pazienteSelezionato.getUsername());
+        terapiaBean.setDataTest(testbean.getData());
+        return terapiaBean;
+    }
+
+    private void mostraAlertTemporaneo(Alert alert) {
+        alert.show();
+        new Timeline(new KeyFrame(Duration.seconds(3), event -> alert.close())).play();
+    }
+
+    private void mostraAlertInformazioneEChiudi() {
+        Alert alert = MessaggioDiAlert.informazione("ESITO POSITIVO", "Operazione completata", "Terapia assegnata con successo");
+        new Timeline(new KeyFrame(Duration.seconds(3), event -> alert.close())).play();
+        alert.showAndWait();
     }
 
     @Override

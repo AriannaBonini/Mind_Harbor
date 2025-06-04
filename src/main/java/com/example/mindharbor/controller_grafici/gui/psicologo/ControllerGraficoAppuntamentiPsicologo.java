@@ -43,9 +43,9 @@ public class ControllerGraficoAppuntamentiPsicologo {
     @FXML
     private TabPane tabPane;
     @FXML
-    private Tab tab1;
-    @FXML
     private Tab tab2;
+    @FXML
+    private Tab tab1;
 
     private AppuntamentiController appuntamentiController;
     private static final Logger logger = LoggerFactory.getLogger(ControllerGraficoAppuntamentiPsicologo.class);

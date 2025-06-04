@@ -40,9 +40,6 @@ public class ConnectionFactory {
 
 
     public static Connection getConnection() {
-        if(connection==null) {
-            System.out.println("nulla");
-        }
         return connection;
     }
 }
