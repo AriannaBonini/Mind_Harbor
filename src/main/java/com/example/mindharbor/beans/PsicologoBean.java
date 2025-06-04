@@ -12,23 +12,21 @@ public class PsicologoBean {
     private Integer numNotifiche;
     private String password;
 
-    public PsicologoBean(){}
+    public PsicologoBean(){/*Costruttore vuoto*/}
 
     public PsicologoBean(Integer numNotifiche) {this.numNotifiche=numNotifiche;}
 
-
-    public PsicologoBean(String username, String nome, String cognome, Integer costoOrario, String nomeStudio,String genere) {
+    public PsicologoBean(String username,String nome, String cognome,String genere) {
+        this(username, nome, cognome);
+        this.genere=genere;
+    }
+    public PsicologoBean(String username, String nome, String cognome) {
         this.username=username;
         this.nome=nome;
         this.cognome=cognome;
-        this.costoOrario=costoOrario;
-        this.nomeStudio=nomeStudio;
-        this.genere=genere;
     }
-    public PsicologoBean(String username,String nome, String cognome,String genere) {this(username,nome,cognome,null,null,genere);}
-    public PsicologoBean(String username, String nome, String cognome) {
-        this(username,nome,cognome,null,null,null);
-    }
+
+
     public PsicologoBean(String username, String nome, String cognome, String costoOrario, String nomeStudio,String genere, String password) {
         controlloUsername(username);
         controlloNome(nome);
@@ -47,11 +45,8 @@ public class PsicologoBean {
 
 
     public String getUsername() {return username;}
-    public void setUsername(String username) {this.username=username;}
     public String getNome() {return nome;}
-    public void setNome(String nome)  {this.nome = nome;}
     public String getCognome() {return cognome;}
-    public void setCognome(String cognome) {this.cognome = cognome;}
     public Integer getCostoOrario() {return costoOrario;}
     public void setCostoOrario(Integer costoOrario) {this.costoOrario = costoOrario;}
     public String getNomeStudio() {
@@ -62,8 +57,11 @@ public class PsicologoBean {
         return genere;
     }
     public Integer getNumNotifiche() {return numNotifiche;}
-    public void setPassword(String password) {this.password = password;}
+    public void setNumNotifiche(Integer numNotifiche) {this.numNotifiche=numNotifiche;}
     public String getPassword(){return password;}
+
+
+
     public void controlloUsername(String username) {
         if (username.chars().allMatch(Character::isDigit)) {
             throw new IllegalArgumentException("Lo username non può essere composto solo da numeri.");

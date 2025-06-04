@@ -1,22 +1,22 @@
 package com.example.mindharbor.beans;
 
-import com.example.mindharbor.tipo_utente.UserType;
+import com.example.mindharbor.enumerazioni.TipoUtente;
 
 public class InfoUtenteBean {
     private String nome;
     private String cognome;
-    private UserType userType;
+    private TipoUtente tipoUtente;
     public InfoUtenteBean() {}
     public InfoUtenteBean(String nome, String cognome) {
         this.nome = nome;
         this.cognome= cognome;
     }
-    public InfoUtenteBean(UserType userType) {this.userType=userType;}
+    public InfoUtenteBean(TipoUtente tipoUtente) {this.tipoUtente = tipoUtente;}
     public String getNome() {
         return nome;
     }
     public String getCognome() {
         return cognome;
     }
-    public UserType getUserType() {return userType;}
+    public TipoUtente getTipoUtente() {return tipoUtente;}
 }

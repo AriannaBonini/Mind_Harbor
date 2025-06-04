@@ -7,6 +7,7 @@ import com.example.mindharbor.beans.PsicologoBean;
 import com.example.mindharbor.dao.AppuntamentoDAO;
 import com.example.mindharbor.dao.UtenteDAO;
 import com.example.mindharbor.eccezioni.EccezioneDAO;
+import com.example.mindharbor.enumerazioni.TipoAppuntamento;
 import com.example.mindharbor.model.Appuntamento;
 import com.example.mindharbor.model.Psicologo;
 import com.example.mindharbor.model.Utente;
@@ -15,6 +16,7 @@ import com.example.mindharbor.sessione.SessionManager;
 import com.example.mindharbor.strumenti_utili.SetInfoUtente;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class AppuntamentiController {
 
@@ -34,16 +36,21 @@ public class AppuntamentiController {
         DAOFactoryFacade daoFactoryFacade=DAOFactoryFacade.getInstance();
         UtenteDAO utenteDAO= daoFactoryFacade.getUtenteDAO();
         AppuntamentoDAO appuntamentoDAO= daoFactoryFacade.getAppuntamentoDAO();
+        Appuntamento appuntamento= new Appuntamento();
 
         List<AppuntamentiBean> appuntamentiPazienteBeanList = new ArrayList<>();
         try {
             Utente infoPsicologo=utenteDAO.trovaNomeCognome(new Psicologo(SessionManager.getInstance().getPazienteCorrente().getPsicologo().getUsername()));
-            List<Appuntamento> appuntamentoPazienteList = appuntamentoDAO.trovaAppuntamentiPaziente(SessionManager.getInstance().getPazienteCorrente(), selectedTabName);
+            appuntamento.setPaziente(SessionManager.getInstance().getPazienteCorrente());
+
+            appuntamento.setTipoAppuntamento(tipoAppuntamento(selectedTabName));
+
+            List<Appuntamento> appuntamentoPazienteList = appuntamentoDAO.trovaAppuntamentiPaziente(appuntamento);
 
             for (Appuntamento app : appuntamentoPazienteList) {
                 AppuntamentiBean appuntamentiPazienteBean = new AppuntamentiBean(
-                        app.getData(),
-                        app.getOra(),
+                        String.valueOf(app.getData()),
+                        String.valueOf(app.getOra()),
                         new PsicologoBean(infoPsicologo.getUsername(),infoPsicologo.getNome(),infoPsicologo.getCognome())
                 );
 
@@ -59,18 +66,22 @@ public class AppuntamentiController {
         DAOFactoryFacade daoFactoryFacade = DAOFactoryFacade.getInstance();
         AppuntamentoDAO appuntamentoDAO = daoFactoryFacade.getAppuntamentoDAO();
         UtenteDAO utenteDAO= daoFactoryFacade.getUtenteDAO();
+        Appuntamento appuntamento= new Appuntamento();
 
         List<AppuntamentiBean> appuntamentiPsicologoBeanList = new ArrayList<>();
 
         try {
-            List<Appuntamento> appuntamentoPsicologoList = appuntamentoDAO.trovaAppuntamentiPsicologo(SessionManager.getInstance().getPsicologoCorrente(),selectedTabName);
+            appuntamento.setPsicologo(SessionManager.getInstance().getPsicologoCorrente());
+            appuntamento.setTipoAppuntamento(tipoAppuntamento(selectedTabName));
+
+            List<Appuntamento> appuntamentoPsicologoList = appuntamentoDAO.trovaAppuntamentiPsicologo(appuntamento);
 
             for (Appuntamento app : appuntamentoPsicologoList) {
                 Utente utentePaziente=utenteDAO.trovaNomeCognome(app.getPaziente());
 
                 AppuntamentiBean appuntamentiPsicologoBean = new AppuntamentiBean(
-                        app.getData(),
-                        app.getOra(),
+                        String.valueOf(app.getData()),
+                        String.valueOf(app.getOra()),
                         new PazienteBean(utentePaziente.getNome(),utentePaziente.getCognome())
                 );
                 appuntamentiPsicologoBeanList.add(appuntamentiPsicologoBean);
@@ -80,6 +91,14 @@ public class AppuntamentiController {
             throw new EccezioneDAO(e.getMessage());
         }
         return appuntamentiPsicologoBeanList;
+    }
+
+    private TipoAppuntamento tipoAppuntamento(String tabSelezionato) {
+        if(Objects.equals(tabSelezionato, TipoAppuntamento.IN_PROGRAMMA.getId())){
+            return TipoAppuntamento.IN_PROGRAMMA;
+        }else {
+            return TipoAppuntamento.PASSATO;
+        }
     }
 
     public boolean getPsicologo() {

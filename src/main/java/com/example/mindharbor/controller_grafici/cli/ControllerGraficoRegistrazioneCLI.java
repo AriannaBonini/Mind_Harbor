@@ -7,7 +7,7 @@ import com.example.mindharbor.eccezioni.EccezioneDAO;
 import com.example.mindharbor.eccezioni.EccezioneFormatoNonValido;
 import com.example.mindharbor.strumenti_utili.supporto_cli.CodiciAnsi;
 import com.example.mindharbor.strumenti_utili.supporto_cli.GestoreOutput;
-import com.example.mindharbor.tipo_utente.UserType;
+import com.example.mindharbor.enumerazioni.TipoUtente;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,8 +29,8 @@ public class ControllerGraficoRegistrazioneCLI extends AbsGestoreInput{
             try {
                 opzione = mostraMenu();
                 switch (opzione) {
-                    case 1 -> datiGenericiUtente(UserType.PAZIENTE.getId());
-                    case 2 -> datiGenericiUtente(UserType.PSICOLOGO.getId());
+                    case 1 -> datiGenericiUtente(TipoUtente.PAZIENTE.getId());
+                    case 2 -> datiGenericiUtente(TipoUtente.PSICOLOGO.getId());
                     case 3 -> esci = true;
                     default -> throw new EccezioneFormatoNonValido("Scelta non valida");
                 }

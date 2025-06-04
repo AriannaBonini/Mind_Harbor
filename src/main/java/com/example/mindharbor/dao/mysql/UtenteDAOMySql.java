@@ -5,7 +5,7 @@ import com.example.mindharbor.dao.mysql.query_sql.QuerySQLUtenteDAO;
 import com.example.mindharbor.model.Appuntamento;
 import com.example.mindharbor.model.Psicologo;
 import com.example.mindharbor.model.Utente;
-import com.example.mindharbor.tipo_utente.UserType;
+import com.example.mindharbor.enumerazioni.TipoUtente;
 import com.example.mindharbor.eccezioni.EccezioneDAO;
 import com.example.mindharbor.sessione.ConnectionFactory;
 import java.sql.Connection;
@@ -41,11 +41,11 @@ public class UtenteDAOMySql extends QuerySQLUtenteDAO implements UtenteDAO {
 
     protected Utente getTipoUtente(ResultSet rs) throws SQLException {
         Utente utente;
-        UserType tipo;
+        TipoUtente tipo;
         if (rs.getString(RUOLO).equals("Paziente")) {
-            tipo = UserType.PAZIENTE;
+            tipo = TipoUtente.PAZIENTE;
         } else {
-            tipo = UserType.PSICOLOGO;
+            tipo = TipoUtente.PSICOLOGO;
         }
         utente = new Utente(
                 rs.getString(USERNAME),

@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface TerapiaDAO {
     void aggiungiTerapia(Terapia terapia) throws EccezioneDAO;
-    List<Terapia> getTerapie(Utente utente) throws EccezioneDAO;
-    Integer getNuoveTerapie(Utente paziente) throws EccezioneDAO;
-    boolean controlloEsistenzaTerapiaPerUnTest(TestPsicologico testPsicologico) throws EccezioneDAO;
+    List<Terapia> getTerapie(Utente paziente) throws EccezioneDAO;
+    Terapia getNuoveTerapie(Utente paziente) throws EccezioneDAO;
+    boolean esistenzaTerapiaPerUnTest(TestPsicologico testPsicologico) throws EccezioneDAO;
 }

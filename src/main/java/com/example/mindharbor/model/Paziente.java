@@ -1,7 +1,6 @@
 package com.example.mindharbor.model;
 
-import com.example.mindharbor.tipo_utente.UserType;
-import java.util.List;
+import com.example.mindharbor.enumerazioni.TipoUtente;
 
 public class Paziente extends Utente{
 
@@ -12,26 +11,29 @@ public class Paziente extends Utente{
 
     public Paziente() {/*Costruttore vuoto*/}
 
-    public Paziente(String username, String nome, String cognome, UserType userType, String genere, String password, Integer anni) {
-        super(username, nome, cognome, userType, genere,password);
+    public Paziente(String username, String nome, String cognome, TipoUtente tipoUtente, String genere, String password, Integer anni) {
+        super(username, nome, cognome, tipoUtente, genere,password);
         this.anni=anni;
 
     }
 
-    public Paziente(String username, String nome, String cognome, UserType userType, Psicologo psicologo) {
-        super(username, nome, cognome, userType, null,null);
-        this.psicologo=psicologo;
-
+    public Paziente(String username) {
+        super(username);
     }
 
-    public Paziente(String username, String nome, String cognome) {
-        super(username,nome,cognome,UserType.PAZIENTE);
-    }
-    public Paziente(String username) { super(username); }
     public Paziente(Integer anni, String diagnosi){
         this.anni=anni;
         this.diagnosi=diagnosi;
     }
+
+    public Paziente(String username, String nome, String cognome, TipoUtente tipoUtente, Psicologo psicologo) {
+        super(username, nome, cognome, tipoUtente);
+        this.psicologo=psicologo;
+    }
+
+
+
+
     public Integer getNumeroTest() {return numeroTest;}
     public String getDiagnosi() {return diagnosi;}
     public void setDiagnosi(String diagnosi) {this.diagnosi = diagnosi;}

@@ -9,7 +9,7 @@ import com.example.mindharbor.eccezioni.EccezioneDAO;
 import com.example.mindharbor.model.Paziente;
 import com.example.mindharbor.model.Psicologo;
 import com.example.mindharbor.patterns.facade.DAOFactoryFacade;
-import com.example.mindharbor.tipo_utente.UserType;
+import com.example.mindharbor.enumerazioni.TipoUtente;
 
 public class RegistrazioneController {
 
@@ -24,7 +24,7 @@ public class RegistrazioneController {
                 pazienteBean.getUsername(),
                 pazienteBean.getNome(),
                 pazienteBean.getCognome(),
-                UserType.PAZIENTE,
+                TipoUtente.PAZIENTE,
                 pazienteBean.getGenere(),
                 pazienteBean.getPassword(),
                 pazienteBean.getAnni()
@@ -56,7 +56,7 @@ public class RegistrazioneController {
                 psicologoBean.getUsername(),
                 psicologoBean.getNome(),
                 psicologoBean.getCognome(),
-                UserType.PSICOLOGO,
+                TipoUtente.PSICOLOGO,
                 psicologoBean.getGenere(),
                 psicologoBean.getPassword());
 

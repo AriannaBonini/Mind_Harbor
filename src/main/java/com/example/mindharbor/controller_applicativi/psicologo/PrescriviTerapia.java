@@ -13,8 +13,8 @@ import com.example.mindharbor.patterns.facade.DAOFactoryFacade;
 import com.example.mindharbor.sessione.SessionManager;
 import com.example.mindharbor.strumenti_utili.SetInfoUtente;
 import com.example.mindharbor.strumenti_utili.ValidatoreSessione;
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class PrescriviTerapia {
@@ -85,9 +85,9 @@ public class PrescriviTerapia {
         TerapiaDAO terapiaDAO= daoFactoryFacade.getTerapiaDAO();
 
         try {
-            List<TestPsicologico> listaTestsvolti = testPsicologicoDAO.listaTestSvolti(SessionManager.getInstance().getPsicologoCorrente(), new Paziente(pazienteSelezionato.getUsername()));
+            List<TestPsicologico> listaTestsvolti = testPsicologicoDAO.listaTestSvolti(new TestPsicologico(SessionManager.getInstance().getPsicologoCorrente(), new Paziente(pazienteSelezionato.getUsername())));
             for(TestPsicologico testPsicologico: listaTestsvolti) {
-                if(!terapiaDAO.controlloEsistenzaTerapiaPerUnTest(testPsicologico)) {
+                if(terapiaDAO.esistenzaTerapiaPerUnTest(testPsicologico)) {
                     return true;
                 }
             }
@@ -174,7 +174,7 @@ public class PrescriviTerapia {
                     TestBean testBean = new TestBean(
                             test.getTest(),
                             test.getRisultato(),
-                            test.getData(),
+                            String.valueOf(test.getData()),
                             test.getSvolto());
 
                     testBeanList.add(testBean);
@@ -204,7 +204,11 @@ public class PrescriviTerapia {
         DAOFactoryFacade daoFactoryFacade=DAOFactoryFacade.getInstance();
         TestPsicologicoDAO testPsicologicoDAO= daoFactoryFacade.getTestPsicologicoDAO();
         try {
-            testPsicologicoDAO.assegnaTest(new TestPsicologico(SessionManager.getInstance().getPsicologoCorrente(), new Paziente(testBean.getPaziente()), testBean.getNomeTest()));
+            TestPsicologico testPsicologico= new TestPsicologico(SessionManager.getInstance().getPsicologoCorrente(), new Paziente(testBean.getPaziente()));
+            testPsicologico.setTest(testBean.getNomeTest());
+
+            testPsicologicoDAO.assegnaTest(testPsicologico);
+
         }catch (EccezioneDAO e) {
             throw new EccezioneDAO(e.getMessage());
         }
@@ -217,19 +221,17 @@ public class PrescriviTerapia {
 
         List<TestBean> testSvoltiBean= new ArrayList<>();
         try {
-            List<TestPsicologico> testSvolti = testPsicologicoDAO.listaTestSvoltiSenzaPrescrizione(pazienteSelezionato.getUsername(), SessionManager.getInstance().getPsicologoCorrente().getUsername());
+            TestPsicologico testPsicologico= new TestPsicologico(SessionManager.getInstance().getPsicologoCorrente(),new Paziente(pazienteSelezionato.getUsername()));
+            List<TestPsicologico> testSvolti = testPsicologicoDAO.listaTestSvoltiSenzaPrescrizione(testPsicologico);
             for(TestPsicologico test : testSvolti) {
 
                 test.setPaziente(new Paziente(pazienteSelezionato.getUsername()));
                 test.setPsicologo(SessionManager.getInstance().getPsicologoCorrente());
 
-                if(!terapiaDAO.controlloEsistenzaTerapiaPerUnTest(test)) {
+                if(terapiaDAO.esistenzaTerapiaPerUnTest(test)) {
                     TestBean testSvoltoBean = new TestBean(test.getTest(),
-                            "",
-                            "",
                             test.getRisultato(),
-                            test.getData(),
-                            null);
+                            String.valueOf(test.getData()));
 
                     testSvoltiBean.add(testSvoltoBean);
                 }
@@ -257,8 +259,11 @@ public class PrescriviTerapia {
     public void aggiungiNuovaTerapia(TerapiaBean terapiaBean) throws EccezioneDAO {
         DAOFactoryFacade daoFactoryFacade=DAOFactoryFacade.getInstance();
         TerapiaDAO terapiaDAO= daoFactoryFacade.getTerapiaDAO();
+        LocalDate dataCorrente= LocalDate.now();
         try {
-            Terapia terapia = new Terapia(new TestPsicologico(terapiaBean.getDataTest(), null, SessionManager.getInstance().getPsicologoCorrente(), new Paziente(terapiaBean.getPaziente()), "", null), terapiaBean.getTerapia(), terapiaBean.getDataTerapia());
+            TestPsicologico testPsicologico= new TestPsicologico(LocalDate.parse(terapiaBean.getDataTest()), SessionManager.getInstance().getPsicologoCorrente(), new Paziente(terapiaBean.getPaziente()));
+
+            Terapia terapia = new Terapia(testPsicologico, terapiaBean.getTerapia(), dataCorrente);
             terapiaDAO.aggiungiTerapia(terapia);
         }catch (EccezioneDAO e) {
             throw new EccezioneDAO(e.getMessage());
@@ -301,7 +306,7 @@ public class PrescriviTerapia {
                 risultato += punteggio;
             }
             risultatoTest.setRisultatoUltimoTest(risultato);
-            Double progresso = calcolaProgresso(risultatoTest,testSelezionato.getData(),testSelezionato.getNomeTest());
+            Double progresso = calcolaProgresso(risultatoTest,LocalDate.parse(testSelezionato.getData()),testSelezionato.getNomeTest());
 
             risultatoTest.setRisultatoTestPrecedente(progresso);
         }catch (EccezioneDAO e) {
@@ -310,14 +315,17 @@ public class PrescriviTerapia {
         return risultatoTest;
     }
 
-    private Double calcolaProgresso(RisultatiTestBean risultatoTest, Date dataTest, String nomeTest) throws EccezioneDAO {
+    private Double calcolaProgresso(RisultatiTestBean risultatoTest, LocalDate dataTest, String nomeTest) throws EccezioneDAO {
         DAOFactoryFacade daoFactoryFacade=DAOFactoryFacade.getInstance();
         TestPsicologicoDAO testPsicologicoDAO= daoFactoryFacade.getTestPsicologicoDAO();
 
         double progressi;
         try {
+            TestPsicologico testPsicologico= new TestPsicologico(dataTest, risultatoTest.getRisultatoUltimoTest(),nomeTest);
+            testPsicologico.setPaziente(SessionManager.getInstance().getPazienteCorrente());
 
-            TestPsicologico ultimoTestPsicologico = testPsicologicoDAO.trovaTestPassati(new TestPsicologico(dataTest, risultatoTest.getRisultatoUltimoTest(), null, SessionManager.getInstance().getPazienteCorrente(),nomeTest, null));
+            TestPsicologico ultimoTestPsicologico = testPsicologicoDAO.trovaTestPassati(testPsicologico);
+
 
             if (ultimoTestPsicologico == null) {
                 return null;
@@ -358,11 +366,11 @@ public class PrescriviTerapia {
             List<Terapia> terapie = terapiaDAO.getTerapie(SessionManager.getInstance().getPazienteCorrente());
 
             for (Terapia terapia : terapie) {
-                TerapiaBean terapiaBean = new TerapiaBean(terapia.getTestPsicologico().getPsicologo().getUsername(),
-                        " ",
+                TerapiaBean terapiaBean = new TerapiaBean(
                         terapia.getTerapia(),
-                        terapia.getDataTerapia(),
-                        null);
+                        String.valueOf(terapia.getDataTerapia()));
+
+                terapiaBean.setPsicologo(terapia.getTestPsicologico().getPsicologo().getUsername());
 
                 terapieBean.add(terapiaBean);
             }

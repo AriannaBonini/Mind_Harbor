@@ -2,9 +2,9 @@ package com.example.mindharbor.dao.memoria;
 
 import com.example.mindharbor.dao.AppuntamentoDAO;
 import com.example.mindharbor.eccezioni.EccezioneDAO;
+import com.example.mindharbor.enumerazioni.TipoAppuntamento;
 import com.example.mindharbor.model.Appuntamento;
 import com.example.mindharbor.model.Paziente;
-import com.example.mindharbor.model.Psicologo;
 import com.example.mindharbor.model.Utente;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -14,31 +14,31 @@ import java.util.Objects;
 public class AppuntamentoDAOMemoria implements AppuntamentoDAO {
     private final List<Appuntamento> appuntamentiInMemoria=new ArrayList<>();
 
-    public List<Appuntamento> trovaAppuntamentiPaziente(Utente paziente, String selectedTabName) throws EccezioneDAO {
+    public List<Appuntamento> trovaAppuntamentiPaziente(Appuntamento appuntamento) throws EccezioneDAO {
         try {
-            List<Appuntamento> appuntamentoPazienteList = new ArrayList<>();
+            List<Appuntamento> listaAppuntamentiPaziente = new ArrayList<>();
             LocalDate oggi = LocalDate.now();
 
-            boolean inProgramma = "IN PROGRAMMA".equals(selectedTabName);
+            boolean inProgramma = appuntamento.getTipoAppuntamento()== TipoAppuntamento.IN_PROGRAMMA;
 
             for (Appuntamento app : appuntamentiInMemoria) {
-                boolean stessoPaziente = app.getPaziente().getUsername().equals(paziente.getUsername());
+                boolean stessoPaziente = app.getPaziente().getUsername().equals(appuntamento.getPaziente().getUsername());
                 boolean appuntamentoConfermato = app.getStatoAppuntamento() == 1;
 
                 if (!(stessoPaziente && appuntamentoConfermato)) {
                     continue;
                 }
 
-                LocalDate dataApp = LocalDate.parse(app.getData());
-                boolean appuntamentoValido = inProgramma != dataApp.isBefore(oggi);
+                boolean appuntamentoValido = inProgramma != app.getData().isBefore(oggi);
 
                 if (appuntamentoValido) {
-                    Appuntamento appuntamento = new Appuntamento(app.getData(), app.getOra());
-                    appuntamentoPazienteList.add(appuntamento);
+                    Appuntamento appuntamentoTrovato = new Appuntamento(app.getData(), app.getOra());
+
+                    listaAppuntamentiPaziente.add(appuntamentoTrovato);
                 }
             }
 
-            return appuntamentoPazienteList;
+            return listaAppuntamentiPaziente;
         } catch (NullPointerException e) {
             throw new EccezioneDAO("Errore durante la ricerca degli appuntamenti del paziente: " + e.getMessage());
         }
@@ -46,32 +46,34 @@ public class AppuntamentoDAOMemoria implements AppuntamentoDAO {
 
 
     @Override
-    public List<Appuntamento> trovaAppuntamentiPsicologo(Utente psicologo, String selectedTabName) throws EccezioneDAO {
-        List<Appuntamento> appuntamentoPsicologoList = new ArrayList<>();
+    public List<Appuntamento> trovaAppuntamentiPsicologo(Appuntamento appuntamento) throws EccezioneDAO {
+        List<Appuntamento> listaAppuntamentiPsicologo = new ArrayList<>();
         LocalDate oggi = LocalDate.now();
-        boolean inProgramma = "IN PROGRAMMA".equals(selectedTabName);
+
+        boolean inProgramma = appuntamento.getTipoAppuntamento()== TipoAppuntamento.IN_PROGRAMMA;
 
         try {
 
             for (Appuntamento app : appuntamentiInMemoria) {
-                boolean stessoPsicologo = app.getPsicologo().getUsername().equals(psicologo.getUsername());
+                boolean stessoPsicologo = app.getPsicologo().getUsername().equals(appuntamento.getPsicologo().getUsername());
                 boolean appuntamentoConfermato = app.getStatoAppuntamento() == 1;
 
                 if (!(stessoPsicologo && appuntamentoConfermato)) {
                     continue;
                 }
 
-                LocalDate dataApp = LocalDate.parse(app.getData());
-                boolean appuntamentoValido = inProgramma != dataApp.isBefore(oggi);
+                boolean appuntamentoValido = inProgramma != app.getData().isBefore(oggi);
 
                 if (appuntamentoValido) {
-                    Paziente paziente= new Paziente(app.getPaziente().getUsername());
-                    Appuntamento appuntamento = new Appuntamento(app.getData(), app.getOra(), paziente);
-                    appuntamentoPsicologoList.add(appuntamento);
+
+                    Appuntamento appuntamentoTrovato = new Appuntamento(app.getData(), app.getOra());
+                    appuntamentoTrovato.setPaziente(new Paziente(app.getPaziente().getUsername()));
+
+                    listaAppuntamentiPsicologo.add(appuntamentoTrovato);
                 }
             }
 
-            return appuntamentoPsicologoList;
+            return listaAppuntamentiPsicologo;
         } catch (NullPointerException e) {
             throw new EccezioneDAO("Errore durante la ricerca degli appuntamenti dello psicologo: " + e.getMessage());
         }
@@ -106,7 +108,7 @@ public class AppuntamentoDAOMemoria implements AppuntamentoDAO {
     }
 
     @Override
-    public Appuntamento notificheNuoviAppuntamentiPaziente(Paziente paziente) throws EccezioneDAO {
+    public Appuntamento notificheNuoviAppuntamentiPaziente(Utente paziente) throws EccezioneDAO {
         Appuntamento appuntamento = new Appuntamento();
         int notificheNuoviAppuntamenti = 0;
 
@@ -117,12 +119,10 @@ public class AppuntamentoDAOMemoria implements AppuntamentoDAO {
                 }
             }
 
-            if (notificheNuoviAppuntamenti > 0) {
-                appuntamento.setStatoNotificaPaziente(notificheNuoviAppuntamenti);
-            }
+            appuntamento.setStatoNotificaPaziente(notificheNuoviAppuntamenti);
 
         } catch (NullPointerException e) {
-            throw new EccezioneDAO("Dati mancanti: " + e.getMessage());
+            throw new EccezioneDAO("Dati assenti: " + e.getMessage());
         } catch (Exception e) {
             throw new EccezioneDAO("Errore durante il conteggio delle notifiche per il paziente: " + e.getMessage());
         }
@@ -131,7 +131,7 @@ public class AppuntamentoDAOMemoria implements AppuntamentoDAO {
     }
 
     @Override
-    public Appuntamento notificheNuoviAppuntamentiPsicologo(Psicologo psicologo) throws EccezioneDAO {
+    public Appuntamento notificheNuoviAppuntamentiPsicologo(Utente psicologo) throws EccezioneDAO {
         Appuntamento appuntamento = new Appuntamento();
         int notificheNuoviAppuntamenti = 0;
 
@@ -142,9 +142,7 @@ public class AppuntamentoDAOMemoria implements AppuntamentoDAO {
                 }
             }
 
-            if (notificheNuoviAppuntamenti > 0) {
-                appuntamento.setStatoNotificaPaziente(notificheNuoviAppuntamenti);
-            }
+            appuntamento.setStatoNotificaPsicologo(notificheNuoviAppuntamenti);
 
         } catch (NullPointerException e) {
             throw new EccezioneDAO("Dati mancanti: " + e.getMessage());
@@ -158,7 +156,7 @@ public class AppuntamentoDAOMemoria implements AppuntamentoDAO {
 
 
     @Override
-    public List<Appuntamento> trovaRichiesteAppuntamento(Psicologo psicologo) throws EccezioneDAO {
+    public List<Appuntamento> trovaRichiesteAppuntamento(Utente psicologo) throws EccezioneDAO {
         try {
             List<Appuntamento> richiesteAppuntamento = new ArrayList<>();
 
@@ -166,11 +164,10 @@ public class AppuntamentoDAOMemoria implements AppuntamentoDAO {
                 if (app.getPsicologo().getUsername().equals(psicologo.getUsername())
                         && app.getStatoAppuntamento() == 0) {
 
-                    Appuntamento richiesta = new Appuntamento(
-                            app.getIdAppuntamento(),
-                            new Paziente(app.getPaziente().getUsername()),
-                            app.getStatoNotificaPsicologo()
-                    );
+                    Appuntamento richiesta = new Appuntamento(app.getIdAppuntamento());
+
+                    richiesta.setPaziente(new Paziente(app.getPaziente().getUsername()));
+                    richiesta.setStatoNotificaPsicologo(app.getStatoNotificaPsicologo());
 
                     richiesteAppuntamento.add(richiesta);
                 }
@@ -274,11 +271,11 @@ public class AppuntamentoDAOMemoria implements AppuntamentoDAO {
     }
 
     @Override
-    public boolean getDisp(Integer idAppuntamento, Psicologo psicologo) throws EccezioneDAO {
+    public boolean getDisp(Appuntamento appuntamento) throws EccezioneDAO {
         try {
             Appuntamento target = null;
             for (Appuntamento app : appuntamentiInMemoria) {
-                if (Objects.equals(app.getIdAppuntamento(), idAppuntamento) && app.getPsicologo().getUsername().equals(psicologo.getUsername())) {
+                if (Objects.equals(app.getIdAppuntamento(), appuntamento.getIdAppuntamento()) && app.getPsicologo().getUsername().equals(appuntamento.getPsicologo().getUsername())) {
                     target = app;
                     break;
                 }
@@ -291,10 +288,10 @@ public class AppuntamentoDAOMemoria implements AppuntamentoDAO {
             / con stesso psicologo, stessa data e ora, diverso dall'id controllato*/
             for (Appuntamento app : appuntamentiInMemoria) {
                 if (app.getStatoAppuntamento() == 1
-                        && app.getPsicologo().getUsername().equals(psicologo.getUsername())
+                        && app.getPsicologo().getUsername().equals(appuntamento.getPsicologo().getUsername())
                         && app.getData().equals(target.getData())
                         && app.getOra().equals(target.getOra())
-                        && !Objects.equals(app.getIdAppuntamento(), idAppuntamento)) {
+                        && !Objects.equals(app.getIdAppuntamento(), appuntamento.getIdAppuntamento())) {
                     return false;
                 }
             }
@@ -306,10 +303,10 @@ public class AppuntamentoDAOMemoria implements AppuntamentoDAO {
     }
 
     @Override
-    public void aggiornaStatoNotificaPaziente(Utente utente) throws EccezioneDAO {
+    public void aggiornaStatoNotificaPaziente(Utente paziente) throws EccezioneDAO {
         try {
             for (Appuntamento app : appuntamentiInMemoria) {
-                if (app.getPaziente().getUsername().equals(utente.getUsername())
+                if (app.getPaziente().getUsername().equals(paziente.getUsername())
                         && app.getStatoNotificaPaziente() == 1) {
                     app.setStatoNotificaPaziente(0);
                 }

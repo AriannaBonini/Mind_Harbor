@@ -14,7 +14,6 @@ import com.example.mindharbor.strumenti_utili.supporto_cli.CodiciAnsi;
 import com.example.mindharbor.strumenti_utili.supporto_cli.GestoreOutput;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
 
@@ -106,8 +105,13 @@ public class ControllerGraficoPrescriviTerapiaCLI extends AbsGestoreInput implem
             start();
         }
         try {
-            Date currentDate = new Date();
-            prescriviTerapiaController.aggiungiNuovaTerapia(new TerapiaBean(pazienteSelezionato.getUsername(), prescrizione, currentDate, listaTest.get(indiceTest).getData()));
+            TerapiaBean terapiaBean= new TerapiaBean(prescrizione,null);
+            terapiaBean.setPaziente(pazienteSelezionato.getUsername());
+            terapiaBean.setDataTest(listaTest.get(indiceTest).getData());
+
+            prescriviTerapiaController.aggiungiNuovaTerapia(terapiaBean);
+
+
             GestoreOutput.stampaMessaggio("OPERAZIONE COMPLETATA: Terapia assegnata con successo");
         }catch (EccezioneDAO e) {
             logger.info("Errore durante il salvataggio della terapia ", e );

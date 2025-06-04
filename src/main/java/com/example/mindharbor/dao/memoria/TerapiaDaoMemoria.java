@@ -17,10 +17,12 @@ public class TerapiaDaoMemoria implements TerapiaDAO {
     public void aggiungiTerapia(Terapia terapia) throws EccezioneDAO {
         Terapia terapiaDaInserire = new Terapia();
         try {
-            TestPsicologico testPsicologico= new TestPsicologico(new java.sql.Date(terapia.getTestPsicologico().getData().getTime()),terapia.getTestPsicologico().getPsicologo(),terapia.getTestPsicologico().getPaziente());
+            TestPsicologico testPsicologico= new TestPsicologico(terapia.getTestPsicologico().getPsicologo(),terapia.getTestPsicologico().getPaziente());
+            testPsicologico.setData(terapia.getTestPsicologico().getData());
+
             terapiaDaInserire.setTestPsicologico(testPsicologico);
             terapiaDaInserire.setTerapia(terapia.getTerapia());
-            terapiaDaInserire.setDataTerapia(new java.sql.Date(terapia.getDataTerapia().getTime()));
+            terapiaDaInserire.setDataTerapia(terapia.getDataTerapia());
             terapiaDaInserire.setNotificaPaziente(1);
 
 
@@ -31,11 +33,11 @@ public class TerapiaDaoMemoria implements TerapiaDAO {
     }
 
     @Override
-    public List<Terapia> getTerapie(Utente utente) throws EccezioneDAO {
+    public List<Terapia> getTerapie(Utente paziente) throws EccezioneDAO {
         try {
             List<Terapia> result = new ArrayList<>();
             for (Terapia t : terapiaInMemoria) {
-                if (t.getTestPsicologico().getPaziente().getUsername().equals(utente.getUsername())) {
+                if (t.getTestPsicologico().getPaziente().getUsername().equals(paziente.getUsername())) {
                     Terapia terapia = new Terapia(
                             new TestPsicologico(new Psicologo(t.getTestPsicologico().getPsicologo().getUsername())),
                             t.getTerapia(),
@@ -45,7 +47,7 @@ public class TerapiaDaoMemoria implements TerapiaDAO {
                     result.add(terapia);
                 }
             }
-            aggiornaStatoNotificaPaziente(utente);
+            aggiornaStatoNotificaPaziente(paziente);
             return result;
         } catch (Exception e) {
             throw new EccezioneDAO("Errore nel recupero terapie: " + e.getMessage());
@@ -65,32 +67,34 @@ public class TerapiaDaoMemoria implements TerapiaDAO {
     }
 
     @Override
-    public Integer getNuoveTerapie(Utente paziente) throws EccezioneDAO {
+    public Terapia getNuoveTerapie(Utente paziente) throws EccezioneDAO {
+        Terapia terapia= new Terapia();
+        int nuoveTerapie = 0;
         try {
-            int count = 0;
             for (Terapia t : terapiaInMemoria) {
                 if (t.getTestPsicologico().getPaziente().getUsername().equals(paziente.getUsername())
                         && t.getNotificaPaziente() == 1) {
-                    count++;
+                    nuoveTerapie++;
                 }
             }
-            return count;
         } catch (Exception e) {
             throw new EccezioneDAO("Errore nel conteggio nuove terapie: " + e.getMessage());
         }
+        terapia.setNotificaPaziente(nuoveTerapie);
+        return terapia;
     }
 
     @Override
-    public boolean controlloEsistenzaTerapiaPerUnTest(TestPsicologico testPsicologico) throws EccezioneDAO {
+    public boolean esistenzaTerapiaPerUnTest(TestPsicologico testPsicologico) throws EccezioneDAO {
         try {
             for (Terapia terapia : terapiaInMemoria) {
                 if (terapia.getTestPsicologico().getPaziente().getUsername().equals(testPsicologico.getPaziente().getUsername()) &&
                         terapia.getTestPsicologico().getPsicologo().getUsername().equals(testPsicologico.getPsicologo().getUsername()) &&
                         terapia.getTestPsicologico().getData().equals(testPsicologico.getData())) {
-                    return true;
+                    return false;
                 }
             }
-            return false;
+            return true;
         }catch (Exception e) {
             throw new EccezioneDAO("Errore nel controllo delle terapie assegnate: " + e.getMessage());
         }

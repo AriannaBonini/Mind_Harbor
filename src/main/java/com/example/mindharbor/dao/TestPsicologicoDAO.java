@@ -9,14 +9,14 @@ import java.util.List;
 
 public interface TestPsicologicoDAO {
     void assegnaTest(TestPsicologico test) throws EccezioneDAO;
-    TestPsicologico getNotificaPazientePerTestAssegnato(Paziente paziente) throws EccezioneDAO;
+    TestPsicologico getNotificaPazientePerTestAssegnato(Utente paziente) throws EccezioneDAO;
     void modificaStatoNotificaTest(Utente utente, Paziente pazienteSelezionato) throws EccezioneDAO;
-    List<TestPsicologico> trovaListaTest(Paziente paziente) throws EccezioneDAO;
+    List<TestPsicologico> trovaListaTest(Utente paziente) throws EccezioneDAO;
     TestPsicologico trovaTestPassati(TestPsicologico testDaAggiungere) throws EccezioneDAO;
-    Integer getNumTestSvoltiDaNotificare(Utente psicologo) throws EccezioneDAO;
-    List<TestPsicologico> listaTestSvolti(Utente utentePsicologo, Paziente paziente) throws EccezioneDAO;
-    List<TestPsicologico> listaTestSvoltiSenzaPrescrizione(String usernamePaziente, String usernamePsicologo) throws EccezioneDAO;
+    TestPsicologico getNumTestSvoltiDaNotificare(Utente psicologo) throws EccezioneDAO;
+    List<TestPsicologico> listaTestSvolti(TestPsicologico testPsicologico) throws EccezioneDAO;
+    List<TestPsicologico> listaTestSvoltiSenzaPrescrizione(TestPsicologico testPsicologico) throws EccezioneDAO;
     Paziente numTestSvoltiPerPaziente(Utente paziente) throws EccezioneDAO;
-    boolean getNumTestAssegnato(Paziente paziente) throws EccezioneDAO;
+    boolean getNumTestAssegnato(Utente paziente) throws EccezioneDAO;
 
 }

@@ -1,47 +1,34 @@
 package com.example.mindharbor.model;
 
 
+import com.example.mindharbor.enumerazioni.TipoAppuntamento;
+
+import java.time.LocalDate;
+import java.time.LocalTime;
+
 public class Appuntamento {
     private Integer idAppuntamento;
-    private String data;
-    private String ora;
+    private LocalDate data;
+    private LocalTime ora;
     private Paziente paziente;
     private Psicologo psicologo;
-    private Integer notificaRichiesta;
     private Integer statoAppuntamento;
     private Integer statoNotificaPsicologo;
     private Integer statoNotificaPaziente;
+    private TipoAppuntamento tipoAppuntamento;
 
-    public Appuntamento() {
+    public Appuntamento() {/*Costruttore vuoto*/}
+
+    public Appuntamento(LocalDate data, LocalTime ora) {
+        this.data=data;
+        this.ora=ora;
     }
 
-    public Appuntamento(String data, String ora, Integer idAppuntamento, Paziente paziente, Psicologo psicologo, Integer notificaRichiesta) {
-        this.idAppuntamento = idAppuntamento;
-        this.data = data;
-        this.ora = ora;
-        this.paziente = paziente;
-        this.psicologo = psicologo;
-        this.notificaRichiesta = notificaRichiesta;
-    }
-
-    public Appuntamento(String data, String ora, Paziente paziente) {
-        this(data, ora, null, paziente, null, null);
-    }
-
-    public Appuntamento(String data, String ora) {
-        this(data, ora, null, null, null, null);
-    }
-
-    public Appuntamento(Integer idAppuntamento, Paziente paziente, Integer statoNotificaPsicologo) {
-        this(null, null, idAppuntamento, paziente, null, statoNotificaPsicologo);
-    }
-
-    public Appuntamento(String data, String ora, Paziente paziente, Psicologo psicologo) {
-        this(data, ora, null, paziente, psicologo, null);
-    }
-
-    public Appuntamento(Paziente paziente, Psicologo psicologo) {
-        this(null, null, null, paziente, psicologo, null);
+    public Appuntamento(LocalDate data, LocalTime ora, Paziente paziente, Psicologo psicologo) {
+        this.data=data;
+        this.ora=ora;
+        this.paziente=paziente;
+        this.psicologo=psicologo;
     }
 
     public Appuntamento(Integer idAppuntamento) {
@@ -49,14 +36,17 @@ public class Appuntamento {
     }
 
     public Appuntamento(Integer idAppuntamento, Psicologo psicologo, Paziente paziente) {
-        this(null, null, idAppuntamento, paziente, psicologo, null);
+        this.idAppuntamento=idAppuntamento;
+        this.psicologo=psicologo;
+        this.paziente=paziente;
     }
 
-    public void setData(String data) {
+
+    public void setData(LocalDate data) {
         this.data = data;
     }
 
-    public void setOra(String ora) {
+    public void setOra(LocalTime ora) {
         this.ora = ora;
     }
 
@@ -64,11 +54,11 @@ public class Appuntamento {
         return idAppuntamento;
     }
 
-    public String getData() {
+    public LocalDate getData() {
         return data;
     }
 
-    public String getOra() {
+    public LocalTime getOra() {
         return ora;
     }
 
@@ -88,9 +78,6 @@ public class Appuntamento {
         this.psicologo = psicologo;
     }
 
-    public Integer getNotificaRichiesta() {
-        return notificaRichiesta;
-    }
 
     public Integer getStatoAppuntamento() {
         return statoAppuntamento;
@@ -118,6 +105,14 @@ public class Appuntamento {
 
     public void setIdAppuntamento(Integer idAppuntamento) {
         this.idAppuntamento = idAppuntamento;
+    }
+
+    public TipoAppuntamento getTipoAppuntamento() {
+        return tipoAppuntamento;
+    }
+
+    public void setTipoAppuntamento(TipoAppuntamento tipoAppuntamento) {
+        this.tipoAppuntamento = tipoAppuntamento;
     }
 }
 

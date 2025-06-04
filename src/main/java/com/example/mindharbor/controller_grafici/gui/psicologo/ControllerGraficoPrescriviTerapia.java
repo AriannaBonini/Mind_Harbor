@@ -26,7 +26,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 
 public class ControllerGraficoPrescriviTerapia implements RicevitoreControllerApplicativo, RicevitoreParametri {
@@ -153,8 +152,13 @@ public class ControllerGraficoPrescriviTerapia implements RicevitoreControllerAp
             new Timeline(new KeyFrame(Duration.seconds(3), event -> alert.close()));
         } else {
             try {
-            Date currentDate= new Date();
-            prescriviTerapiaController.aggiungiNuovaTerapia(new TerapiaBean(pazienteSelezionato.getUsername(), testoInserito,currentDate,testbean.getData()));
+
+                TerapiaBean terapiaBean= new TerapiaBean(testoInserito,null);
+                terapiaBean.setPaziente(pazienteSelezionato.getUsername());
+                terapiaBean.setDataTest(testbean.getData());
+
+                prescriviTerapiaController.aggiungiNuovaTerapia(terapiaBean);
+
             Alert alert= MessaggioDiAlert.informazione("ESITO POSITIVO", "Operazione completata", "Terapia assegnata con successo");
             new Timeline(new KeyFrame(Duration.seconds(3), event -> alert.close()));
             alert.showAndWait();

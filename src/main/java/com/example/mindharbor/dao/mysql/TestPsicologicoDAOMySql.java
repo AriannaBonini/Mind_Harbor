@@ -8,8 +8,7 @@ import com.example.mindharbor.model.Psicologo;
 import com.example.mindharbor.model.TestPsicologico;
 import com.example.mindharbor.model.Utente;
 import com.example.mindharbor.sessione.ConnectionFactory;
-import com.example.mindharbor.tipo_utente.UserType;
-
+import com.example.mindharbor.enumerazioni.TipoUtente;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +34,7 @@ public class TestPsicologicoDAOMySql extends QuerySQLTestPsicologicoDAO implemen
     }
 
     @Override
-    public TestPsicologico getNotificaPazientePerTestAssegnato(Paziente paziente) throws EccezioneDAO {
+    public TestPsicologico getNotificaPazientePerTestAssegnato(Utente paziente) throws EccezioneDAO {
         /*Questo metodo ci ritorna il numero di test da notificare al paziente sulla sua Home.*/
         int numeroNuoviTestAssegnati;
         TestPsicologico testPsicologico= new TestPsicologico();
@@ -64,7 +63,7 @@ public class TestPsicologicoDAOMySql extends QuerySQLTestPsicologicoDAO implemen
         try {
             String updateQuery;
 
-            if (utente.getUserType().equals(UserType.PAZIENTE)) {
+            if (utente.getUserType().equals(TipoUtente.PAZIENTE)) {
                 updateQuery = QuerySQLTestPsicologicoDAO.MODIFICA_STATO_NOTIFICA_PAZIENTE;
 
                 try (PreparedStatement stmt = conn.prepareStatement(updateQuery)) {
@@ -87,7 +86,7 @@ public class TestPsicologicoDAOMySql extends QuerySQLTestPsicologicoDAO implemen
     }
 
     @Override
-    public List<TestPsicologico> trovaListaTest(Paziente paziente) throws EccezioneDAO {
+    public List<TestPsicologico> trovaListaTest(Utente paziente) throws EccezioneDAO {
 
         List<TestPsicologico> testPsicologicoList = new ArrayList<>();
 
@@ -99,11 +98,12 @@ public class TestPsicologicoDAOMySql extends QuerySQLTestPsicologicoDAO implemen
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
                     TestPsicologico test = new TestPsicologico(
-                            rs.getDate(3),
+                            (rs.getDate(3).toLocalDate()),
                             rs.getInt(1),
-                            rs.getString(2),
-                            rs.getInt(4)
-                    );
+                            rs.getString(2));
+
+                    test.setSvolto(rs.getInt(4));
+
                     testPsicologicoList.add(test);
                 }
             }
@@ -146,7 +146,7 @@ public class TestPsicologicoDAOMySql extends QuerySQLTestPsicologicoDAO implemen
 
             stmt.setInt(1, testDaAggiungere.getRisultato());
             stmt.setString(2, testDaAggiungere.getPaziente().getUsername());
-            stmt.setDate(3, (java.sql.Date) testDaAggiungere.getData());
+            stmt.setDate(3, Date.valueOf(testDaAggiungere.getData()));
 
             stmt.executeUpdate();
 
@@ -156,8 +156,9 @@ public class TestPsicologicoDAOMySql extends QuerySQLTestPsicologicoDAO implemen
     }
 
     @Override
-    public Integer getNumTestSvoltiDaNotificare(Utente psicologo) throws EccezioneDAO {
-        int count = 0;
+    public TestPsicologico getNumTestSvoltiDaNotificare(Utente psicologo) throws EccezioneDAO {
+        TestPsicologico testPsicologico= new TestPsicologico();
+        int nuoviTestSvolti = 0;
 
         Connection conn = ConnectionFactory.getConnection();
         try (PreparedStatement stmt = conn.prepareStatement(QuerySQLTestPsicologicoDAO.NOTIFICA_PSICOLOGO_TEST_SVOLTI, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)) {
@@ -166,30 +167,33 @@ public class TestPsicologicoDAOMySql extends QuerySQLTestPsicologicoDAO implemen
 
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    count = rs.getInt(TOTAL);
+                    nuoviTestSvolti = rs.getInt(TOTAL);
                 }
             }
         } catch (SQLException e) {
             throw new EccezioneDAO(e.getMessage());
         }
 
-        return count;
+        testPsicologico.setStatoNotificaPsicologo(nuoviTestSvolti);
+        return testPsicologico;
     }
 
     @Override
-    public List<TestPsicologico> listaTestSvolti(Utente utentePsicologo, Paziente paziente) throws EccezioneDAO {
+    public List<TestPsicologico> listaTestSvolti(TestPsicologico testPsicologico) throws EccezioneDAO {
         List<TestPsicologico> listaTestPsicologico= new ArrayList<>();
         Connection conn = ConnectionFactory.getConnection();
         try (PreparedStatement stmt = conn.prepareStatement(QuerySQLTestPsicologicoDAO.NUMERO_TEST_SVOLTI_SENZA_PRESCRIZIONE, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)) {
 
-            stmt.setString(1, utentePsicologo.getUsername());
-            stmt.setString(2, paziente.getUsername());
+            stmt.setString(1, testPsicologico.getPsicologo().getUsername());
+            stmt.setString(2, testPsicologico.getPaziente().getUsername());
 
             try (ResultSet rs = stmt.executeQuery()) {
                 while(rs.next()) {
-                    TestPsicologico testPsicologico= new TestPsicologico(rs.getDate(1),new Psicologo(rs.getString(2)),new Paziente(rs.getString(3)));
+                    TestPsicologico testPsicologicoTrovato= new TestPsicologico(new Psicologo(rs.getString(2)),new Paziente(rs.getString(3)));
 
-                    listaTestPsicologico.add(testPsicologico);
+                    testPsicologicoTrovato.setData((rs.getDate(1)).toLocalDate());
+
+                    listaTestPsicologico.add(testPsicologicoTrovato);
                 }
             }
         } catch (SQLException e) {
@@ -200,19 +204,19 @@ public class TestPsicologicoDAOMySql extends QuerySQLTestPsicologicoDAO implemen
     }
 
     @Override
-    public List<TestPsicologico> listaTestSvoltiSenzaPrescrizione(String usernamePaziente, String usernamePsicologo) throws EccezioneDAO {
+    public List<TestPsicologico> listaTestSvoltiSenzaPrescrizione(TestPsicologico testPsicologico) throws EccezioneDAO {
         List<TestPsicologico> testSvolti = new ArrayList<>();
 
         Connection conn = ConnectionFactory.getConnection();
         try (PreparedStatement stmt = conn.prepareStatement(QuerySQLTestPsicologicoDAO.LISTA_TEST_SVOLTI_SENZA_PRESCRIZIONE, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)) {
 
-            stmt.setString(1, usernamePsicologo);
-            stmt.setString(2, usernamePaziente);
+            stmt.setString(1, testPsicologico.getPsicologo().getUsername());
+            stmt.setString(2, testPsicologico.getPaziente().getUsername());
 
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
                     TestPsicologico testSvolto = new TestPsicologico(
-                                rs.getDate(1),
+                            (rs.getDate(1)).toLocalDate(),
                                 rs.getInt(2),
                                 rs.getString(3)
                         );
@@ -247,7 +251,7 @@ public class TestPsicologicoDAOMySql extends QuerySQLTestPsicologicoDAO implemen
     }
 
     @Override
-    public boolean getNumTestAssegnato(Paziente paziente) throws EccezioneDAO {
+    public boolean getNumTestAssegnato(Utente paziente) throws EccezioneDAO {
         Connection conn = ConnectionFactory.getConnection();
 
         try (PreparedStatement stmt = conn.prepareStatement(QuerySQLTestPsicologicoDAO.TEST_ASSEGNATO_IN_DATA_ODIERNA, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)) {

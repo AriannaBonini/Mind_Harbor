@@ -1,20 +1,23 @@
 package com.example.mindharbor.model;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 public class Terapia {
     private TestPsicologico testPsicologico;
     private String prescrizione;
-    private Date dataTerapia;
+    private LocalDate dataTerapia;
     private Integer notificaPaziente;
 
-    public Terapia(TestPsicologico testPsicologico, String prescrizione, Date dataTerapia ) {
+    public Terapia(TestPsicologico testPsicologico, String prescrizione, LocalDate dataTerapia ) {
         this.testPsicologico=testPsicologico;
         this.prescrizione = prescrizione;
         this.dataTerapia=dataTerapia;
     }
 
-    public Terapia(){}
+    public Terapia(){/*Costruttore vuoto*/}
+
+
+
 
     public TestPsicologico getTestPsicologico() {
         return testPsicologico;
@@ -32,11 +35,11 @@ public class Terapia {
         this.prescrizione = terapiaStr;
     }
 
-    public Date getDataTerapia() {
+    public LocalDate getDataTerapia() {
         return dataTerapia;
     }
 
-    public void setDataTerapia(Date dataTerapia) {
+    public void setDataTerapia(LocalDate dataTerapia) {
         this.dataTerapia = dataTerapia;
     }
 

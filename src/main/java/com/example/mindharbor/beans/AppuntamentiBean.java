@@ -1,10 +1,5 @@
 package com.example.mindharbor.beans;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
-import java.time.LocalTime;
-
 public class AppuntamentiBean {
         private String data;
         private String ora;
@@ -12,22 +7,29 @@ public class AppuntamentiBean {
         private PsicologoBean psicologo;
         private Integer idAppuntamento;
         private Integer notificaRichiesta;
-        private static final DateTimeFormatter FORMATO_ORA = DateTimeFormatter.ofPattern("HH:mm");
-        private static final DateTimeFormatter FORMATO_DATA = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        private static final String FORMATO_ORA = "^\\d{2}:\\d{2}$";
+        private static final String FORMATO_DATA = "^\\d{4}-\\d{2}-\\d{2}$";
 
-    public AppuntamentiBean() {}
+    public AppuntamentiBean() {/*Costruttore vuoto*/}
 
-    public AppuntamentiBean(String data, String ora, PazienteBean paziente,PsicologoBean psicologo,Integer idAppuntamento,Integer notificaRichiesta) {
+    public AppuntamentiBean(String data, String ora, PazienteBean paziente) {
         this.data=data;
         this.ora=ora;
         this.paziente=paziente;
+    }
+    public AppuntamentiBean(String data, String ora, PsicologoBean psicologo) {
+        this.data=data;
+        this.ora=ora;
         this.psicologo=psicologo;
+    }
+
+    public AppuntamentiBean(PazienteBean paziente, Integer idAppuntamento, Integer notificaRichiesta) {
+        this.paziente=paziente;
         this.idAppuntamento=idAppuntamento;
         this.notificaRichiesta=notificaRichiesta;
     }
-    public AppuntamentiBean(String data, String ora, PazienteBean paziente) {this(data,ora,paziente,null,null,null);}
-    public AppuntamentiBean(String data, String ora, PsicologoBean psicologo) {this(data,ora,null,psicologo,null,null);}
-    public AppuntamentiBean(PazienteBean paziente, Integer idAppuntamento, Integer notificaRichiesta) {this(null,null,paziente,null,idAppuntamento,notificaRichiesta);}
+
+
 
     public void setOra(String ora) {
         if (!ora.isEmpty() && controllaFormatoOrario(ora)) {
@@ -52,22 +54,13 @@ public class AppuntamentiBean {
     public PsicologoBean getPsicologo() {return psicologo;}
     public void setPsicologo(PsicologoBean psicologo) {this.psicologo = psicologo;}
     public Integer getIdAppuntamento() {return idAppuntamento;}
+
     private boolean controllaFormatoData(String data) {
-        try {
-            LocalDate.parse(data, FORMATO_DATA);
-            return true;
-        } catch (DateTimeParseException e) {
-            return false;
-        }
+        return data.matches(FORMATO_DATA);
     }
 
     private boolean controllaFormatoOrario(String ora) {
-        try {
-            LocalTime.parse(ora, FORMATO_ORA);
-            return true;
-        } catch (DateTimeParseException e) {
-            return false;
-        }
+        return ora.matches(FORMATO_ORA);
     }
 
 }

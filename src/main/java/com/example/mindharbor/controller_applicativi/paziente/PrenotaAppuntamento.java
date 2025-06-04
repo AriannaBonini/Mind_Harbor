@@ -160,8 +160,8 @@ public class PrenotaAppuntamento {
         AppuntamentoDAO appuntamentoDAO= daoFactoryFacade.getAppuntamentoDAO();
 
         appuntamentiBean.getPaziente().setUsername(SessionManager.getInstance().getPazienteCorrente().getUsername());
-        Appuntamento appuntamento= new Appuntamento(appuntamentiBean.getData(),
-                appuntamentiBean.getOra(),
+        Appuntamento appuntamento= new Appuntamento(LocalDate.parse(appuntamentiBean.getData()),
+                LocalTime.parse(appuntamentiBean.getOra()),
                 new Paziente(appuntamentiBean.getPaziente().getUsername()),
                 new Psicologo(appuntamentiBean.getPsicologo().getUsername()));
 
@@ -218,7 +218,7 @@ public class PrenotaAppuntamento {
                 AppuntamentiBean ricBean= new AppuntamentiBean(
                         new PazienteBean(ric.getPaziente().getUsername(),ric.getPaziente().getNome(),ric.getPaziente().getCognome(),ric.getPaziente().getGenere()),
                         ric.getIdAppuntamento(),
-                        ric.getNotificaRichiesta());
+                        ric.getStatoNotificaPsicologo());
 
                 listaRichiesteBean.add(ricBean);
             }
@@ -235,8 +235,8 @@ public class PrenotaAppuntamento {
         try {
             richiesta = appuntamentoDAO.getInfoRichiesta(new Appuntamento(richiestaAppuntamento.getIdAppuntamento()));
 
-            richiestaAppuntamento.setOra(richiesta.getOra());
-            richiestaAppuntamento.setData(richiesta.getData());
+            richiestaAppuntamento.setOra(String.valueOf(richiesta.getOra()));
+            richiestaAppuntamento.setData(String.valueOf(richiesta.getData()));
 
             return richiestaAppuntamento;
         }catch (EccezioneDAO e) {
@@ -258,7 +258,10 @@ public class PrenotaAppuntamento {
         DAOFactoryFacade daoFactoryFacade=DAOFactoryFacade.getInstance();
         AppuntamentoDAO appuntamentoDAO= daoFactoryFacade.getAppuntamentoDAO();
         try {
-            if(!appuntamentoDAO.getDisp(richiestaAppuntamentoSelezionata.getIdAppuntamento(),SessionManager.getInstance().getPsicologoCorrente())) {
+            Appuntamento appuntamento= new Appuntamento(richiestaAppuntamentoSelezionata.getIdAppuntamento());
+            appuntamento.setPsicologo(SessionManager.getInstance().getPsicologoCorrente());
+
+            if(!appuntamentoDAO.getDisp(appuntamento)) {
                 return true;
             }
             return !BoundaryMockAPICalendario.calendario();

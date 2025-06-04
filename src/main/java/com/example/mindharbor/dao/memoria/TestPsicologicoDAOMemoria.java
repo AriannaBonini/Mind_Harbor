@@ -5,7 +5,7 @@ import com.example.mindharbor.eccezioni.EccezioneDAO;
 import com.example.mindharbor.model.Paziente;
 import com.example.mindharbor.model.TestPsicologico;
 import com.example.mindharbor.model.Utente;
-import com.example.mindharbor.tipo_utente.UserType;
+import com.example.mindharbor.enumerazioni.TipoUtente;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -16,7 +16,12 @@ public class TestPsicologicoDAOMemoria implements TestPsicologicoDAO {
     @Override
     public void assegnaTest(TestPsicologico test) throws EccezioneDAO {
         try {
-            TestPsicologico testDaInserire = new TestPsicologico(new java.sql.Date(System.currentTimeMillis()), 0, test.getPsicologo(), test.getPaziente(), test.getTest(), 0, 1, 0);
+            TestPsicologico testDaInserire = new TestPsicologico(LocalDate.now(), test.getPsicologo(), test.getPaziente());
+
+            testDaInserire.setTest(test.getTest());
+            testDaInserire.setStatoNotificaPaziente(1);
+            testDaInserire.setStatoNotificaPsicologo(0);
+
             testPsicologiciInMemoria.add(testDaInserire);
         }catch (Exception e) {
             throw new EccezioneDAO("Errore durante l'inserimento del nuovo test: " + e.getMessage());
@@ -24,7 +29,7 @@ public class TestPsicologicoDAOMemoria implements TestPsicologicoDAO {
     }
 
     @Override
-    public TestPsicologico getNotificaPazientePerTestAssegnato(Paziente paziente) throws EccezioneDAO {
+    public TestPsicologico getNotificaPazientePerTestAssegnato(Utente paziente) throws EccezioneDAO {
         TestPsicologico testPsicologico= new TestPsicologico();
         int numeroNuoviTestAssegnati = 0;
         try {
@@ -33,7 +38,7 @@ public class TestPsicologicoDAOMemoria implements TestPsicologicoDAO {
                     numeroNuoviTestAssegnati++;
                 }
             }
-            testPsicologico.setStatoNotificaPsicologo(numeroNuoviTestAssegnati);
+            testPsicologico.setStatoNotificaPaziente(numeroNuoviTestAssegnati);
             return testPsicologico;
         }catch (Exception e) {
             throw new EccezioneDAO("Errore durante il conteggio delle notifiche del paziente: " + e.getMessage());
@@ -43,7 +48,7 @@ public class TestPsicologicoDAOMemoria implements TestPsicologicoDAO {
     @Override
     public void modificaStatoNotificaTest(Utente utente, Paziente pazienteSelezionato) throws EccezioneDAO{
         try {
-            if (utente.getUserType().equals(UserType.PAZIENTE)) {
+            if (utente.getUserType().equals(TipoUtente.PAZIENTE)) {
                 for (TestPsicologico t : testPsicologiciInMemoria) {
                     if (t.getPaziente().getUsername().equals(utente.getUsername()) && t.getStatoNotificaPaziente() == 1) {
                         t.setStatoNotificaPaziente(0);
@@ -64,7 +69,7 @@ public class TestPsicologicoDAOMemoria implements TestPsicologicoDAO {
     }
 
     @Override
-    public List<TestPsicologico> trovaListaTest(Paziente paziente) throws EccezioneDAO{
+    public List<TestPsicologico> trovaListaTest(Utente paziente) throws EccezioneDAO{
         List<TestPsicologico> listaTest = new ArrayList<>();
         try {
             for (TestPsicologico t : testPsicologiciInMemoria) {
@@ -72,9 +77,9 @@ public class TestPsicologicoDAOMemoria implements TestPsicologicoDAO {
                     TestPsicologico test = new TestPsicologico(
                             t.getData(),
                             t.getRisultato(),
-                            t.getTest(),
-                            t.getSvolto()
-                    );
+                            t.getTest());
+
+                    test.setSvolto(t.getSvolto());
 
                     listaTest.add(test);
                 }
@@ -88,14 +93,14 @@ public class TestPsicologicoDAOMemoria implements TestPsicologicoDAO {
     @Override
     public TestPsicologico trovaTestPassati(TestPsicologico testDaAggiungere) throws EccezioneDAO {
         TestPsicologico ultimoTestPsicologicoSvolto = new TestPsicologico();
-        Date data = null;
+        LocalDate data = null;
         try {
             for (TestPsicologico t : testPsicologiciInMemoria) {
                 if (t.getPaziente().getUsername().equals(testDaAggiungere.getPaziente().getUsername())
                         && t.getTest().equals(testDaAggiungere.getTest())
                         && t.getSvolto() == 1) {
-                    Date dataTest = t.getData();
-                    if (dataTest.after(data)) {
+                    LocalDate dataTest = t.getData();
+                    if (dataTest.isAfter(data)) {
                         data = dataTest;
                         ultimoTestPsicologicoSvolto.setRisultato(t.getRisultato());
                     }
@@ -126,32 +131,36 @@ public class TestPsicologicoDAOMemoria implements TestPsicologicoDAO {
     }
 
     @Override
-    public Integer getNumTestSvoltiDaNotificare(Utente psicologo) throws EccezioneDAO {
-        int count = 0;
+    public TestPsicologico getNumTestSvoltiDaNotificare(Utente psicologo) throws EccezioneDAO {
+        TestPsicologico testPsicologico= new TestPsicologico();
+        int nuoviTestSvolti = 0;
         try {
         for (TestPsicologico t : testPsicologiciInMemoria) {
             if (t.getPsicologo().getUsername().equals(psicologo.getUsername()) && t.getStatoNotificaPsicologo() == 1) {
-                count++;
+                nuoviTestSvolti++;
             }
         }
-        return count;
+        testPsicologico.setStatoNotificaPsicologo(nuoviTestSvolti);
+        return testPsicologico;
     }catch (Exception e) {
             throw new EccezioneDAO("Errore durante la ricerca dei test svolti da notificare: " + e.getMessage());
         }
     }
 
     @Override
-    public List<TestPsicologico> listaTestSvolti(Utente utentePsicologo, Paziente paziente) throws EccezioneDAO {
+    public List<TestPsicologico> listaTestSvolti(TestPsicologico testPsicologico) throws EccezioneDAO {
         List<TestPsicologico> listaTestPsicologico= new ArrayList<>();
 
         try {
             for (TestPsicologico test : testPsicologiciInMemoria) {
                 if (test.getSvolto() == 1
-                        && test.getPsicologo().getUsername().equals(utentePsicologo.getUsername())
-                        && test.getPaziente().getUsername().equals(paziente.getUsername())) {
+                        && test.getPsicologo().getUsername().equals(testPsicologico.getPsicologo().getUsername())
+                        && test.getPaziente().getUsername().equals(testPsicologico.getPaziente().getUsername())) {
 
-                    TestPsicologico testPsicologico=new TestPsicologico(test.getData(),test.getPsicologo(),test.getPaziente());
-                    listaTestPsicologico.add(testPsicologico);
+                    TestPsicologico testPsicologicoTrovato=new TestPsicologico(test.getPsicologo(),test.getPaziente());
+
+                    testPsicologicoTrovato.setData(test.getData());
+                    listaTestPsicologico.add(testPsicologicoTrovato);
                 }
             }
             return listaTestPsicologico;
@@ -163,14 +172,14 @@ public class TestPsicologicoDAOMemoria implements TestPsicologicoDAO {
 
 
     @Override
-    public List<TestPsicologico> listaTestSvoltiSenzaPrescrizione(String usernamePaziente, String usernamePsicologo) throws EccezioneDAO{
+    public List<TestPsicologico> listaTestSvoltiSenzaPrescrizione(TestPsicologico testPsicologico) throws EccezioneDAO{
         List<TestPsicologico> testSvolti = new ArrayList<>();
 
         try{
             for (TestPsicologico test : testPsicologiciInMemoria) {
                 if (test.getSvolto() == 1
-                        && test.getPaziente().getUsername().equals(usernamePaziente)
-                        && test.getPsicologo().getUsername().equals(usernamePsicologo)) {
+                        && test.getPaziente().getUsername().equals(testPsicologico.getPaziente().getUsername())
+                        && test.getPsicologo().getUsername().equals(testPsicologico.getPsicologo().getUsername())) {
 
                     TestPsicologico testSvolto = new TestPsicologico(
                                 test.getData(),
@@ -206,14 +215,14 @@ public class TestPsicologicoDAOMemoria implements TestPsicologicoDAO {
     }
 
     @Override
-    public boolean getNumTestAssegnato(Paziente paziente) throws EccezioneDAO {
+    public boolean getNumTestAssegnato(Utente paziente) throws EccezioneDAO {
         LocalDate oggi = LocalDate.now();
 
         try {
             for (TestPsicologico t : testPsicologiciInMemoria) {
                 if (t.getPaziente().getUsername().equals(paziente.getUsername())) {
 
-                    LocalDate dataTest = ((java.sql.Date) t.getData()).toLocalDate();
+                    LocalDate dataTest = t.getData();
                     if (dataTest.equals(oggi)) {
                         return true;
                     }

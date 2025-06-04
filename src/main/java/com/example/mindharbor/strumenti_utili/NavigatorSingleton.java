@@ -1,9 +1,5 @@
 package com.example.mindharbor.strumenti_utili;
 
-import com.example.mindharbor.beans.AppuntamentiBean;
-import com.example.mindharbor.beans.PazienteBean;
-import com.example.mindharbor.beans.PsicologoBean;
-import com.example.mindharbor.beans.TestBean;
 import com.example.mindharbor.controller_grafici.interfacce.RicevitoreControllerApplicativo;
 import com.example.mindharbor.controller_grafici.interfacce.RicevitoreParametri;
 import javafx.fxml.FXMLLoader;
@@ -56,13 +52,14 @@ public class NavigatorSingleton {
 
         Object controllerGrafico = loader.getController();
 
-        if (controllerGrafico instanceof RicevitoreControllerApplicativo && controllerApplicativo != null) {
-            ((RicevitoreControllerApplicativo) controllerGrafico).setControllerApplicativo(controllerApplicativo);
+        if (controllerGrafico instanceof RicevitoreControllerApplicativo ricevitoreControllerApplicativo && controllerApplicativo != null) {
+            ricevitoreControllerApplicativo.setControllerApplicativo(controllerApplicativo);
         }
 
-        if (controllerGrafico instanceof RicevitoreParametri && parametri != null) {
-            ((RicevitoreParametri) controllerGrafico).setParametri(parametri);
+        if (controllerGrafico instanceof RicevitoreParametri ricevitoreParametri && parametri != null) {
+            ricevitoreParametri.setParametri(parametri);
         }
+
 
         Stage stage = new Stage();
         stage.setScene(new Scene(root));

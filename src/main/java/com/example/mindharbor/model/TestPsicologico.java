@@ -1,11 +1,9 @@
 package com.example.mindharbor.model;
 
 import java.time.LocalDate;
-import java.time.ZoneId;
-import java.util.Date;
 
 public class TestPsicologico {
-    private Date data;
+    private LocalDate data;
     private Integer risultato;
     private Psicologo psicologo;
     private Paziente paziente;
@@ -16,50 +14,31 @@ public class TestPsicologico {
 
     public TestPsicologico() {/*Costruttore vuoto*/}
 
-    public TestPsicologico(Date data, Integer risultato, Psicologo psicologo, Paziente paziente, String test, Integer svolto) {
-        this.data = data;
-        this.risultato = risultato;
-        this.psicologo= psicologo;
+    public TestPsicologico(LocalDate data, Psicologo psicologo, Paziente paziente) {
+        this.data=data;
+        this.psicologo=psicologo;
         this.paziente=paziente;
-        this.test=test;
-        this.svolto=svolto;
     }
 
-    public TestPsicologico(Date data, Integer risultato, Psicologo psicologo, Paziente paziente, String test, Integer svolto,Integer statoNotificaPaziente, Integer statoNotificaPsicologo) {
-        this.data = data;
-        this.risultato = risultato;
-        this.psicologo= psicologo;
+    public TestPsicologico(Psicologo psicologo) {this.psicologo= psicologo;}
+
+    public TestPsicologico(Psicologo psicologo, Paziente paziente) {
+        this.psicologo=psicologo;
         this.paziente=paziente;
+    }
+
+    public TestPsicologico(LocalDate data, Integer risultato, String test) {
+        this.data=data;
+        this.risultato=risultato;
         this.test=test;
-        this.svolto=svolto;
-        this.statoNotificaPaziente=statoNotificaPaziente;
-        this.statoNotificaPsicologo=statoNotificaPsicologo;
-    }
-    public TestPsicologico(Date data, Psicologo psicologo, Paziente paziente) {this(data,0,psicologo,paziente,null,null);}
-    public TestPsicologico(Psicologo psicologo, Paziente paziente, String test) {this(null,null,psicologo,paziente,test,null);}
-    public TestPsicologico(Psicologo psicologo) {
-        this.psicologo= psicologo;
-    }
-    public TestPsicologico(Date data, Integer risultato, String test, Integer svolto) {this(data,risultato,null,null,test,svolto);}
-    public TestPsicologico(Date data, Integer risultato, String test) {this(data,risultato,null,null,test,null);}
-
-    public LocalDate convertiInLocalDate(Date date) {
-        // Converti java.util.Date a LocalDate
-        if (!(date instanceof java.sql.Date)) {
-            return date.toInstant()
-                    .atZone(ZoneId.systemDefault())
-                    .toLocalDate();
-        }
-        // Converte la java.sql.Date in java.util.Date
-        return ((java.sql.Date) date).toLocalDate();
     }
 
 
-    public Date getData() {
+    public LocalDate getData() {
         return data;
     }
 
-    public void setData(Date data) {
+    public void setData(LocalDate data) {
         this.data = data;
     }
 

@@ -70,7 +70,7 @@ public class PazienteDAOMemoria implements PazienteDAO {
     }
 
     @Override
-    public String getUsernamePsicologo(Utente paziente) throws EccezioneDAO {
+    public Psicologo getUsernamePsicologo(Utente paziente) throws EccezioneDAO {
         try {
             Paziente pazienteInMemoria = pazientiInMemoria.get(paziente.getUsername());
 
@@ -82,7 +82,7 @@ public class PazienteDAOMemoria implements PazienteDAO {
                 return null;
             }
 
-            return pazienteInMemoria.getPsicologo().getUsername();
+            return pazienteInMemoria.getPsicologo();
 
         } catch (Exception e) {
             throw new EccezioneDAO("Errore durante il recupero dello username dello psicologo: " + e.getMessage(), e);

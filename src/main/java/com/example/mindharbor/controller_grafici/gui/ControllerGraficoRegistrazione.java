@@ -8,7 +8,7 @@ import com.example.mindharbor.strumenti_utili.supporto_gui.MessaggioDiAlert;
 import com.example.mindharbor.strumenti_utili.supporto_gui.LabelTemporanea;
 import com.example.mindharbor.strumenti_utili.NavigatorSingleton;
 import com.example.mindharbor.strumenti_utili.costanti.Costanti;
-import com.example.mindharbor.tipo_utente.UserType;
+import com.example.mindharbor.enumerazioni.TipoUtente;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -59,7 +59,7 @@ public class ControllerGraficoRegistrazione {
 
     public void initialize() {
         registrazioneController = new RegistrazioneController();
-        campoTipoUtente.getItems().addAll(UserType.PAZIENTE.getId(),UserType.PSICOLOGO.getId());
+        campoTipoUtente.getItems().addAll(TipoUtente.PAZIENTE.getId(), TipoUtente.PSICOLOGO.getId());
     }
 
 

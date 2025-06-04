@@ -1,7 +1,7 @@
 package com.example.mindharbor.controller_grafici.gui;
 
 import com.example.mindharbor.beans.InfoUtenteBean;
-import com.example.mindharbor.tipo_utente.UserType;
+import com.example.mindharbor.enumerazioni.TipoUtente;
 import com.example.mindharbor.beans.CredenzialiLoginBean;
 import com.example.mindharbor.eccezioni.EccezioneDAO;
 import com.example.mindharbor.eccezioni.EccezioneSessioneUtente;
@@ -66,7 +66,7 @@ public class ControllerGraficoLogin {
             if (infoUtenteLoggato == null) {
                 LabelTemporanea.duration(info, "Credenziali errate");
             } else {
-                if (infoUtenteLoggato.getUserType().equals(UserType.PAZIENTE)) {
+                if (infoUtenteLoggato.getTipoUtente().equals(TipoUtente.PAZIENTE)) {
                     homePaziente();
                 } else {
                     homePsicologo();

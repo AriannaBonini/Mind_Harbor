@@ -17,7 +17,7 @@ module com.example.mindharbor {
     exports com.example.mindharbor.dao;
     exports com.example.mindharbor.eccezioni;
     exports com.example.mindharbor.model;
-    exports com.example.mindharbor.tipo_utente;
+    exports com.example.mindharbor.enumerazioni;
     exports com.example.mindharbor.controller_applicativi.paziente;
     opens com.example.mindharbor.controller_applicativi.paziente to javafx.fxml;
     exports com.example.mindharbor.controller_applicativi.psicologo;

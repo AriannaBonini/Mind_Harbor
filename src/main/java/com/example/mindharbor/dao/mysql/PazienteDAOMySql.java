@@ -5,6 +5,7 @@ import com.example.mindharbor.dao.mysql.query_sql.QuerySQLPazienteDAO;
 import com.example.mindharbor.eccezioni.EccezioneDAO;
 import com.example.mindharbor.model.Appuntamento;
 import com.example.mindharbor.model.Paziente;
+import com.example.mindharbor.model.Psicologo;
 import com.example.mindharbor.model.Utente;
 import com.example.mindharbor.sessione.ConnectionFactory;
 import java.sql.Connection;
@@ -92,8 +93,8 @@ public class PazienteDAOMySql extends QuerySQLPazienteDAO implements PazienteDAO
     }
 
     @Override
-    public String getUsernamePsicologo(Utente paziente) throws EccezioneDAO {
-        String usernamePsicologo = null;
+    public Psicologo getUsernamePsicologo(Utente paziente) throws EccezioneDAO {
+        Psicologo psicologo= new Psicologo();
         Connection conn = ConnectionFactory.getConnection();
 
         try (PreparedStatement stmt = conn.prepareStatement(QuerySQLPazienteDAO.USERNAME_PSICOLOGO, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)) {
@@ -102,14 +103,14 @@ public class PazienteDAOMySql extends QuerySQLPazienteDAO implements PazienteDAO
 
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    usernamePsicologo = rs.getString(1);
+                    psicologo.setUsername(rs.getString(1));
                 }
             }
         } catch (SQLException e) {
             throw new EccezioneDAO(e.getMessage());
         }
 
-        return usernamePsicologo;
+        return psicologo;
     }
 
     @Override

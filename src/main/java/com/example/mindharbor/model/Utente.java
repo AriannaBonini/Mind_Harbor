@@ -1,30 +1,47 @@
 package com.example.mindharbor.model;
 
-import com.example.mindharbor.tipo_utente.UserType;
+import com.example.mindharbor.enumerazioni.TipoUtente;
 
     public class Utente {
         private String username;
         private String nome;
         private String cognome;
-        private UserType userType;
+        private TipoUtente tipoUtente;
         private String genere;
         private String password;
 
-        public Utente() {}
+        public Utente() {/*Costruttore vuoto*/}
 
-        public Utente(String username, String nome, String cognome, UserType userType, String genere, String password ) {
+        public Utente(String username, String nome, String cognome, TipoUtente tipoUtente, String genere, String password ) {
             this.username=username;
             this.nome=nome;
             this.cognome=cognome;
-            this.userType=userType;
+            this.tipoUtente = tipoUtente;
             this.genere=genere;
             this.password=password;
         }
-        public Utente(String username, String nome, String cognome, UserType userType) {this(username,nome,cognome,userType,null,null);}
-        public Utente(String username, String password) {this(username,null,null,null,null,password);}
-        public Utente(String username, String nome, String cognome, UserType userType, String genere) {this(username,nome,cognome,userType,genere,null);}
         public Utente(String username) {this.username=username;}
-        public Utente(String username, String nome, String cognome, String genere) {this(username,nome,cognome,null,genere,null);}
+        public Utente(String username, String nome, String cognome, TipoUtente tipoUtente) {
+            this.username=username;
+            this.nome=nome;
+            this.cognome=cognome;
+            this.tipoUtente = tipoUtente;
+        }
+
+        public Utente(String username, String password) {
+            this.username=username;
+            this.password=password;
+        }
+
+        public Utente(String username, String nome, String cognome, String genere) {
+            this.username=username;
+            this.nome=nome;
+            this.cognome=cognome;
+            this.genere=genere;
+        }
+
+
+
 
         public String getGenere() {return genere;}
         public void setGenere(String genere) {this.genere = genere;}
@@ -35,7 +52,7 @@ import com.example.mindharbor.tipo_utente.UserType;
         public void setNome(String nome) {this.nome = nome;}
         public String getCognome() {return cognome;}
         public void setCognome(String cognome) {this.cognome = cognome;}
-        public UserType getUserType() {return userType;}
+        public TipoUtente getUserType() {return tipoUtente;}
         public void setPassword(String password) {this.password=password;}
     }
 

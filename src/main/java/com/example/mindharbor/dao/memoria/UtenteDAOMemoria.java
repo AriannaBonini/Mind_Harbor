@@ -5,7 +5,7 @@ import com.example.mindharbor.eccezioni.EccezioneDAO;
 import com.example.mindharbor.model.Appuntamento;
 import com.example.mindharbor.model.Psicologo;
 import com.example.mindharbor.model.Utente;
-import com.example.mindharbor.tipo_utente.UserType;
+import com.example.mindharbor.enumerazioni.TipoUtente;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,12 +31,12 @@ public class UtenteDAOMemoria implements UtenteDAO {
     }
 
     protected Utente getTipoUtente(Utente utente) {
-        UserType tipo;
+        TipoUtente tipo;
 
         if ("Paziente".equalsIgnoreCase(utente.getUserType().toString())) {
-            tipo = UserType.PAZIENTE;
+            tipo = TipoUtente.PAZIENTE;
         } else {
-            tipo = UserType.PSICOLOGO;
+            tipo = TipoUtente.PSICOLOGO;
         }
 
         return new Utente(

@@ -6,7 +6,7 @@ import com.example.mindharbor.model.Appuntamento;
 import com.example.mindharbor.model.Psicologo;
 import com.example.mindharbor.model.Utente;
 import com.example.mindharbor.strumenti_utili.costanti.Costanti;
-import com.example.mindharbor.tipo_utente.UserType;
+import com.example.mindharbor.enumerazioni.TipoUtente;
 import com.example.mindharbor.strumenti_utili.costanti.CostantiLetturaScrittura;
 import com.example.mindharbor.strumenti_utili.UtilitiesCSV;
 import java.util.ArrayList;
@@ -58,9 +58,9 @@ public class UtenteDAOCsv implements UtenteDAO {
             if (colonne[CostantiUtenteCvs.INDICE_UTENTE_USERNAME].equals(credenzialiUtenteLogin.getUsername()) &&
                     colonne[CostantiUtenteCvs.INDICE_UTENTE_PASSWORD].equals(credenzialiUtenteLogin.getPassword())) {
                 if(Objects.equals(colonne[CostantiUtenteCvs.INDICE_UTENTE_CATEGORIA], "Paziente")) {
-                    utente = new Utente(colonne[CostantiUtenteCvs.INDICE_UTENTE_USERNAME], colonne[CostantiUtenteCvs.INDICE_UTENTE_NOME], colonne[CostantiUtenteCvs.INDICE_UTENTE_COGNOME], UserType.PAZIENTE);
+                    utente = new Utente(colonne[CostantiUtenteCvs.INDICE_UTENTE_USERNAME], colonne[CostantiUtenteCvs.INDICE_UTENTE_NOME], colonne[CostantiUtenteCvs.INDICE_UTENTE_COGNOME], TipoUtente.PAZIENTE);
                 } else {
-                    utente = new Utente(colonne[CostantiUtenteCvs.INDICE_UTENTE_USERNAME], colonne[CostantiUtenteCvs.INDICE_UTENTE_NOME], colonne[CostantiUtenteCvs.INDICE_UTENTE_COGNOME], UserType.PSICOLOGO);
+                    utente = new Utente(colonne[CostantiUtenteCvs.INDICE_UTENTE_USERNAME], colonne[CostantiUtenteCvs.INDICE_UTENTE_NOME], colonne[CostantiUtenteCvs.INDICE_UTENTE_COGNOME], TipoUtente.PSICOLOGO);
                 }
                 break;
             }

@@ -4,6 +4,7 @@ import com.example.mindharbor.dao.PazienteDAO;
 import com.example.mindharbor.eccezioni.EccezioneDAO;
 import com.example.mindharbor.model.Appuntamento;
 import com.example.mindharbor.model.Paziente;
+import com.example.mindharbor.model.Psicologo;
 import com.example.mindharbor.model.Utente;
 import com.example.mindharbor.strumenti_utili.costanti.CostantiLetturaScrittura;
 import com.example.mindharbor.strumenti_utili.UtilitiesCSV;
@@ -69,8 +70,8 @@ public class PazienteDAOCsv implements PazienteDAO {
     }
 
     @Override
-    public String getUsernamePsicologo(Utente paziente) throws EccezioneDAO {
-        String usernamePsicologo = null;
+    public Psicologo getUsernamePsicologo(Utente paziente) throws EccezioneDAO {
+        Psicologo psicologo = new Psicologo();
 
         List<String[]> righeCSV;
         try {
@@ -82,12 +83,12 @@ public class PazienteDAOCsv implements PazienteDAO {
         for (String[] colonne : righeCSV) {
             if (colonne[CostantiPazienteCsv.INDICE_PAZIENTE_USERNAME].equals(paziente.getUsername())) {
                 if (!colonne[CostantiPazienteCsv.INDICE_PSICOLOGO_USERNAME].isEmpty()) {
-                    usernamePsicologo = colonne[CostantiPazienteCsv.INDICE_PSICOLOGO_USERNAME];
+                    psicologo.setUsername(colonne[CostantiPazienteCsv.INDICE_PSICOLOGO_USERNAME]);
                 }
                 break;
             }
         }
-        return usernamePsicologo;
+        return psicologo;
     }
 
 

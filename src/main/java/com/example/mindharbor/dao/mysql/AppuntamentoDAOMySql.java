@@ -3,85 +3,84 @@ package com.example.mindharbor.dao.mysql;
 import com.example.mindharbor.dao.AppuntamentoDAO;
 import com.example.mindharbor.dao.mysql.query_sql.QuerySQLAppuntamentoDAO;
 import com.example.mindharbor.eccezioni.EccezioneDAO;
-import com.example.mindharbor.model.Psicologo;
+import com.example.mindharbor.enumerazioni.TipoAppuntamento;
 import com.example.mindharbor.model.Utente;
 import com.example.mindharbor.model.Appuntamento;
 import com.example.mindharbor.model.Paziente;
 import com.example.mindharbor.sessione.ConnectionFactory;
 import java.sql.*;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
 public class AppuntamentoDAOMySql extends QuerySQLAppuntamentoDAO implements AppuntamentoDAO {
 
     @Override
-    public List<Appuntamento>  trovaAppuntamentiPaziente(Utente paziente, String selectedTabName) throws EccezioneDAO {
-        List<Appuntamento> appuntamentoPazienteList = new ArrayList<>();
+    public List<Appuntamento>  trovaAppuntamentiPaziente(Appuntamento appuntamento) throws EccezioneDAO {
+        List<Appuntamento> listaAppuntamentiPaziente = new ArrayList<>();
+        String sql;
 
-        String sql = QuerySQLAppuntamentoDAO.TROVA_APPUNTAMENTI_PAZIENTE;
-
-        if (selectedTabName.equals("IN PROGRAMMA")) {
-            sql += QuerySQLAppuntamentoDAO.TROVA_APPUNTAMENTI_IN_PROGRAMMA;
+        if (appuntamento.getTipoAppuntamento()== TipoAppuntamento.IN_PROGRAMMA) {
+            sql = QuerySQLAppuntamentoDAO.TROVA_APPUNTAMENTI_PAZIENTE_IN_PROGRAMMA;
         } else {
-            sql += QuerySQLAppuntamentoDAO.TROVA_APPUNTAMENTI_PASSATI;
+            sql = QuerySQLAppuntamentoDAO.TROVA_APPUNTAMENTI_PAZIENTE_PASSATI;
         }
 
         Connection conn = ConnectionFactory.getConnection();
 
         try (PreparedStatement stmt = conn.prepareStatement(sql, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)) {
-            stmt.setString(1, paziente.getUsername());
+            stmt.setString(1, appuntamento.getPaziente().getUsername());
 
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
-                    Appuntamento appuntamento = new Appuntamento(
-                            rs.getString(1),
-                            rs.getString(2)
+                    Appuntamento appuntamentoTrovato = new Appuntamento(
+                            LocalDate.parse(rs.getString(1)),
+                            LocalTime.parse(rs.getString(2))
                     );
 
-                    appuntamentoPazienteList.add(appuntamento);
+                    listaAppuntamentiPaziente.add(appuntamentoTrovato);
                 }
             }
         } catch (SQLException e) {
             throw new EccezioneDAO(e.getMessage());
         }
 
-        return appuntamentoPazienteList;
+        return listaAppuntamentiPaziente;
     }
 
     @Override
-    public List<Appuntamento> trovaAppuntamentiPsicologo(Utente psicologo, String selectedTabName) throws EccezioneDAO {
-        List<Appuntamento> appuntamentoPsicologoList = new ArrayList<>();
+    public List<Appuntamento> trovaAppuntamentiPsicologo(Appuntamento appuntamento) throws EccezioneDAO {
+        List<Appuntamento> listaAppuntamentiPsicologo = new ArrayList<>();
+        String sql;
 
-        String sql = QuerySQLAppuntamentoDAO.TROVA_APPUNTAMENTI_PSICOLOGO;
-
-        if (selectedTabName.equals("IN PROGRAMMA")) {
-            sql += QuerySQLAppuntamentoDAO.TROVA_APPUNTAMENTI_IN_PROGRAMMA;
+        if (appuntamento.getTipoAppuntamento()==TipoAppuntamento.IN_PROGRAMMA) {
+            sql = QuerySQLAppuntamentoDAO.TROVA_APPUNTAMENTI_PSICOLOGO_IN_PROGRAMMA;
         } else {
-            sql += QuerySQLAppuntamentoDAO.TROVA_APPUNTAMENTI_PASSATI;
+            sql = QuerySQLAppuntamentoDAO.TROVA_APPUNTAMENTI_PSICOLOGO_PASSATI;
         }
-
 
         Connection conn = ConnectionFactory.getConnection();
 
         try (PreparedStatement stmt = conn.prepareStatement(sql, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)) {
-            stmt.setString(1, psicologo.getUsername());
+            stmt.setString(1, appuntamento.getPsicologo().getUsername());
 
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
-                    Appuntamento appuntamento = new Appuntamento(
-                            rs.getString(1),
-                            rs.getString(2),
-                            new Paziente(rs.getString(3))
-                    );
+                    Appuntamento appuntamentoTrovato = new Appuntamento(
+                            LocalDate.parse(rs.getString(1)),
+                            LocalTime.parse(rs.getString(2)));
 
-                    appuntamentoPsicologoList.add(appuntamento);
+                    appuntamentoTrovato.setPaziente(new Paziente(rs.getString(3)));
+
+                    listaAppuntamentiPsicologo.add(appuntamentoTrovato);
                 }
             }
         } catch (SQLException e) {
             throw new EccezioneDAO(e.getMessage());
         }
 
-        return appuntamentoPsicologoList;
+        return listaAppuntamentiPsicologo;
     }
 
     @Override
@@ -91,7 +90,7 @@ public class AppuntamentoDAOMySql extends QuerySQLAppuntamentoDAO implements App
         try (PreparedStatement stmt = conn.prepareStatement(QuerySQLAppuntamentoDAO.INSERISCI_RICHIESTA_APPUNTAMENTO)) {
 
             stmt.setDate(1, Date.valueOf(appuntamento.getData()));
-            stmt.setString(2, appuntamento.getOra());
+            stmt.setString(2, String.valueOf(appuntamento.getOra()));
             stmt.setString(3, appuntamento.getPaziente().getUsername());
             stmt.setString(4, appuntamento.getPsicologo().getUsername());
 
@@ -103,7 +102,7 @@ public class AppuntamentoDAOMySql extends QuerySQLAppuntamentoDAO implements App
     }
 
     @Override
-    public Appuntamento notificheNuoviAppuntamentiPaziente(Paziente paziente) throws EccezioneDAO {
+    public Appuntamento notificheNuoviAppuntamentiPaziente(Utente paziente) throws EccezioneDAO {
         Appuntamento appuntamento = new Appuntamento();
 
         Connection conn = ConnectionFactory.getConnection();
@@ -126,8 +125,8 @@ public class AppuntamentoDAOMySql extends QuerySQLAppuntamentoDAO implements App
     }
 
     @Override
-    public Appuntamento notificheNuoviAppuntamentiPsicologo(Psicologo psicologo) throws EccezioneDAO {
-        Appuntamento appuntamento = null;
+    public Appuntamento notificheNuoviAppuntamentiPsicologo(Utente psicologo) throws EccezioneDAO {
+        Appuntamento appuntamento = new Appuntamento();
 
         Connection conn = ConnectionFactory.getConnection();
 
@@ -137,8 +136,7 @@ public class AppuntamentoDAOMySql extends QuerySQLAppuntamentoDAO implements App
 
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    appuntamento = new Appuntamento();
-                    appuntamento.setStatoNotificaPaziente(rs.getInt("Totale"));
+                    appuntamento.setStatoNotificaPsicologo(rs.getInt("Totale"));
                 }
             }
 
@@ -153,8 +151,8 @@ public class AppuntamentoDAOMySql extends QuerySQLAppuntamentoDAO implements App
 
 
     @Override
-    public List<Appuntamento> trovaRichiesteAppuntamento(Psicologo psicologo) throws EccezioneDAO {
-        List<Appuntamento> richiesteAppuntamento = new ArrayList<>();
+    public List<Appuntamento> trovaRichiesteAppuntamento(Utente psicologo) throws EccezioneDAO {
+        List<Appuntamento> listaRichiesteAppuntamento = new ArrayList<>();
 
         Connection conn = ConnectionFactory.getConnection();
 
@@ -163,19 +161,19 @@ public class AppuntamentoDAOMySql extends QuerySQLAppuntamentoDAO implements App
 
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
-                    Appuntamento richiesta = new Appuntamento(
-                            rs.getInt(2),
-                            new Paziente(rs.getString(3)),
-                            rs.getInt(1)
-                    );
+                    Appuntamento richiestaAppuntamento= new Appuntamento(rs.getInt(2));
 
-                    richiesteAppuntamento.add(richiesta);
+                    richiestaAppuntamento.setPaziente(new Paziente(rs.getString(3)));
+                    richiestaAppuntamento.setStatoNotificaPsicologo(rs.getInt(1));
+
+
+                    listaRichiesteAppuntamento.add(richiestaAppuntamento);
                 }
             }
         } catch (SQLException e) {
             throw new EccezioneDAO(e.getMessage());
         }
-        return richiesteAppuntamento;
+        return listaRichiesteAppuntamento;
     }
 
     @Override
@@ -194,7 +192,7 @@ public class AppuntamentoDAOMySql extends QuerySQLAppuntamentoDAO implements App
 
     @Override
     public Appuntamento getInfoRichiesta(Appuntamento richiestaAppuntamento) throws EccezioneDAO {
-        Appuntamento richiesta = null;
+        Appuntamento richiesta = new Appuntamento();
 
         Connection conn = ConnectionFactory.getConnection();
 
@@ -205,8 +203,8 @@ public class AppuntamentoDAOMySql extends QuerySQLAppuntamentoDAO implements App
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     richiesta = new Appuntamento(
-                            rs.getString(1),
-                            rs.getString(2)
+                            LocalDate.parse(rs.getString(1)),
+                            LocalTime.parse(rs.getString(2))
                     );
                 }
             }
@@ -263,14 +261,14 @@ public class AppuntamentoDAOMySql extends QuerySQLAppuntamentoDAO implements App
     }
 
     @Override
-    public boolean getDisp(Integer idAppuntamento, Psicologo psicologo) throws EccezioneDAO {
+    public boolean getDisp(Appuntamento appuntamento) throws EccezioneDAO {
         boolean disponibile = false;
 
         Connection conn = ConnectionFactory.getConnection();
         try (PreparedStatement stmt = conn.prepareStatement(QuerySQLAppuntamentoDAO.CONTROLLA_DISPONIBILITA, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)) {
 
-            stmt.setInt(1, idAppuntamento);
-            stmt.setString(2, psicologo.getUsername());
+            stmt.setInt(1, appuntamento.getIdAppuntamento());
+            stmt.setString(2, appuntamento.getPsicologo().getUsername());
 
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
@@ -284,18 +282,16 @@ public class AppuntamentoDAOMySql extends QuerySQLAppuntamentoDAO implements App
     }
 
     @Override
-    public void aggiornaStatoNotificaPaziente(Utente utente) throws EccezioneDAO {
+    public void aggiornaStatoNotificaPaziente(Utente paziente) throws EccezioneDAO {
 
         Connection conn = ConnectionFactory.getConnection();
         try (PreparedStatement stmt = conn.prepareStatement(QuerySQLAppuntamentoDAO.UPDATE_STATO_NOTIFICA_PAZIENTE)) {
 
-            stmt.setString(1, utente.getUsername());
+            stmt.setString(1, paziente.getUsername());
             stmt.executeUpdate();
 
         } catch (SQLException e) {
             throw new EccezioneDAO(e.getMessage());
         }
     }
-
-
 }

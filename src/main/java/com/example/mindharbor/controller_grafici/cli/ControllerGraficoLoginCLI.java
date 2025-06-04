@@ -9,7 +9,7 @@ import com.example.mindharbor.controller_grafici.cli.psicologo.ControllerGrafico
 import com.example.mindharbor.eccezioni.EccezioneDAO;
 import com.example.mindharbor.eccezioni.EccezioneFormatoNonValido;
 import com.example.mindharbor.eccezioni.EccezioneSessioneUtente;
-import com.example.mindharbor.tipo_utente.UserType;
+import com.example.mindharbor.enumerazioni.TipoUtente;
 import com.example.mindharbor.strumenti_utili.supporto_cli.CodiciAnsi;
 import com.example.mindharbor.strumenti_utili.supporto_cli.GestoreOutput;
 import org.slf4j.Logger;
@@ -69,7 +69,7 @@ public class ControllerGraficoLoginCLI extends AbsGestoreInput {
             if(infoUtenteBean == null) {
                 GestoreOutput.stampaMessaggio("Credenziali Errate");
                 login();
-            } else if (infoUtenteBean.getUserType().equals(UserType.PSICOLOGO)) {
+            } else if (infoUtenteBean.getTipoUtente().equals(TipoUtente.PSICOLOGO)) {
                 new ControllerGraficoHomePsicologoCLI().start();
             } else {
                 new ControllerGraficoHomePazienteCLI().start();

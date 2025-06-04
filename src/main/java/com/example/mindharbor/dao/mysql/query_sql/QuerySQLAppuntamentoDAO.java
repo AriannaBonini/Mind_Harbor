@@ -16,18 +16,27 @@ public abstract class QuerySQLAppuntamentoDAO {
     protected static final String UGUALE_1 ="= 1";
     protected static final String UPDATE="UPDATE";
     protected static final String SELECT="SELECT";
+    protected static final String AND= " AND ";
 
-    protected static final String TROVA_APPUNTAMENTI_PSICOLOGO= SELECT + " " + DATA + " , "  + ORA + " , " + USERNAME_PAZIENTE + " " +
+    protected static final String TROVA_APPUNTAMENTI_PSICOLOGO_IN_PROGRAMMA= SELECT + " " + DATA + " , "  + ORA + " , " + USERNAME_PAZIENTE + " " +
             "FROM " + TABELLA_APPUNTAMENTO + " " +
-            "WHERE " + STATO_APPUNTAMENTO + " " + UGUALE_1 + " AND " + USERNAME_PSICOLOGO + " " + CONFRONTO;
+            "WHERE " + STATO_APPUNTAMENTO + " " + UGUALE_1 + AND + USERNAME_PSICOLOGO + " " + CONFRONTO +
+            AND + DATA + " >= NOW() ";
 
-    protected static final String TROVA_APPUNTAMENTI_PAZIENTE= SELECT + " " + DATA + " , "  + ORA + " " +
+    protected static final String TROVA_APPUNTAMENTI_PSICOLOGO_PASSATI= SELECT + " " + DATA + " , "  + ORA + " , " + USERNAME_PAZIENTE + " " +
             "FROM " + TABELLA_APPUNTAMENTO + " " +
-            "WHERE " + STATO_APPUNTAMENTO + " " + UGUALE_1 + " AND " + USERNAME_PAZIENTE + " " + CONFRONTO;
+            "WHERE " + STATO_APPUNTAMENTO + " " + UGUALE_1 + AND + USERNAME_PSICOLOGO + " " + CONFRONTO +
+            AND + DATA + " < NOW() ";
+    protected static final String TROVA_APPUNTAMENTI_PAZIENTE_IN_PROGRAMMA = SELECT + " " + DATA + " , " + ORA + " " +
+                    "FROM " + TABELLA_APPUNTAMENTO + " " +
+                    "WHERE " + STATO_APPUNTAMENTO + " " + UGUALE_1 + AND + USERNAME_PAZIENTE + " " + CONFRONTO +
+                    AND + DATA + " >= NOW() ";
 
+    protected static final String TROVA_APPUNTAMENTI_PAZIENTE_PASSATI = SELECT + " " + DATA + " , " + ORA + " " +
+                    "FROM " + TABELLA_APPUNTAMENTO + " " +
+                    "WHERE " + STATO_APPUNTAMENTO + " " + UGUALE_1 + AND + USERNAME_PAZIENTE + " " + CONFRONTO +
+                    AND + DATA + " < NOW() ";
 
-    protected static final String TROVA_APPUNTAMENTI_IN_PROGRAMMA= " " + " AND " + " " + DATA + " >= NOW() ";
-    protected static final String TROVA_APPUNTAMENTI_PASSATI= " " + " AND " + " " + DATA + " < NOW() ";
 
     protected static final String INSERISCI_RICHIESTA_APPUNTAMENTO="INSERT INTO " + TABELLA_APPUNTAMENTO + " ( " +
             ID_APPUNTAMENTO + ", " +

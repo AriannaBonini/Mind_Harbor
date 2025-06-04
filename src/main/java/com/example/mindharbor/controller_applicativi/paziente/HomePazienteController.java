@@ -34,8 +34,7 @@ public class HomePazienteController {
         DAOFactoryFacade daoFactoryFacade=DAOFactoryFacade.getInstance();
         TerapiaDAO terapiaDAO= daoFactoryFacade.getTerapiaDAO();
         try {
-            PazienteBean pazienteBean =new PazienteBean(terapiaDAO.getNuoveTerapie(SessionManager.getInstance().getPazienteCorrente()));
-            return pazienteBean;
+            return new PazienteBean((terapiaDAO.getNuoveTerapie(SessionManager.getInstance().getPazienteCorrente())).getNotificaPaziente());
         }catch (EccezioneDAO e) {
             throw new EccezioneDAO(e.getMessage());
         }

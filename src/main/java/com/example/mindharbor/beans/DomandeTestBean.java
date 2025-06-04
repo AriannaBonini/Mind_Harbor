@@ -6,8 +6,7 @@ public class DomandeTestBean {
     private List<String> domande;
     private List<Integer> punteggi;
 
-    public DomandeTestBean() {//costruttore privato
-    }
+    public DomandeTestBean() {/*Costruttore privato*/}
 
     public void setDomande(List<String> domande) {this.domande=domande;}
 

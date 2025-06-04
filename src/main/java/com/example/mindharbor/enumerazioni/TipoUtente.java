@@ -1,12 +1,12 @@
-package com.example.mindharbor.tipo_utente;
+package com.example.mindharbor.enumerazioni;
 
-public enum UserType{
+public enum TipoUtente {
     PAZIENTE("Paziente"),
     PSICOLOGO("Psicologo");
 
     private final String id;
 
-    UserType(String id) {
+    TipoUtente(String id) {
         this.id = id;
     }
 

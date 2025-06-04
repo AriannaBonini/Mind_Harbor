@@ -17,9 +17,6 @@ public class UtilitiesCSV {
     private static final Logger logger = LoggerFactory.getLogger(UtilitiesCSV.class);
     private UtilitiesCSV(){}
 
-    public static final String IN_PROGRAMMA = "IN PROGRAMMA";
-    public static final String PASSATI = "PASSATI";
-
 
 
     /**
@@ -37,13 +34,12 @@ public class UtilitiesCSV {
     public static List<String[]> leggiRigheDaCsv(String filePath, int x) throws EccezioneDAO {
         List<String[]> righe = new ArrayList<>();
         try (CSVReader reader = new CSVReader(new FileReader(filePath))) {
-            if(x==0) { //solo lettura
-                reader.readNext();  // Questo legge e scarta la prima riga (intestazione)
+            if(x==0) {
+                reader.readNext();
             }
-            //altrimenti lettura e scrittura
             String[] colonne;
             while ((colonne = reader.readNext()) != null) {
-                // Unisci i valori delle colonne in una riga (unendo i valori con la virgola)
+
                 righe.add(colonne);
             }
         } catch (IOException | CsvValidationException e) {
@@ -66,9 +62,9 @@ public class UtilitiesCSV {
      */
     public static void scriviRigheAggiornate(String filePath, List<String[]> righeAggiornate) throws EccezioneDAO {
         try (CSVWriter writer = new CSVWriter(new FileWriter(filePath))) {
-            // Scrivi ogni riga (che è una singola stringa) nel CSV
+
             for (String[] riga : righeAggiornate) {
-                writer.writeNext(riga);  // Scrivi la riga come un array di stringhe, dove ogni stringa è una colonna
+                writer.writeNext(riga);
             }
         } catch (IOException e) {
             throw new EccezioneDAO("Errore nella scrittura nel file CSV: " + e.getMessage(), e);
@@ -93,15 +89,11 @@ public class UtilitiesCSV {
     public static int contaNotifichePaziente(String filePath, String username, int indicePaziente, int indiceNotifica) throws EccezioneDAO {
         int contatore = 0;
 
-        // Ottieni le righe dal CSV
         List<String[]> righeCSV = leggiRigheDaCsv(filePath, CostantiLetturaScrittura.SOLO_LETTURA);
 
-        // Scorri tutte le righe
         for (String[] colonne : righeCSV) {
-            // Verifica che la riga abbia abbastanza colonne
             if (colonne.length > Math.max(indicePaziente, indiceNotifica)) {
 
-                // Controlla se la notifica è attiva per il paziente specifico
                 if (colonne[indicePaziente].equals(username) && colonne[indiceNotifica].equals("1")) {
                     contatore++;
                 }

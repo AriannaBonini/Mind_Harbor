@@ -1,5 +1,7 @@
 package com.example.mindharbor.beans;
 
+import static com.example.mindharbor.strumenti_utili.costanti.Costanti.SOLO_LETTERE;
+
 public class PazienteBean {
     private String nome;
     private String cognome;
@@ -23,11 +25,32 @@ public class PazienteBean {
         this.username=username;
         this.numTestSvolti=numTestSvolti;
     }
-    public PazienteBean(String nome, String cognome, String genere, Integer anni, String diagnosi, String username) {this(nome,cognome,genere,anni,diagnosi,username,null);}
-    public PazienteBean(String username, Integer numTestSvolti, String nome, String cognome, String genere) {this(nome,cognome,genere,null,null,username,numTestSvolti);}
-    public PazienteBean(Integer numNotifiche) {this.numNotifiche=numNotifiche;}
-    public PazienteBean(String username, String nome, String cognome, String genere) {this(nome,cognome,genere,null,null,username,null);}
-    public PazienteBean(String nome, String cognome) {this(nome,cognome,null,null,null,null,null);}
+    public PazienteBean(String nome, String cognome, String genere, Integer anni, String diagnosi, String username) {
+        this(username,nome,cognome,genere);
+        this.anni=anni;
+        this.diagnosi=diagnosi;
+    }
+
+    public PazienteBean(String username, Integer numTestSvolti, String nome, String cognome, String genere) {
+        this(username,nome,cognome,genere);
+        this.numTestSvolti=numTestSvolti;
+    }
+    public PazienteBean(Integer numNotifiche) {
+        this.numNotifiche=numNotifiche;
+    }
+    public PazienteBean(String username, String nome, String cognome, String genere) {
+        this(nome,cognome);
+        this.username=username;
+        this.genere=genere;
+    }
+    public PazienteBean(String nome, String cognome) {
+        this.nome=nome;
+        this.cognome=cognome;
+    }
+
+
+
+
     public PazienteBean(String nome, String cognome, String anni) {
         controlloFormatoNome(nome);
         controlloFormatoCognome(cognome);
@@ -54,11 +77,8 @@ public class PazienteBean {
     }
     public void setAnni(Integer anni) {this.anni = anni;}
     public String getNome() {return nome;}
-    public void setNome(String nome) {this.nome = nome;}
     public String getCognome() {return cognome;}
-    public void setCognome(String cognome) {this.cognome = cognome;}
     public String getGenere() {return genere;}
-    public void setGenere(String genere) {this.genere = genere;}
     public Integer getAnni() {return anni;}
     public String getDiagnosi() {return diagnosi;}
     public void setDiagnosi(String diagnosi){this.diagnosi=diagnosi;}
@@ -67,17 +87,19 @@ public class PazienteBean {
     public Integer getNumTestSvolti() {return numTestSvolti;}
     public void setNumTestSvolti(Integer numTestSvolti) {this.numTestSvolti = numTestSvolti;}
     public Integer getNumNotifiche() {return numNotifiche;}
-    public void setPassword(String password) {this.password = password;}
     public String getPassword(){return password;}
 
+
+
+
     private void controlloFormatoNome(String nome){
-        if (nome == null || !nome.matches("\\p{L}+")) {
+        if (nome == null || !nome.matches(SOLO_LETTERE)){
             throw new IllegalArgumentException("Il nome deve contenere solo lettere e non può essere vuoto.");
         }
     }
 
     private void controlloFormatoCognome(String cognome){
-        if (cognome == null || !cognome.matches("\\p{L}+")) {
+        if (cognome == null || !cognome.matches(SOLO_LETTERE)) {
             throw new IllegalArgumentException("Il cognome deve contenere solo lettere e non può essere vuoto.");
         }
     }
