@@ -133,25 +133,29 @@ public class ControllerGraficoRichiediPrenotazione implements RicevitoreControll
     @Override
     public void setControllerApplicativo(Object controllerApplicativo) {
         this.prenotaAppuntamentoController = (PrenotaAppuntamento) controllerApplicativo;
-
-        inizializzazioneDati();
+        aggiornaDatiUtente();
     }
 
-    private void inizializzazioneDati(){
+    private void aggiornaDatiUtente() {
         InfoUtenteBean infoUtenteBean = prenotaAppuntamentoController.getInfoUtente();
-
-        labelNomePaziente.setText(infoUtenteBean.getNome() + " " + infoUtenteBean.getCognome());
+        if (infoUtenteBean != null) {
+            String nome = infoUtenteBean.getNome() != null ? infoUtenteBean.getNome() : "";
+            String cognome = infoUtenteBean.getCognome() != null ? infoUtenteBean.getCognome() : "";
+            labelNomePaziente.setText((nome + " " + cognome).trim());
+        }
     }
 
     @Override
-    public void setParametri(Object appuntamentoBean){
-        this.appuntamentoBean=(AppuntamentiBean)appuntamentoBean;
-        inizializzazioneDatiBean();
-
+    public void setParametri(Object appuntamentoBean) {
+        this.appuntamentoBean = (AppuntamentiBean) appuntamentoBean;
+        aggiornaDatiAppuntamento();
     }
 
-    private void inizializzazioneDatiBean(){
-        psicologoSelezionato=(this.appuntamentoBean).getPsicologo();
-        popolaSchedaPsicologo();
+    private void aggiornaDatiAppuntamento() {
+        if (appuntamentoBean != null) {
+            psicologoSelezionato = appuntamentoBean.getPsicologo();
+            popolaSchedaPsicologo();
+        }
     }
+
 }

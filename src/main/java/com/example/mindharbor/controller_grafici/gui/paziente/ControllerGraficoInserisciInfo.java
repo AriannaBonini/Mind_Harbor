@@ -103,28 +103,43 @@ public class ControllerGraficoInserisciInfo implements RicevitoreControllerAppli
         }
     }
 
+
     @Override
     public void setControllerApplicativo(Object controllerApplicativo) {
         this.prenotaAppuntamentoController = (PrenotaAppuntamento) controllerApplicativo;
-        inizializzazioneDati();
+        inizializzaDatiUtente();
     }
 
-    private void inizializzazioneDati() {
+    private void inizializzaDatiUtente() {
         InfoUtenteBean infoUtenteBean = prenotaAppuntamentoController.getInfoUtente();
-        labelNomePaziente.setText(infoUtenteBean.getNome() + " " + infoUtenteBean.getCognome());
+        if (infoUtenteBean != null) {
+            String nome = infoUtenteBean.getNome() != null ? infoUtenteBean.getNome() : "";
+            String cognome = infoUtenteBean.getCognome() != null ? infoUtenteBean.getCognome() : "";
+            labelNomePaziente.setText((nome + " " + cognome).trim());
+        }
     }
 
     @Override
-    public void setParametri(Object appuntamentoBean){
-        this.appuntamentoBean=(AppuntamentiBean) appuntamentoBean;
-        inizializzazioneDatiBean();
+    public void setParametri(Object appuntamentoBean) {
+        this.appuntamentoBean = (AppuntamentiBean) appuntamentoBean;
+        inizializzaDatiPaziente();
     }
 
-    private void inizializzazioneDatiBean(){
-        if (appuntamentoBean.getPaziente() != null && appuntamentoBean.getPaziente().getNome() != null && appuntamentoBean.getPaziente().getCognome() != null && appuntamentoBean.getPaziente().getAnni() != null) {
-            campoNome.setText(appuntamentoBean.getPaziente().getNome());
-            campoCognome.setText(appuntamentoBean.getPaziente().getCognome());
-            campoAnni.setText(String.valueOf(appuntamentoBean.getPaziente().getAnni()));
+    private void inizializzaDatiPaziente() {
+        if (appuntamentoBean == null) return;
+
+        var paziente = appuntamentoBean.getPaziente();
+        if (paziente == null) return;
+
+        if (paziente.getNome() != null) {
+            campoNome.setText(paziente.getNome());
+        }
+        if (paziente.getCognome() != null) {
+            campoCognome.setText(paziente.getCognome());
+        }
+        if (paziente.getAnni() != null) {
+            campoAnni.setText(String.valueOf(paziente.getAnni()));
         }
     }
+
 }
