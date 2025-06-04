@@ -7,11 +7,13 @@ import com.example.mindharbor.beans.PazienteBean;
 import com.example.mindharbor.controller_grafici.interfacce.RicevitoreControllerApplicativo;
 import com.example.mindharbor.controller_grafici.interfacce.RicevitoreParametri;
 import com.example.mindharbor.eccezioni.EccezionePazienteNonAutorizzato;
+import com.example.mindharbor.patterns.decorator.ComponenteNodo;
+import com.example.mindharbor.patterns.decorator.NodoBase;
 import com.example.mindharbor.strumenti_utili.supporto_gui.EffettiGrafici;
 import com.example.mindharbor.strumenti_utili.costanti.Costanti;
 import com.example.mindharbor.eccezioni.EccezioneDAO;
 import com.example.mindharbor.patterns.decorator.GenereDecorator;
-import com.example.mindharbor.patterns.decorator.ImmagineDecorator;
+import com.example.mindharbor.patterns.decorator.NodoDecorator;
 import com.example.mindharbor.strumenti_utili.NavigatorSingleton;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -119,8 +121,11 @@ public class ControllerGraficoSchedaPersonalePaziente implements RicevitoreContr
             diagnosiPaziente.setText(pazienteSelezionato.getDiagnosi());
         }
 
-        ImmagineDecorator immagineDecorator = new GenereDecorator(immaginePaziente,pazienteSelezionato.getGenere());
-        immagineDecorator.caricaImmagine();
+        ComponenteNodo base = new NodoBase(immaginePaziente);
+
+        NodoDecorator nodoDecorator = new GenereDecorator(base, pazienteSelezionato.getGenere());
+        nodoDecorator.applica();
+
     }
 
     @FXML

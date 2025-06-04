@@ -7,8 +7,10 @@ import com.example.mindharbor.beans.PsicologoBean;
 import com.example.mindharbor.controller_grafici.interfacce.RicevitoreControllerApplicativo;
 import com.example.mindharbor.controller_grafici.interfacce.RicevitoreParametri;
 import com.example.mindharbor.eccezioni.EccezioneDAO;
+import com.example.mindharbor.patterns.decorator.ComponenteNodo;
 import com.example.mindharbor.patterns.decorator.GenereDecorator;
-import com.example.mindharbor.patterns.decorator.ImmagineDecorator;
+import com.example.mindharbor.patterns.decorator.NodoBase;
+import com.example.mindharbor.patterns.decorator.NodoDecorator;
 import com.example.mindharbor.strumenti_utili.supporto_gui.MessaggioDiAlert;
 import com.example.mindharbor.strumenti_utili.supporto_gui.EffettiGrafici;
 import com.example.mindharbor.strumenti_utili.NavigatorSingleton;
@@ -71,8 +73,10 @@ public class ControllerGraficoRichiediPrenotazione implements RicevitoreControll
         costoOrario.setText(psicologoSelezionato.getCostoOrario() + " €/h");
         nomeStudio.setText(psicologoSelezionato.getNomeStudio());
 
-        ImmagineDecorator immagineDecorator = new GenereDecorator(immaginePsicologo,psicologoSelezionato.getGenere());
-        immagineDecorator.caricaImmagine();
+        ComponenteNodo base = new NodoBase(immaginePsicologo);
+
+        NodoDecorator nodoDecorator = new GenereDecorator(base,psicologoSelezionato.getGenere());
+        nodoDecorator.applica();
 
     }
 

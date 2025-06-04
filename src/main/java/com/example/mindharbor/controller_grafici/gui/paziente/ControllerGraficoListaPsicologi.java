@@ -7,8 +7,8 @@ import com.example.mindharbor.beans.PsicologoBean;
 import com.example.mindharbor.controller_grafici.interfacce.RicevitoreControllerApplicativo;
 import com.example.mindharbor.controller_grafici.interfacce.RicevitoreParametri;
 import com.example.mindharbor.eccezioni.EccezioneDAO;
+import com.example.mindharbor.patterns.decorator.*;
 import com.example.mindharbor.strumenti_utili.supporto_gui.MessaggioDiAlert;
-import com.example.mindharbor.strumenti_utili.supporto_gui.SupportoCellFactory;
 import com.example.mindharbor.strumenti_utili.supporto_gui.SupportoControllerGraficiListaUtenti;
 import com.example.mindharbor.strumenti_utili.NavigatorSingleton;
 import javafx.collections.FXCollections;
@@ -44,8 +44,9 @@ public class ControllerGraficoListaPsicologi implements RicevitoreControllerAppl
     private AppuntamentiBean appuntamentoBean;
 
     public void initialize() {
-        listViewPsicologo.setCellFactory(SupportoCellFactory.creaFactoryConGlow());
     }
+
+
     private void popolaLista() {
         try {
             List<PsicologoBean> listaPsicologiBean = prenotaAppuntamentoController.getListaPsicologi();
@@ -64,9 +65,20 @@ public class ControllerGraficoListaPsicologi implements RicevitoreControllerAppl
 
         for (PsicologoBean psiBean : listaPsicologiBean) {
             ImageView immaginePsicologo = new ImageView();
-            HBox hBoxPsicologo = SupportoControllerGraficiListaUtenti.creaHBoxUtenti(immaginePsicologo, psiBean.getNome(), psiBean.getCognome(), psiBean.getGenere(),false);
+            HBox hBoxPsicologo = SupportoControllerGraficiListaUtenti.creaHBoxUtenti(immaginePsicologo, psiBean.getNome(), psiBean.getCognome(),false);
+
+             ComponenteNodo base = new NodoBase(hBoxPsicologo);
+
+            ComponenteNodo immagineDecorator = new GenereDecorator(base, psiBean.getGenere());
+
+            ComponenteNodo glowDecorator = new GlowDecorator(immagineDecorator);
+
+            glowDecorator.applica();
+
             nodi.add(hBoxPsicologo);
             hBoxPsicologo.setUserData(psiBean);
+
+
         }
 
         listViewPsicologo.setFixedCellSize(100);

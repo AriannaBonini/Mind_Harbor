@@ -1,27 +1,35 @@
 package com.example.mindharbor.patterns.decorator;
 
 
+
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-
 import java.util.Objects;
 
-public class GenereDecorator extends ImmagineDecorator {
+public class GenereDecorator extends NodoDecorator {
     private final String genere;
 
-    public GenereDecorator(ImageView imageView, String genere) {
-        super(imageView);
+    public GenereDecorator(ComponenteNodo componenteDecorato, String genere) {
+        super(componenteDecorato);
         this.genere = genere;
     }
 
-    public void caricaImmagine() {
-        Image immagine;
-        if (genere.equalsIgnoreCase("M")) {
-            immagine = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/com/example/mindharbor/Img/IconaMaschio.png")));
+    @Override
+    public void applica() {
+        super.applica();
 
-        } else {
-            immagine = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/com/example/mindharbor/Img/IconaFemmina.png")));
+        ImageView imageView = estraiImageView();
+
+        if (imageView != null) {
+            String path = genere.equalsIgnoreCase("M")
+                    ? "/com/example/mindharbor/Img/IconaMaschio.png"
+                    : "/com/example/mindharbor/Img/IconaFemmina.png";
+            Image immagine = new Image(Objects.requireNonNull(getClass().getResourceAsStream(path)));
+            imageView.setImage(immagine);
         }
-        imageView.setImage(immagine);
     }
+
+
+
 }
+

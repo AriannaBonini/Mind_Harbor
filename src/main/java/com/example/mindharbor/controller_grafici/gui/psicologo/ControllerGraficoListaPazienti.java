@@ -4,10 +4,10 @@ import com.example.mindharbor.controller_applicativi.psicologo.PrescriviTerapia;
 import com.example.mindharbor.beans.InfoUtenteBean;
 import com.example.mindharbor.beans.PazienteBean;
 import com.example.mindharbor.eccezioni.EccezioneDAO;
+import com.example.mindharbor.patterns.decorator.*;
 import com.example.mindharbor.strumenti_utili.supporto_gui.EffettiGrafici;
 import com.example.mindharbor.strumenti_utili.supporto_gui.SupportoControllerGraficiListaUtenti;
 import com.example.mindharbor.strumenti_utili.NavigatorSingleton;
-import com.example.mindharbor.strumenti_utili.supporto_gui.SupportoCellFactory;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -43,7 +43,6 @@ public class ControllerGraficoListaPazienti {
         InfoUtenteBean infoUtenteBean = prescriviTerapiaController.getInfoUtente();
         labelNomePsicologo.setText(infoUtenteBean.getNome() + " " + infoUtenteBean.getCognome());
 
-        listViewPazienti.setCellFactory(SupportoCellFactory.creaFactoryConGlow());
 
         popolaLista();
     }
@@ -73,7 +72,16 @@ public class ControllerGraficoListaPazienti {
             if(paz.getNumTestSvolti()>0) {
                 grassetto=true;
             }
-            HBox hBoxPaziente = SupportoControllerGraficiListaUtenti.creaHBoxUtenti(immaginePaziente, paz.getNome(), paz.getCognome(), paz.getGenere(),grassetto);
+            HBox hBoxPaziente = SupportoControllerGraficiListaUtenti.creaHBoxUtenti(immaginePaziente, paz.getNome(), paz.getCognome(),grassetto);
+
+            ComponenteNodo base = new NodoBase(hBoxPaziente);
+
+            ComponenteNodo immagineDecorator = new GenereDecorator(base, paz.getGenere());
+
+            ComponenteNodo glowDecorator = new GlowDecorator(immagineDecorator);
+
+            glowDecorator.applica();
+
             nodi.add(hBoxPaziente);
             hBoxPaziente.setUserData(paz);
         }

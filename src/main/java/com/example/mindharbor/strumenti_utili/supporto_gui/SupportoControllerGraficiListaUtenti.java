@@ -1,7 +1,6 @@
 package com.example.mindharbor.strumenti_utili.supporto_gui;
 
-import com.example.mindharbor.patterns.decorator.GenereDecorator;
-import com.example.mindharbor.patterns.decorator.ImmagineDecorator;
+
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
@@ -13,7 +12,7 @@ public class SupportoControllerGraficiListaUtenti {
     private SupportoControllerGraficiListaUtenti() {//costruttore privato//
     }
 
-    public static HBox creaHBoxUtenti(ImageView imageView, String nome, String cognome, String genere, boolean evidenziaUtente){
+    public static HBox creaHBoxUtenti(ImageView imageView, String nome, String cognome, boolean evidenziaUtente){
         Label labelNome = new Label("\n     NOME: " + nome);
         Label labelCognome = new Label("     COGNOME: " + cognome);
         labelNome.setTextFill(Color.WHITE);
@@ -25,10 +24,6 @@ public class SupportoControllerGraficiListaUtenti {
         }
 
         VBox box = new VBox(labelNome, labelCognome);
-
-        ImmagineDecorator immagineDecorator = new GenereDecorator(imageView, genere);
-        immagineDecorator.caricaImmagine();
-
         return new HBox(imageView, box);
     }
 }

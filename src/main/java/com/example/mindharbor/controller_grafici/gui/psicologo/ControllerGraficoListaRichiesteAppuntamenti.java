@@ -4,10 +4,8 @@ import com.example.mindharbor.controller_applicativi.paziente.PrenotaAppuntament
 import com.example.mindharbor.beans.AppuntamentiBean;
 import com.example.mindharbor.beans.InfoUtenteBean;
 import com.example.mindharbor.eccezioni.EccezioneDAO;
-import com.example.mindharbor.patterns.decorator.GenereDecorator;
-import com.example.mindharbor.patterns.decorator.ImmagineDecorator;
+import com.example.mindharbor.patterns.decorator.*;
 import com.example.mindharbor.strumenti_utili.NavigatorSingleton;
-import com.example.mindharbor.strumenti_utili.supporto_gui.SupportoCellFactory;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -46,7 +44,6 @@ public class ControllerGraficoListaRichiesteAppuntamenti {
         InfoUtenteBean infoUtenteBean = prenotaAppuntamentoController.getInfoUtente();
         labelNomePsicologo.setText(infoUtenteBean.getNome() + " " + infoUtenteBean.getCognome());
 
-        listViewPazienti.setCellFactory(SupportoCellFactory.creaFactoryConGlow());
         popolaLista();
     }
 
@@ -86,11 +83,14 @@ public class ControllerGraficoListaRichiesteAppuntamenti {
             cognomePaziente.setTextFill(Color.WHITE);
 
             boxPaziente.getChildren().addAll(nomePaziente, cognomePaziente);
-
-            ImmagineDecorator immagineDecorator = new GenereDecorator(immaginePaziente,appBean.getPaziente().getGenere());
-            immagineDecorator.caricaImmagine();
-
             hBoxPaziente.getChildren().addAll(immaginePaziente, boxPaziente);
+
+            ComponenteNodo base = new NodoBase(hBoxPaziente);
+            NodoDecorator immagineDecorator = new GenereDecorator(base, appBean.getPaziente().getGenere());
+            NodoDecorator glowDecorator = new GlowDecorator(immagineDecorator);
+
+            glowDecorator.applica();
+
             nodi.add(hBoxPaziente);
 
             hBoxPaziente.setUserData(appBean);

@@ -4,12 +4,10 @@ import com.example.mindharbor.controller_applicativi.psicologo.PrescriviTerapia;
 import com.example.mindharbor.beans.InfoUtenteBean;
 import com.example.mindharbor.beans.TestBean;
 import com.example.mindharbor.eccezioni.EccezioneDAO;
-import com.example.mindharbor.patterns.decorator.ImmagineDecorator;
-import com.example.mindharbor.patterns.decorator.TestDecorator;
+import com.example.mindharbor.patterns.decorator.*;
 import com.example.mindharbor.strumenti_utili.supporto_gui.EffettiGrafici;
 import com.example.mindharbor.strumenti_utili.supporto_gui.LabelTemporanea;
 import com.example.mindharbor.strumenti_utili.NavigatorSingleton;
-import com.example.mindharbor.strumenti_utili.supporto_gui.SupportoCellFactory;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -50,7 +48,6 @@ public class ControllerGraficoListaTest {
         infoUtenteBean = prescriviTerapiaController.getInfoUtente();
         labelNomePaziente.setText(infoUtenteBean.getNome() + " " + infoUtenteBean.getCognome());
 
-        listViewTest.setCellFactory(SupportoCellFactory.creaFactoryConGlow());
 
         trovaPsicologo();
 
@@ -118,14 +115,16 @@ public class ControllerGraficoListaTest {
 
             boxTest.getChildren().addAll(dataTest, nomeTest, risultatoTest);
 
-            ImmagineDecorator immagineDecorator = new TestDecorator(immagineStato,test.getSvolto());
-            immagineDecorator.caricaImmagine();
-
             immagineStato.setFitWidth(25);
             immagineStato.setFitHeight(25);
 
             hBoxTest.getChildren().addAll(immagineStato, boxTest);
             hBoxTest.setSpacing(10);
+
+            ComponenteNodo base = new NodoBase(hBoxTest);
+            NodoDecorator testDecorator = new TestDecorator(base, test.getSvolto());
+            NodoDecorator glowDecorator = new GlowDecorator(testDecorator);
+            glowDecorator.applica();
 
             nodi.add(hBoxTest);
 

@@ -5,12 +5,10 @@ import com.example.mindharbor.beans.AppuntamentiBean;
 import com.example.mindharbor.beans.InfoUtenteBean;
 import com.example.mindharbor.controller_grafici.interfacce.RicevitoreControllerApplicativo;
 import com.example.mindharbor.controller_grafici.interfacce.RicevitoreParametri;
+import com.example.mindharbor.patterns.decorator.*;
 import com.example.mindharbor.strumenti_utili.supporto_gui.EffettiGrafici;
 import com.example.mindharbor.strumenti_utili.costanti.Costanti;
 import com.example.mindharbor.eccezioni.EccezioneDAO;
-import com.example.mindharbor.patterns.decorator.DisponibilitaDecorator;
-import com.example.mindharbor.patterns.decorator.GenereDecorator;
-import com.example.mindharbor.patterns.decorator.ImmagineDecorator;
 import com.example.mindharbor.strumenti_utili.supporto_gui.MessaggioDiAlert;
 import com.example.mindharbor.strumenti_utili.NavigatorSingleton;
 import javafx.animation.KeyFrame;
@@ -88,8 +86,10 @@ public class ControllerGraficoVerificaDisponibilita implements RicevitoreControl
         labelData.setText(richiestaAppuntamentoSelezionato.getData());
         labelOra.setText(richiestaAppuntamentoSelezionato.getOra());
 
-        ImmagineDecorator immagineDecorator = new GenereDecorator(immaginePaziente,richiestaAppuntamentoSelezionato.getPaziente().getGenere());
-        immagineDecorator.caricaImmagine();
+        ComponenteNodo base = new NodoBase(immaginePaziente);
+        NodoDecorator nodoDecorator = new GenereDecorator(base, richiestaAppuntamentoSelezionato.getPaziente().getGenere());
+        nodoDecorator.applica();
+
     }
 
 
@@ -131,12 +131,15 @@ public class ControllerGraficoVerificaDisponibilita implements RicevitoreControl
 
         try {
             if(prenotaAppuntamentoController.nonDisponibile(richiestaAppuntamentoSelezionato)) {
-                ImmagineDecorator immagineDecorator = new DisponibilitaDecorator(immagineDisp,false);
-                immagineDecorator.caricaImmagine();
+
+                ComponenteNodo base = new NodoBase(immagineDisp);
+                NodoDecorator nodoDecorator = new DisponibilitaDecorator(base,false);
+                nodoDecorator.applica();
 
             } else {
-                ImmagineDecorator immagineDecorator = new DisponibilitaDecorator(immagineDisp,true);
-                immagineDecorator.caricaImmagine();
+                ComponenteNodo base = new NodoBase(immagineDisp);
+                NodoDecorator nodoDecorator = new DisponibilitaDecorator(base,true);
+                nodoDecorator.applica();
                 accetta.setDisable(false);
             }
 

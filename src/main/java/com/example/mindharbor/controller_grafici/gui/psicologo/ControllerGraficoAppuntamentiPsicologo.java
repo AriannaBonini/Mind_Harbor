@@ -5,6 +5,7 @@ import com.example.mindharbor.beans.AppuntamentiBean;
 import com.example.mindharbor.beans.InfoUtenteBean;
 import com.example.mindharbor.eccezioni.EccezioneDAO;
 import com.example.mindharbor.strumenti_utili.NavigatorSingleton;
+import com.example.mindharbor.strumenti_utili.supporto_gui.SupportoTab;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -61,13 +62,7 @@ public class ControllerGraficoAppuntamentiPsicologo {
 
         tab1Selezionato();
 
-        tabPane.getSelectionModel().selectedItemProperty().addListener((obs, oldTab, newTab) -> {
-            if (newTab == tab1) {
-                tab1Selezionato();
-            } else if (newTab == tab2) {
-                tab2Selezionato();
-            }
-        });
+        SupportoTab.aggiuntoListenerTab(tabPane, tab1, tab2, this::tab1Selezionato, this::tab2Selezionato);
 
     }
 
