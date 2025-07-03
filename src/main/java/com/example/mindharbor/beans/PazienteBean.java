@@ -16,6 +16,10 @@ public class PazienteBean {
     Questo attributo viene utilizzato per le notifiche dei nuovi appuntamenti, delle nuove terapie e dei nuovi test
      */
 
+    public PazienteBean(){
+        //Costruttore vuoto//
+    }
+
     public PazienteBean(String nome, String cognome, String genere, Integer anni, String diagnosi, String username,Integer numTestSvolti) {
         this.nome = nome;
         this.cognome = cognome;

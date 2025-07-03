@@ -15,6 +15,7 @@ import com.example.mindharbor.eccezioni.EccezioneDAO;
 import com.example.mindharbor.patterns.decorator.GenereDecorator;
 import com.example.mindharbor.patterns.decorator.NodoDecorator;
 import com.example.mindharbor.strumenti_utili.NavigatorSingleton;
+import com.example.mindharbor.strumenti_utili.supporto_gui.MessaggioDiAlert;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
@@ -102,7 +103,10 @@ public class ControllerGraficoSchedaPersonalePaziente implements RicevitoreContr
         } catch (EccezioneDAO e) {
             logger.info("Non esistono informazioni relative al paziente", e);
         }catch (EccezionePazienteNonAutorizzato e){
-            logger.info("Errore",e);
+            String username= e.getUsernamePaziente();
+            String messaggio= "Tentativo non autorizzato per il paziente: " + username;
+            MessaggioDiAlert.errore(messaggio).showAndWait();
+            tornaIndietro();
         }
 
     }

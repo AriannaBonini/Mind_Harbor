@@ -182,7 +182,8 @@ public class ControllerGraficoSvolgiTest implements RicevitoreControllerApplicat
                 notificaProgresso("Risultato test: " + risultatoTest.getRisultatoUltimoTest(), "Complimenti! Hai svolto il tuo primo test");
 
             } else {
-                if (risultatoTest.getRisultatoTestPrecedente() > 0) {
+                risultatoTest.setProgresso(prescriviTerapiaController.calcolaProgresso(risultatoTest));
+                if (risultatoTest.getProgresso() > 0) {
                     notificaProgresso("Progresso: " + risultatoTest.getRisultatoTestPrecedente() + "%", "Complimenti!");
                 } else {
                     notificaProgresso("Regresso: " + risultatoTest.getRisultatoTestPrecedente() + "%", "Mi dispiace!");

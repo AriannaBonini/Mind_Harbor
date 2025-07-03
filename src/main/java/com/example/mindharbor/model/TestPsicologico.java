@@ -33,7 +33,6 @@ public class TestPsicologico {
         this.test=test;
     }
 
-
     public LocalDate getData() {
         return data;
     }

@@ -1,17 +1,15 @@
 package com.example.mindharbor.eccezioni;
 
-import java.io.Serial;
 
-public class EccezioneSessioneUtente extends Exception{
+public class EccezioneSessioneUtente extends RuntimeException{
+    private final String username;
 
-    @Serial
-    private static final long serialVersionUID = 3L;
-
-    public EccezioneSessioneUtente(){
-        super("The user hasn't been defined yet");
+    public EccezioneSessioneUtente(String messaggio, String username) {
+        super(messaggio);
+        this.username = username;
     }
 
-    public EccezioneSessioneUtente(String messaggio) {
-        super(messaggio);
+    public String getUsername() {
+        return username;
     }
 }

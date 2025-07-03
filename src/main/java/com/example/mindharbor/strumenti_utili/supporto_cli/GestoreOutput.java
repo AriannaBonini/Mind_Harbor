@@ -1,5 +1,6 @@
 package com.example.mindharbor.strumenti_utili.supporto_cli;
 
+
 public class GestoreOutput {
 
     public static final String NOME="NOME : ";

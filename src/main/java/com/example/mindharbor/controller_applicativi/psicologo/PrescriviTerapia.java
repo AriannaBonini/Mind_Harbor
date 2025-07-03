@@ -143,7 +143,7 @@ public class PrescriviTerapia {
                 Se entro in questo else vuol dire che il paziente non è presente nella lista del mio psicologo, questo comporta l'impossibilità di andare avanti
                 poiché lo psicologo può visualizzare SOLO i suoi pazienti.
                  */
-                throw new EccezionePazienteNonAutorizzato("Il paziente non appartiene allo psicologo");
+                throw new EccezionePazienteNonAutorizzato("Il paziente non appartiene allo psicologo", pazienteSelezionato.getUsername());
             }
         }catch (EccezioneDAO e) {
             throw new EccezioneDAO(e.getMessage());
@@ -306,55 +306,52 @@ public class PrescriviTerapia {
                 risultato += punteggio;
             }
             risultatoTest.setRisultatoUltimoTest(risultato);
-            Double progresso = calcolaProgresso(risultatoTest,LocalDate.parse(testSelezionato.getData()),testSelezionato.getNomeTest());
+            Integer risultatoTestPrecedente = recuperaTestSvoltoPrecedentemente(risultatoTest,LocalDate.parse(testSelezionato.getData()),testSelezionato.getNomeTest());
 
-            risultatoTest.setRisultatoTestPrecedente(progresso);
+            risultatoTest.setRisultatoTestPrecedente(risultatoTestPrecedente);
         }catch (EccezioneDAO e) {
             throw new EccezioneDAO(e.getMessage());
         }
         return risultatoTest;
     }
 
-    private Double calcolaProgresso(RisultatiTestBean risultatoTest, LocalDate dataTest, String nomeTest) throws EccezioneDAO {
-        DAOFactoryFacade daoFactoryFacade=DAOFactoryFacade.getInstance();
-        TestPsicologicoDAO testPsicologicoDAO= daoFactoryFacade.getTestPsicologicoDAO();
+    private Integer recuperaTestSvoltoPrecedentemente(RisultatiTestBean risultatoTest, LocalDate dataTest, String nomeTest) throws EccezioneDAO {
+        DAOFactoryFacade daoFactoryFacade = DAOFactoryFacade.getInstance();
+        TestPsicologicoDAO testPsicologicoDAO = daoFactoryFacade.getTestPsicologicoDAO();
 
-        double progressi;
         try {
-            TestPsicologico testPsicologico= new TestPsicologico(dataTest, risultatoTest.getRisultatoUltimoTest(),nomeTest);
+            TestPsicologico testPsicologico = new TestPsicologico(dataTest, risultatoTest.getRisultatoUltimoTest(), nomeTest);
             testPsicologico.setPaziente(SessionManager.getInstance().getPazienteCorrente());
 
             TestPsicologico ultimoTestPsicologico = testPsicologicoDAO.trovaTestPassati(testPsicologico);
+            return ultimoTestPsicologico.getRisultato();
 
-
-            if (ultimoTestPsicologico == null) {
-                return null;
-
-            } else {
-                if (ultimoTestPsicologico.getRisultato() == 0) {
-                    progressi = (double) risultatoTest.getRisultatoUltimoTest() * 10;
-                    progressi = Math.round(progressi * 100.0) / 100.0;
-                    return progressi;
-
-                }
-                if (risultatoTest.getRisultatoUltimoTest() == 0) {
-                    progressi = (double) (-ultimoTestPsicologico.getRisultato()) * 10;
-                    progressi = Math.round(progressi * 100.0) / 100.0;
-                    return progressi;
-
-                }
-
-                progressi = (risultatoTest.getRisultatoUltimoTest() - ultimoTestPsicologico.getRisultato());
-                progressi = (progressi / Math.abs(ultimoTestPsicologico.getRisultato())) * 100;
-                progressi = Math.round(progressi * 100.0) / 100.0;
-
-            }
-        }catch (EccezioneDAO e) {
+        } catch (EccezioneDAO e) {
             throw new EccezioneDAO(e.getMessage());
         }
-
-        return progressi;
     }
+
+    public Double calcolaProgresso(RisultatiTestBean risultatiTestBean) {
+        Integer precedente = risultatiTestBean.getRisultatoTestPrecedente();
+        Integer ultimo = risultatiTestBean.getRisultatoUltimoTest();
+
+        if (precedente == null || ultimo == null) return null;
+        if (precedente == 0 && ultimo == 0) return 0.0;
+
+        double progressi;
+        if (precedente == 0) {
+            progressi = ultimo * 10.0;
+        } else if (ultimo == 0) {
+            progressi = -precedente * 10.0;
+        } else {
+            progressi = ((ultimo - precedente) / (double) Math.abs(precedente)) * 100;
+        }
+
+        progressi = Math.clamp(progressi, -100.0, 100.0);
+        return Math.round(progressi * 100.0) / 100.0;
+    }
+
+
 
     public List<TerapiaBean> trovaTerapie() throws EccezioneDAO {
         DAOFactoryFacade daoFactoryFacade=DAOFactoryFacade.getInstance();

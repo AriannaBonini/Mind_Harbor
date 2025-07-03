@@ -78,7 +78,7 @@ public class ControllerGraficoLoginCLI extends AbsGestoreInput {
         catch (EccezioneDAO | IOException e) {
             logger.error(e.getMessage());
         } catch (EccezioneSessioneUtente e) {
-            logger.info(e.getMessage());
+            GestoreOutput.stampaMessaggio("Utente : " + e.getUsername() + " " + e.getMessage() );
         }
     }
 

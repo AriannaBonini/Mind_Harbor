@@ -2,7 +2,8 @@ package com.example.mindharbor.beans;
 
 public class RisultatiTestBean {
     private Integer risultatoUltimoTest;
-    private Double risultatoTestPrecedente;
+    private Integer risultatoTestPrecedente;
+    private Double progresso;
 
     public RisultatiTestBean() {/*Costruttore Vuoto*/}
 
@@ -13,8 +14,10 @@ public class RisultatiTestBean {
     public void setRisultatoUltimoTest(Integer risultatoUltimoTest) {
         this.risultatoUltimoTest = risultatoUltimoTest;
     }
-    public Double getRisultatoTestPrecedente() {
+    public Integer getRisultatoTestPrecedente() {
         return risultatoTestPrecedente;
     }
-    public void setRisultatoTestPrecedente(Double risultatoTestPrecedente) {this.risultatoTestPrecedente = risultatoTestPrecedente;}
+    public void setRisultatoTestPrecedente(Integer risultatoTestPrecedente) {this.risultatoTestPrecedente = risultatoTestPrecedente;}
+    public Double getProgresso() {return progresso;}
+    public void setProgresso(Double progresso) {this.progresso = progresso;}
 }

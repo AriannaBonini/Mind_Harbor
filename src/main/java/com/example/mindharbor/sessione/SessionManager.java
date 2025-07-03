@@ -28,7 +28,7 @@ public class SessionManager {
 
     public synchronized void login(Utente utente) throws EccezioneSessioneUtente {
         if (utentiLoggati.containsKey(utente.getUsername())) {
-            throw new EccezioneSessioneUtente("Utente già loggato");
+            throw new EccezioneSessioneUtente("Utente già loggato", utente.getUsername());
         }
         utentiLoggati.put(utente.getUsername(), utente);
         usernameUtenteCorrente = utente.getUsername();
@@ -63,14 +63,6 @@ public class SessionManager {
         return null;
     }
 
-    public synchronized Utente changeCurrentUser(String username) {
-        Utente utente = utentiLoggati.get(username);
-        if (utente != null) {
-            usernameUtenteCorrente = username;
-            return utente;
-        }
-        return null;
-    }
 
 }
 

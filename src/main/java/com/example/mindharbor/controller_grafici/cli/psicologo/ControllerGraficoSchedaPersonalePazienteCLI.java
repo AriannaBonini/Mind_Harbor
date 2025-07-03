@@ -8,6 +8,7 @@ import com.example.mindharbor.controller_grafici.interfacce.RicevitoreParametri;
 import com.example.mindharbor.controller_grafici.cli.AbsGestoreInput;
 import com.example.mindharbor.eccezioni.EccezioneDAO;
 import com.example.mindharbor.eccezioni.EccezioneFormatoNonValido;
+import com.example.mindharbor.eccezioni.EccezionePazienteNonAutorizzato;
 import com.example.mindharbor.strumenti_utili.supporto_cli.CodiciAnsi;
 import com.example.mindharbor.strumenti_utili.supporto_cli.GestoreOutput;
 import org.slf4j.Logger;
@@ -107,6 +108,12 @@ public class ControllerGraficoSchedaPersonalePazienteCLI extends AbsGestoreInput
             pazienteSelezionato = prescriviTerapiaController.getSchedaPersonale(pazienteSelezionato);
         } catch (EccezioneDAO e) {
             logger.info("Non esistono informazioni relative al paziente", e);
+        }catch (EccezionePazienteNonAutorizzato e) {
+            String username= e.getUsernamePaziente();
+            String messaggio= "Tentativo non autorizzato per il paziente: " + username;
+
+            GestoreOutput.stampaMessaggio(messaggio);
+            tornaIndietro();
         }
 
     }
